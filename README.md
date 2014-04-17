@@ -1,4 +1,4 @@
 FlightLogger
 ============
 
-RPI appliance to aggegate and log flight data
+Appliance to aggegate and log flight data
