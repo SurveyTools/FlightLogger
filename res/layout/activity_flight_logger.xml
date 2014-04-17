@@ -48,7 +48,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/enable_logging_button" />
+                android:text="@string/enable_laser_alt_button" />
         </LinearLayout>
         
        <GridLayout

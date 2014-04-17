@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">FlightLogger</string>
-    <string name="enable_logging_button">Enable Flight Logging</string>
+    <string name="enable_laser_alt_button">Enable Laser Altimeter</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="disable_logging_button">Disable Flight Logging</string>
+    <string name="disable_laser_alt_button">Disable Laser Altimeter</string>
     <string name="lat_label">Latitude</string>
     <string name="long_label">Longitude</string>
     <string name="alt_label">Altitude</string>
