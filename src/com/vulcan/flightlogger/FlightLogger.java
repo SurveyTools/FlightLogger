@@ -14,9 +14,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FlightLogger extends Activity implements LocationListener {
 	
@@ -111,18 +115,40 @@ public class FlightLogger extends Activity implements LocationListener {
 				}
 			}
 		});
-
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
 	}
-
-	private void initAltimeter() {
-		
+	
+	/**
+	 * Menu handling
+	 */
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the menu items for use in the action bar
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main_activity_actions, menu);
+	    return super.onCreateOptionsMenu(menu);
 	}
+	
+	@Override
+	  public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // action with ID action_refresh was selected
+	    case R.id.action_use_laser_alt:
+	      Toast.makeText(this, "Laser enabled selected", Toast.LENGTH_SHORT)
+	          .show();
+	      break;
+	    // action with ID action_settings was selected
+	    case R.id.action_serial_discovery:
+	      Toast.makeText(this, "Serial discovery selected", Toast.LENGTH_SHORT)
+	          .show();
+	      break;
+	    default:
+	      break;
+	    }
 
+	    return true;
+	  } 
+	
 	private void bindUIControls() {
 		latTV = (TextView)findViewById(R.id.gpsVal1); 
 		lonTV = (TextView)findViewById(R.id.gpsVal2); 
@@ -131,6 +157,18 @@ public class FlightLogger extends Activity implements LocationListener {
 		timeTV = (TextView)findViewById(R.id.gpsVal5); 
 		accuracyTV = (TextView)findViewById(R.id.gpsVal6);
 	}
+
+
+	/**
+	 * Altimeter 
+	 */
+	private void initAltimeter() {
+		
+	}
+	
+	/**
+	 * GPS 
+	 */
 	
 	private void initGps()
 	{
@@ -152,51 +190,8 @@ public class FlightLogger extends Activity implements LocationListener {
         	showGpsFailureAlert();
         	Log.d(LOGGER_TAG, "GPS not enabled");
         }
-
 	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-
-		// Trigger the initial hide() shortly after the activity has been
-		// created, to briefly hint to the user that UI controls
-		// are available.
-		delayedHide(100);
-	}
-
-	/**
-	 * Touch listener to use for in-layout UI controls to delay hiding the
-	 * system UI. This is to prevent the jarring behavior of controls going away
-	 * while interacting with activity UI.
-	 */
-	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-		@Override
-		public boolean onTouch(View view, MotionEvent motionEvent) {
-			if (AUTO_HIDE) {
-				delayedHide(AUTO_HIDE_DELAY_MILLIS);
-			}
-			return false;
-		}
-	};
-
-	Handler mHideHandler = new Handler();
-	Runnable mHideRunnable = new Runnable() {
-		@Override
-		public void run() {
-			mSystemUiHider.hide();
-		}
-	};
-
-	/**
-	 * Schedules a call to hide() in [delay] milliseconds, canceling any
-	 * previously scheduled calls.
-	 */
-	private void delayedHide(int delayMillis) {
-		mHideHandler.removeCallbacks(mHideRunnable);
-		mHideHandler.postDelayed(mHideRunnable, delayMillis);
-	}
-
+	
 	@Override
 	public void onLocationChanged(Location location) 
 	{
@@ -250,6 +245,41 @@ public class FlightLogger extends Activity implements LocationListener {
 	     })
 	    .setIcon(android.R.drawable.ic_dialog_alert)
 	     .show();
+	}
+
+	/**
+	 * Hide status bars to maximize space
+	 */
+	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View view, MotionEvent motionEvent) {
+			if (AUTO_HIDE) {
+				delayedHide(AUTO_HIDE_DELAY_MILLIS);
+			}
+			return false;
+		}
+	};
+	
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Trigger the initial hide() shortly after the activity has been
+		// created, to briefly hint to the user that UI controls
+		// are available.
+		delayedHide(100);
+	}
+
+	Handler mHideHandler = new Handler();
+	Runnable mHideRunnable = new Runnable() {
+		@Override
+		public void run() {
+			mSystemUiHider.hide();
+		}
+	};
+
+	private void delayedHide(int delayMillis) {
+		mHideHandler.removeCallbacks(mHideRunnable);
+		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
 	
 }

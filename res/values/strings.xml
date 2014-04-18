@@ -11,5 +11,7 @@
     <string name="speed_label">Speed</string>
     <string name="time_label">GPS Time</string>
     <string name="accuracy_label">Accuracy</string>
+    <string name="action_serial_discovery">Show Serial Devices</string>
+    <string name="action_use_laser_alt">Enable Laser Altimeter</string>
 
 </resources>
