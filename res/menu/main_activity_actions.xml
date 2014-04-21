@@ -1,7 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_serial_discovery"
-          android:title="@string/action_serial_discovery" />
+    <item android:id="@+id/action_load_gpx"
+          android:title="@string/action_load_gpx" />
     <item android:id="@+id/action_use_laser_alt"
           android:title="@string/action_use_laser_alt" />
+    <item android:id="@+id/action_serial_discovery"
+          android:title="@string/action_serial_discovery" />
+
 </menu>

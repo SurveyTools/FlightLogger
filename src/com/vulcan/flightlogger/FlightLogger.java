@@ -1,5 +1,11 @@
 package com.vulcan.flightlogger;
 
+import java.io.File;
+import java.sql.Date;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
 import com.vulcan.flightlogger.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -118,7 +124,7 @@ public class FlightLogger extends Activity implements LocationListener {
 	}
 	
 	/**
-	 * Menu handling
+	 * Action menu handling
 	 */
 	
 	@Override
@@ -130,21 +136,28 @@ public class FlightLogger extends Activity implements LocationListener {
 	}
 	
 	@Override
-	  public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    // action with ID action_refresh was selected
-	    case R.id.action_use_laser_alt:
-	      Toast.makeText(this, "Laser enabled selected", Toast.LENGTH_SHORT)
-	          .show();
-	      break;
-	    // action with ID action_settings was selected
-	    case R.id.action_serial_discovery:
-	      Toast.makeText(this, "Serial discovery selected", Toast.LENGTH_SHORT)
-	          .show();
-	      break;
-	    default:
-	      break;
-	    }
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		// action with ID action_refresh was selected
+			case R.id.action_use_laser_alt:
+			  Toast.makeText(this, "Laser enabled selected", Toast.LENGTH_SHORT)
+			      .show();
+			  break;
+			// action with ID action_settings was selected
+			case R.id.action_serial_discovery:
+			  Toast.makeText(this, "Serial discovery selected", Toast.LENGTH_SHORT)
+			      .show();
+			  break;
+			case R.id.action_load_gpx:
+				ArrayList<File> gpxFiles = FilesystemMgr.listGPXFiles();
+				for (File gpxFile:gpxFiles)
+				{
+					Log.d("foo", gpxFile.getName());
+				}
+			      break;
+default:
+  break;
+}
 
 	    return true;
 	  } 
@@ -197,10 +210,25 @@ public class FlightLogger extends Activity implements LocationListener {
 	{
 		latTV.setText(Location.convert(location.getLatitude(), Location.FORMAT_DEGREES));
 		lonTV.setText(Location.convert(location.getLongitude(), Location.FORMAT_DEGREES));
-		altTV.setText(String.valueOf(location.getAltitude()));
+		altTV.setText(formatAltitude(location.getAltitude()));
 		speedTV.setText(String.valueOf(location.getSpeed()));
 		accuracyTV.setText(String.valueOf(location.getAccuracy()));
-		timeTV.setText(String.valueOf(location.getTime()));
+		timeTV.setText(convertGPSTime(location.getTime()));
+	}
+	
+	private String convertGPSTime(long gpsTime)
+	{
+		// TODO: see if SimpleDateFormat and Date are expensive
+		Date date = new Date(gpsTime);
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss z");
+		String text = sdf.format(date);
+		return text;
+	}
+	
+	private String formatAltitude(double altVal)
+	{
+		DecimalFormat df = new DecimalFormat("#.##");
+		return df.format(altVal);
 	}
 
 	@Override
