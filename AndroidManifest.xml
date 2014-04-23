@@ -7,14 +7,18 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
+
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
     
-    <uses-feature android:name="android.hardware.location.gps" 
-              android:required="true" />
-    
+    <uses-feature android:name="android.hardware.usb.host" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
 
     <application
         android:allowBackup="true"
@@ -31,14 +35,24 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
         </activity>
         <!-- Uncommenting the following block will (in theory) start this app on reboot -->
-        <!-- <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"
+        <!--
+        <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"
         	android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
 	        <intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
 				<category android:name="android.intent.category.DEFAULT" />
 	        </intent-filter>
-		</receiver> -->
+		</receiver>
+        -->
     </application>
+
 </manifest>
