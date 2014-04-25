@@ -13,7 +13,7 @@
     <string name="accuracy_label">Accuracy</string>
     <string name="action_serial_discovery">Show Serial Devices</string>
     <string name="action_use_laser_alt">Enable Laser Altimeter</string>
-    <string name="action_load_gpx">Load Transect GPX</string>
+    <string name="action_load_gpx">Load GPX File</string>
     <string name="refreshing">Refreshing...</string>
 
 </resources>
