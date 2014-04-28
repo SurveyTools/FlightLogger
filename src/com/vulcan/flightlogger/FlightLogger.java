@@ -6,8 +6,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import tw.com.prolific.driver.pl2303.PL2303Driver;
+import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
 
+import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.geo.GPXParser;
 import com.vulcan.flightlogger.util.SystemUiHider;
 
@@ -37,23 +38,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class FlightLogger extends Activity implements LocationListener {
-	
+
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 
 	private final String LOGGER_TAG = FlightLogger.class.getSimpleName();
 
-	private PL2303Driver mSerial;
 	private boolean mReadSerialData = false;
 	private LocationManager mLocationManager;
 	private boolean mGpsEnabled;
-
-	// BaudRate.B4800, DataBits.D8, StopBits.S1, Parity.NONE, FlowControl.RTSCTS
-	private PL2303Driver.BaudRate mBaudrate = PL2303Driver.BaudRate.B9600;
-	private PL2303Driver.DataBits mDataBits = PL2303Driver.DataBits.D8;
-	private PL2303Driver.Parity mParity = PL2303Driver.Parity.NONE;
-	private PL2303Driver.StopBits mStopBits = PL2303Driver.StopBits.S1;
-	private PL2303Driver.FlowControl mFlowControl = PL2303Driver.FlowControl.OFF;
 
 	// need to get a better number in here to save battery life, once testing in
 	// the air
@@ -162,24 +155,23 @@ public class FlightLogger extends Activity implements LocationListener {
 			}
 		});
 
-		initAltimeter();
 	}
-	
+
 	/**
 	 * Callbacks from activities that return results
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    // Check which request we're responding to
-	    if (requestCode == LOAD_GPX_FILE) {
-	        // Make sure the load activity was successful
-	        if (resultCode == RESULT_OK) {
-	        	String gpxName = data.getStringExtra("gpxfile");
-	        	File gpxFile = new File(gpxName);
-	        	List<Location> waypts = GPXParser.parseRoutePoints(gpxFile);
-	        	Log.d("waypts", waypts.toString());
-	        }
-	    }
+		// Check which request we're responding to
+		if (requestCode == LOAD_GPX_FILE) {
+			// Make sure the load activity was successful
+			if (resultCode == RESULT_OK) {
+				String gpxName = data.getStringExtra("gpxfile");
+				File gpxFile = new File(gpxName);
+				List<Location> waypts = GPXParser.parseRoutePoints(gpxFile);
+				Log.d("waypts", waypts.toString());
+			}
+		}
 	}
 
 	/**
@@ -195,20 +187,21 @@ public class FlightLogger extends Activity implements LocationListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = null;
 		switch (item.getItemId()) {
 		// use laser altimeter
 		case R.id.action_use_laser_alt:
-			openAltimeterDevice();
+			intent = new Intent(this, LaserAltimeterActivity.class);
+			startActivity(intent);
 			break;
 		// load gpx
 		case R.id.action_load_gpx:
-			Intent intent = new Intent(this, GpxFileBrowser.class);
-	        this.startActivityForResult(intent, LOAD_GPX_FILE);
+			intent = new Intent(this, GpxFileBrowser.class);
+			this.startActivityForResult(intent, LOAD_GPX_FILE);
 			break;
 		default:
 			break;
 		}
-
 		return true;
 	}
 
@@ -219,86 +212,6 @@ public class FlightLogger extends Activity implements LocationListener {
 		mSpeedTV = (TextView) findViewById(R.id.gpsVal4);
 		mTimeTV = (TextView) findViewById(R.id.gpsVal5);
 		mAccuracyTV = (TextView) findViewById(R.id.gpsVal6);
-	}
-
-	/**
-	 * Altimeter
-	 */
-	private void initAltimeter() {
-		mSerial = new PL2303Driver(
-				(UsbManager) getSystemService(Context.USB_SERVICE), this,
-				ACTION_USB_PERMISSION);
-
-		// check USB host function.
-		if (!mSerial.PL2303USBFeatureSupported()) {
-
-			Toast.makeText(this, "No Support USB host API", Toast.LENGTH_SHORT)
-					.show();
-
-			Log.d(LOGGER_TAG, "No Support USB host API");
-
-			mSerial = null;
-		}
-	}
-
-	private void openAltimeterDevice() {
-		if (null == mSerial)
-			return;
-
-		if (mSerial.isConnected()) {
-
-			// if (!mSerial.InitByBaudRate(mBaudrate)) {
-			if (!mSerial.InitByBaudRate(mBaudrate, 700)) {
-				if (!mSerial.PL2303Device_IsHasPermission()) {
-					Toast.makeText(this,
-							"Cannot open altimeter, try restarting the app",
-							Toast.LENGTH_SHORT).show();
-				}
-
-				if (mSerial.PL2303Device_IsHasPermission()
-						&& (!mSerial.PL2303Device_IsSupportChip())) {
-					Toast.makeText(
-							this,
-							"This USB chip is not supported, please use PL2303HXD / RA / EA chip.",
-							Toast.LENGTH_SHORT).show();
-				}
-			} else {
-				readDataFromSerial();
-			}
-		}
-	}
-
-	private void readDataFromSerial() {
-
-		if ((null == mSerial) || !mSerial.isConnected())
-		{
-			Toast.makeText(
-					this,
-					"There is no driver available to read altimeter data.",
-					Toast.LENGTH_SHORT).show();
-			return;
-		}
-
-		new Thread(new Runnable() {
-			final Handler handler = new Handler();
-			int len;
-
-			public void run() {				
-				while (mReadSerialData == true) {
-					byte[] recBuffer = new byte[16];
-					try {
-						Thread.sleep(100);
-						len = mSerial.read(recBuffer);
-						if(len > 0)
-						{
-							//handler.sendMessage("foo");
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
 	}
 
 	/**
@@ -317,7 +230,6 @@ public class FlightLogger extends Activity implements LocationListener {
 					MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 			Log.d(LOGGER_TAG, "GPS Enabled");
 		} else {
-			showAltimeterFailureAlert();
 			Log.d(LOGGER_TAG, "GPS not enabled");
 		}
 	}
@@ -372,27 +284,6 @@ public class FlightLogger extends Activity implements LocationListener {
 		this.mGpsEnabled = isEnabled;
 	}
 
-	public void showAltimeterFailureAlert() {
-		new AlertDialog.Builder(this)
-				.setTitle("Altimeter Data Error")
-				.setMessage(
-						"The Altimeter failed to initialize. Would you like to try again?")
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								initAltimeter();
-							}
-						})
-				.setNegativeButton(android.R.string.no,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								// do nothing
-							}
-						}).setIcon(android.R.drawable.ic_dialog_alert).show();
-	}
-
 	/**
 	 * Hide status bars to maximize space
 	 */
@@ -430,33 +321,13 @@ public class FlightLogger extends Activity implements LocationListener {
 
 	@Override
 	protected void onDestroy() {
-		mReadSerialData = false;
-		Log.d(LOGGER_TAG, "Enter onDestroy");
-		if (mSerial != null) {
-			mSerial.end();
-			mSerial = null;
-		}
+		SlickUSB2Serial.cleanup(this);
 		super.onDestroy();
-		Log.d(LOGGER_TAG, "Leave onDestroy");
 	}
 
+	@Override
 	public void onResume() {
 		super.onResume();
-
-		if (mSerial != null) {
-			if (!mSerial.isConnected()) {
-
-				if (!mSerial.enumerate()) {
-
-					Toast.makeText(this, "onResume: No serial devices found ",
-							Toast.LENGTH_SHORT).show();
-					return;
-				} else {
-					Log.d(LOGGER_TAG, "onResume: Serial devices discovered");
-				}
-			}// if isConnected
-		}
-		Toast.makeText(this, "attached", Toast.LENGTH_SHORT).show();
 	}
 
 }

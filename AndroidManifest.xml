@@ -47,6 +47,9 @@
         <activity android:name="com.vulcan.flightlogger.GpxFileBrowser"
                   android:label="@string/action_load_gpx">
         </activity>
+        <activity android:name="com.vulcan.flightlogger.altimeter.LaserAltimeterActivity"
+                  android:label="@string/action_altimeter">
+        </activity>
         <!-- Uncommenting the following block will (in theory) start this app on reboot -->
         <!--
         <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"
