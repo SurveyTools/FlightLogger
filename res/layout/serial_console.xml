@@ -1,36 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+	android:background="#0099cc"
+	android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <TextView
-        android:id="@+id/demoTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:text="Device Chooser"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <View
-        android:id="@+id/separator"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/demoTitle"
-        android:layout_height="1dip"
-        android:background="#eeeeee" />
+    android:layout_height="match_parent">
     
-    <ScrollView
-        android:id="@+id/demoScroller"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/separator" >
+    <LinearLayout android:id="@+id/topButtons" 
+    	android:layout_margin="4dip"
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content">
+	   	<Button android:id="@+id/deviceConnect"
+	   		android:layout_margin="8dip"
+			android:layout_weight="3"
+	   		android:layout_width="fill_parent"
+	   		android:layout_height="match_parent"
+	   		android:text="Connect"/>
+	   	<LinearLayout android:orientation="vertical"
+	   		android:layout_weight="1"
+	   		android:layout_width="fill_parent"
+	   		android:layout_height="wrap_content">
+		   	<LinearLayout android:orientation="horizontal"
+		    	android:layout_margin="8dip"
+		  		android:layout_width="wrap_content"
+		  		android:layout_height="wrap_content">
+		  		<TextView android:text="Connected Adapter:"
+		  			android:layout_gravity="center_vertical"
+		  			android:layout_width="wrap_content"
+		  			android:layout_height="wrap_content"/>
+		  		<Spinner android:id="@+id/deviceSpinner"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:drawSelectorOnTop="true"/>
+			    <TextView android:id="@+id/currentSettings" 
+			    	android:layout_marginLeft="8dip"
+			    	android:text="Current Settings: Not Connected"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:layout_gravity="center_vertical"/>
+		  	</LinearLayout>
+		  	<LinearLayout android:orientation="horizontal"
+		  		android:layout_width="fill_parent"
+		  		android:layout_height="wrap_content">
+			   	<LinearLayout android:orientation="horizontal"
+			   		android:layout_margin="8dip"
+			   		android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content">
+			   		<TextView android:text="Baud:"
+			   			android:layout_gravity="center_vertical"
+			   			android:layout_width="wrap_content"
+			   			android:layout_height="wrap_content"/>
+			   		<Spinner android:id="@+id/baudSpinner"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:drawSelectorOnTop="true"/>
+			   	</LinearLayout>
+			   	<LinearLayout android:orientation="horizontal"
+			   		android:layout_margin="8dip"
+			   		android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content">
+			   		<TextView android:text="Data:"
+			   			android:layout_gravity="center_vertical"
+			   			android:layout_width="wrap_content"
+			   			android:layout_height="wrap_content"/>
+			   		<Spinner android:id="@+id/dataSpinner"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:drawSelectorOnTop="true"/>
+			   	</LinearLayout>
+			   	<LinearLayout android:orientation="horizontal"
+			   		android:layout_margin="8dip"
+			   		android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content">
+			   		<TextView android:text="Parity:"
+			   			android:layout_gravity="center_vertical"
+			   			android:layout_width="wrap_content"
+			   			android:layout_height="wrap_content"/>
+			   		<Spinner android:id="@+id/paritySpinner"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:drawSelectorOnTop="true"/>
+			   	</LinearLayout>
+			   	<LinearLayout android:orientation="horizontal"
+			   		android:layout_margin="8dip"
+			   		android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content">
+			   		<TextView android:text="Stop:"
+			   			android:layout_gravity="center_vertical"
+			   			android:layout_width="wrap_content"
+			   			android:layout_height="wrap_content"/>
+			   		<Spinner android:id="@+id/stopSpinner"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:drawSelectorOnTop="true"/>
+			   	</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+		<Button android:id="@+id/updateSettings"
+	   		android:layout_margin="8dip"
+			android:layout_weight="3"
+	   		android:layout_width="fill_parent"
+	   		android:layout_height="match_parent"
+	   		android:text="Update\nSettings"/>
+    </LinearLayout>
+    
+   	<LinearLayout android:orientation="horizontal"
+   		android:layout_margin="8dip"
+   		android:layout_weight="1"
+   		android:layout_width="fill_parent"
+   		android:layout_height="fill_parent">
+   		<LinearLayout android:orientation="vertical"
+   			android:layout_weight="1"
+   			android:layout_width="fill_parent"
+   			android:layout_height="fill_parent">
+	  		<Button android:id="@+id/sendData"
+	  			android:layout_margin="4dip"
+	  			android:layout_width="fill_parent"
+	  			android:layout_height="wrap_content"
+	  			android:text="Send"/>
+	  		<LinearLayout android:orientation="horizontal"
+		  		android:layout_width="fill_parent"
+		  		android:layout_height="wrap_content">
+		  		<Button android:id="@+id/nul"
+			   		android:layout_margin="4dip"
+					android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content"
+			   		android:text="NUL"/>
+			   	<Button android:id="@+id/stx"
+			   		android:layout_margin="4dip"
+					android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content"
+			   		android:text="STX"/>
+			   	<Button android:id="@+id/etx"
+			   		android:layout_margin="4dip"
+					android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content"
+			   		android:text="ETX"/>
+			   	<Button android:id="@+id/ack"
+			   		android:layout_margin="4dip"
+					android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content"
+			   		android:text="ACK"/>
+			   	<Button android:id="@+id/nak"
+			   		android:layout_margin="4dip"
+					android:layout_weight="1"
+			   		android:layout_width="fill_parent"
+			   		android:layout_height="wrap_content"
+			   		android:text="NAK"/>
+		  	</LinearLayout>
+	  		<LinearLayout android:orientation="vertical"
+	  			android:background="@drawable/textfield_bg"
+	  			android:layout_margin="4dip"
+	  			android:layout_weight="1"
+	  			android:layout_width="fill_parent"
+	  			android:layout_height="fill_parent">
+	  			<TextView android:text="Send Data (ascii)"
+		  			android:textSize="20dip"
+		  			android:textStyle="bold"
+		  			android:textColor="#FF043241"
+		  			android:layout_gravity="center_horizontal"
+		  			android:layout_width="wrap_content"
+		  			android:layout_height="wrap_content"/>
+		  		<EditText android:id="@+id/inputBox"
+			  		android:textColor="#FF043241"
+			  		android:gravity="top|left"
+			  		android:layout_width="fill_parent"
+			  		android:layout_height="fill_parent"/>
+	  		</LinearLayout>
+   		</LinearLayout>   
+   		<LinearLayout android:orientation="vertical"
+   			android:layout_weight="1"
+   			android:layout_width="fill_parent"
+   			android:layout_height="fill_parent">
+	  		<Button android:id="@+id/clearData"
+	  			android:layout_margin="4dip"
+	  			android:layout_width="fill_parent"
+	  			android:layout_height="wrap_content"
+	  			android:text="Clear"/>
+	  		<LinearLayout android:orientation="horizontal"
+	  			android:layout_width="fill_parent"
+	  			android:layout_height="wrap_content">
+				<CheckBox android:id="@+id/textAsString"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:checked="true"
+					android:text="Show Data in Hex"/>	  		
+	  		</LinearLayout>
+	  		<LinearLayout android:orientation="vertical"
+	  			android:layout_margin="4dip"
+	  			android:background="@drawable/textfield_bg"
+	  			android:layout_width="fill_parent"
+	  			android:layout_height="fill_parent">
+	  			<TextView android:text="Data Received"
+	   				android:textSize="20dip"
+		  			android:textStyle="bold"
+		  			android:textColor="#FF043241"
+		  			android:layout_gravity="center_horizontal"
+		  			android:layout_width="wrap_content"
+		  			android:layout_height="wrap_content"/>
+		  		<EditText android:id="@+id/outputBox"
+			  		android:textColor="#FF043241"
+			  		android:gravity="top|left"
+			  		android:focusable="false"
+			  		android:layout_width="fill_parent"
+			  		android:layout_height="fill_parent"/>
+	  		</LinearLayout>
+   		</LinearLayout>	
+   	</LinearLayout>
+</LinearLayout>
 
-        <TextView
-            android:id="@+id/consoleText"
-            android:textIsSelectable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:typeface="monospace" />
-    </ScrollView>
 
-</RelativeLayout>

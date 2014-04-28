@@ -4,5 +4,7 @@
           android:title="@string/action_load_gpx" />
     <item android:id="@+id/action_use_laser_alt"
           android:title="@string/action_use_laser_alt" />
+    <item android:id="@+id/action_use_serial_console"
+          android:title="@string/action_use_serial_console" />
 
 </menu>

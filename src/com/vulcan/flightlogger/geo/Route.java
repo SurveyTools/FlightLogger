@@ -4,7 +4,14 @@ import android.location.Location;
 
 public class Route {	
 	
-	public Location startPoint;
-	public Location endPoint;
+	public String name;
+	public RoutePoint[] wayPoints;
+	public Location lastWaypoint;
+	
+	class RoutePoint
+	{
+		public String name;
+		public Location[] wayPoints;		
+	}
 	
 }

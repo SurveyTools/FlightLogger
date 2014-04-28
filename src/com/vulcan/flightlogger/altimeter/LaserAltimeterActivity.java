@@ -1,7 +1,5 @@
 package com.vulcan.flightlogger.altimeter;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import com.vulcan.flightlogger.R;

@@ -9,19 +9,17 @@ import java.util.List;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
 
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
+import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPXParser;
 import com.vulcan.flightlogger.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.usb.UsbManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -35,7 +33,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class FlightLogger extends Activity implements LocationListener {
 
@@ -44,7 +41,6 @@ public class FlightLogger extends Activity implements LocationListener {
 
 	private final String LOGGER_TAG = FlightLogger.class.getSimpleName();
 
-	private boolean mReadSerialData = false;
 	private LocationManager mLocationManager;
 	private boolean mGpsEnabled;
 
@@ -168,8 +164,7 @@ public class FlightLogger extends Activity implements LocationListener {
 			if (resultCode == RESULT_OK) {
 				String gpxName = data.getStringExtra("gpxfile");
 				File gpxFile = new File(gpxName);
-				List<Location> waypts = GPXParser.parseRoutePoints(gpxFile);
-				Log.d("waypts", waypts.toString());
+				// todo load and display the file
 			}
 		}
 	}
@@ -189,6 +184,11 @@ public class FlightLogger extends Activity implements LocationListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
+		// use laser altimeter
+		case R.id.action_use_serial_console:
+			intent = new Intent(this, SerialConsole.class);
+			startActivity(intent);
+			break;
 		// use laser altimeter
 		case R.id.action_use_laser_alt:
 			intent = new Intent(this, LaserAltimeterActivity.class);
