@@ -1,6 +1,7 @@
 package com.vulcan.flightlogger.geo;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Service;
@@ -9,17 +10,36 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+
 
 public class NavigationService extends Service implements LocationListener {
 	
 	public List<Route> mRouteList;
 	public Route mCurrentRoute;
 	private final IBinder mBinder = new LocalBinder();
+	private final ArrayList<GeoUpdateListener> mListeners
+			= new ArrayList<GeoUpdateListener>();
+	private final Handler mHandler = new Handler();
 	
 	public class LocalBinder extends Binder {
         public NavigationService getService() {
             return NavigationService.this;
+        }
+    }
+	
+    public void registerListener(GeoUpdateListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(GeoUpdateListener listener) {
+        mListeners.remove(listener);
+    }
+
+    private void sendLocationUpdate(Location location) {
+        for (GeoUpdateListener listener : mListeners) {
+            listener.onLocationUpdate(location);
         }
     }
 

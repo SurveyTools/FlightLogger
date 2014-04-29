@@ -3,7 +3,7 @@
  * will need to write our own DialogFragment, but I'm using this to get 
  * us working quickly
  */
-package com.vulcan.flightlogger.geo;
+package com.vulcan.flightlogger;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -27,7 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class GpxFileBrowser extends Activity {
+public class FileBrowser extends Activity {
 
 	// Stores names of traversed directories
 	ArrayList<String> dirList = new ArrayList<String>();

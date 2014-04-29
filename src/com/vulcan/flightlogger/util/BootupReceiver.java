@@ -1,6 +1,6 @@
 package com.vulcan.flightlogger.util;
 
-import com.vulcan.flightlogger.GPSActivity;
+import com.vulcan.flightlogger.geo.GPSActivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
