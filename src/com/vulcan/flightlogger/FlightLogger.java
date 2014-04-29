@@ -11,6 +11,7 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPXParser;
+import com.vulcan.flightlogger.geo.GpxFileBrowser;
 import com.vulcan.flightlogger.util.SystemUiHider;
 
 import android.annotation.TargetApi;
