@@ -27,7 +27,7 @@
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true" >
         <activity
-            android:name="com.vulcan.flightlogger.FlightLogger"
+            android:name="com.vulcan.flightlogger.GPSActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme" >
@@ -44,7 +44,7 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity android:name="com.vulcan.flightlogger.GpxFileBrowser"
+        <activity android:name="com.vulcan.flightlogger.geo.GpxFileBrowser"
                   android:label="@string/action_load_gpx">
         </activity>
         <activity android:name="com.vulcan.flightlogger.altimeter.LaserAltimeterActivity"

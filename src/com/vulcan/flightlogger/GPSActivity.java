@@ -11,6 +11,7 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPXParser;
+import com.vulcan.flightlogger.geo.GpxFileBrowser;
 import com.vulcan.flightlogger.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -34,12 +35,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-public class FlightLogger extends Activity implements LocationListener {
+public class GPSActivity extends Activity implements LocationListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 
-	private final String LOGGER_TAG = FlightLogger.class.getSimpleName();
+	private final String LOGGER_TAG = GPSActivity.class.getSimpleName();
 
 	private LocationManager mLocationManager;
 	private boolean mGpsEnabled;

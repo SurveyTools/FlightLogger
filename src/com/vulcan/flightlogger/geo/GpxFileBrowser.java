@@ -3,12 +3,14 @@
  * will need to write our own DialogFragment, but I'm using this to get 
  * us working quickly
  */
-package com.vulcan.flightlogger;
+package com.vulcan.flightlogger.geo;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
+import com.vulcan.flightlogger.R;
+import com.vulcan.flightlogger.R.drawable;
 
 import android.app.Activity;
 import android.app.AlertDialog;

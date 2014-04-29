@@ -54,6 +54,7 @@ public class GPXParser {
 			
 			for (int i = 0; i < nodelist_routes.getLength(); i++) 
 			{
+				
 				List<Location> list = new ArrayList<Location>();
 				// see if there are waypoints marked by the element 'rtept'
 				NodeList nodelist_rtkpt = elementRoot.getElementsByTagName("rtept");
