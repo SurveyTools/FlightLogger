@@ -30,12 +30,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-public class GPSActivity extends Activity implements LocationListener {
+public class GPSDebugActivity extends Activity implements LocationListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 
-	private final String LOGGER_TAG = GPSActivity.class.getSimpleName();
+	private final String LOGGER_TAG = GPSDebugActivity.class.getSimpleName();
 
 	private LocationManager mLocationManager;
 	private boolean mGpsEnabled;
@@ -157,22 +157,6 @@ public class GPSActivity extends Activity implements LocationListener {
 		this.startActivityForResult(intent, LOAD_GPX_FILE);
 	}
 
-	/**
-	 * Callbacks from activities that return results
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// Check which request we're responding to
-		if (requestCode == LOAD_GPX_FILE) {
-			// Make sure the load activity was successful
-			if (resultCode == RESULT_OK) {
-				String gpxName = data.getStringExtra("gpxfile");
-				Intent it = new Intent(this, RouteListActivity.class);
-	            it.putExtra("gpxfile", gpxName);
-	            startActivity(it);
-			}
-		}
-	}
 
 //	/**
 //	 * Action menu handling

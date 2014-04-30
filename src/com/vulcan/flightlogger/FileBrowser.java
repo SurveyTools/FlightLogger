@@ -1,7 +1,7 @@
 /*
  * Modified from https://github.com/mburman/Android-File-Explore. We 
  * will need to write our own DialogFragment, but I'm using this to get 
- * us working quickly
+ * us up and working quickly
  */
 package com.vulcan.flightlogger;
 

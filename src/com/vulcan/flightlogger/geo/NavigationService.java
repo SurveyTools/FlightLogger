@@ -1,6 +1,5 @@
 package com.vulcan.flightlogger.geo;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +9,23 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
+//import android.os.Handler;
 import android.os.IBinder;
 
 
 public class NavigationService extends Service implements LocationListener {
+	
+	// if within threshold, the next waypoint is chosen for navigation. 
+	// Yes, this may be too simplistic, but we need to start somewhere
+	private final int WAYPOINT_THRESHOLD_METERS = 200; 
 	
 	public List<Route> mRouteList;
 	public Route mCurrentRoute;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<RouteUpdateListener> mListeners
 			= new ArrayList<RouteUpdateListener>();
-	private final Handler mHandler = new Handler();
+	// TODO - Not sure if we need to dispatch on separate thread yet
+	// private final Handler mHandler = new Handler();
 	
 	public class LocalBinder extends Binder {
         public NavigationService getService() {
@@ -37,21 +41,27 @@ public class NavigationService extends Service implements LocationListener {
         mListeners.remove(listener);
     }
 
-    private void sendLocationUpdate(Location location) {
+    private void sendRouteUpdate(RouteStatus routeUpdate) {
         for (RouteUpdateListener listener : mListeners) {
-            listener.onLocationUpdate(location);
+        	listener.onRouteUpdate(routeUpdate);
         }
     }
 
 	@Override
 	public void onLocationChanged(Location loc) {
-		calculateCrossTrack(loc);
+		RouteStatus currStatus = calculateRouteStatus(loc);
+    	if (currStatus != null)
+    	{
+    		sendRouteUpdate(currStatus);
+    	}
 
 	}
 
-	private void calculateCrossTrack(Location loc) {
+	// determine current waypoint, distance and deviation from
+	// next waypoint
+	private RouteStatus calculateRouteStatus(Location loc) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
@@ -78,12 +88,6 @@ public class NavigationService extends Service implements LocationListener {
 		return mBinder;
 	}
 	
-	public void loadRoutesFromGpx(File gpxFile)
-	{
-		
-		
-	}
-	
 	/*
 	 * Let the user specify/override which route we are flying on. Must match 
 	 * a route instance currently loaded by the service. We're assuming we are 
@@ -106,7 +110,7 @@ public class NavigationService extends Service implements LocationListener {
 	 * the first route in the list, and end with the last 
 	 * route in the list. 
 	 */	
-	private void nextRoute()
+	private void nextRouteWaypoint()
 	{
 		int index = mRouteList.indexOf(mCurrentRoute);
 		if (index < 0 || index + 1 >= mRouteList.size())

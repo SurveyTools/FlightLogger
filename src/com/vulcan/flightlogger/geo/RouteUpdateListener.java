@@ -4,9 +4,7 @@ import android.location.Location;
 
 public interface RouteUpdateListener {
 	
-	public void onRouteUpdate(Route newRoute);
+	public void onRouteUpdate(RouteStatus routeUpdate);
 
-	// this is just here for testing until we get real routes
-	public void onLocationUpdate(Location location);
 
 }

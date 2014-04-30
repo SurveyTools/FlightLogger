@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.vulcan.flightlogger.geo.GPSActivity"
+            android:name="com.vulcan.flightlogger.geo.GPSDebugActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/action_show_gps_debug"
             android:theme="@style/FullscreenTheme" >

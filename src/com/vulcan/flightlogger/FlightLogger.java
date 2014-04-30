@@ -1,15 +1,14 @@
 package com.vulcan.flightlogger;
 
-import java.io.File;
-
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
-import com.vulcan.flightlogger.geo.GPSActivity;
+import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.RouteListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,7 +45,7 @@ public class FlightLogger extends Activity {
 		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.action_show_gps_debug:
-			intent = new Intent(this, GPSActivity.class);
+			intent = new Intent(this, GPSDebugActivity.class);
 			startActivity(intent);
 			break;
 		// use laser altimeter
@@ -60,11 +59,29 @@ public class FlightLogger extends Activity {
 			startActivity(intent);
 			break;
 		case R.id.action_show_route_list:
-			intent = new Intent(this, RouteListActivity.class);
-			startActivity(intent);
-			break;
+			// load gpx
+			intent = new Intent(this, FileBrowser.class);
+			this.startActivityForResult(intent, LOAD_GPX_FILE);
 		}
 		return true;
+	}
+	
+	/**
+	 * Callbacks from activities that return results
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Check which request we're responding to
+		if (requestCode == LOAD_GPX_FILE) {
+			// Make sure the load activity was successful
+			if (resultCode == RESULT_OK) {
+				String gpxName = data.getStringExtra("gpxfile");
+				Log.d(LOGGER_TAG, "GPX filename: " + gpxName);
+				Intent it = new Intent(this, RouteListActivity.class);
+	            it.putExtra("gpxfile", gpxName);
+	            startActivity(it);
+			}
+		}
 	}
 
 	
