@@ -1,17 +1,13 @@
 package com.vulcan.flightlogger.geo;
 
-import java.io.File;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
-
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
-
 import com.vulcan.flightlogger.FileBrowser;
 import com.vulcan.flightlogger.R;
 import com.vulcan.flightlogger.util.SystemUiHider;
-
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -157,43 +153,6 @@ public class GPSDebugActivity extends Activity implements LocationListener {
 		this.startActivityForResult(intent, LOAD_GPX_FILE);
 	}
 
-
-//	/**
-//	 * Action menu handling
-//	 */
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu items for use in the action bar
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.main_activity_actions, menu);
-//		return super.onCreateOptionsMenu(menu);
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		Intent intent = null;
-//		switch (item.getItemId()) {
-//		// use laser altimeter
-//		case R.id.action_show_serial_console:
-//			intent = new Intent(this, SerialConsole.class);
-//			startActivity(intent);
-//			break;
-//		// use laser altimeter
-//		case R.id.action_show_laser_alt:
-//			intent = new Intent(this, LaserAltimeterActivity.class);
-//			startActivity(intent);
-//			break;
-//		// load gpx
-//		case R.id.action_load_gpx:
-//			intent = new Intent(this, FileBrowser.class);
-//			this.startActivityForResult(intent, LOAD_GPX_FILE);
-//			break;
-//		default:
-//			break;
-//		}
-//		return true;
-//	}
-
 	private void bindUIControls() {
 		mLatTV = (TextView) findViewById(R.id.gpsVal1);
 		mLonTV = (TextView) findViewById(R.id.gpsVal2);
@@ -235,6 +194,7 @@ public class GPSDebugActivity extends Activity implements LocationListener {
 		mTimeTV.setText(convertGPSTime(location.getTime()));
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	private String convertGPSTime(long gpsTime) {
 		// TODO: see if SimpleDateFormat and Date are expensive
 		Date date = new Date(gpsTime);

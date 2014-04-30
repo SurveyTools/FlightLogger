@@ -10,7 +10,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import com.vulcan.flightlogger.R;
-import com.vulcan.flightlogger.R.drawable;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,6 +43,7 @@ public class FileBrowser extends Activity {
 
 	ListAdapter adapter;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -169,6 +169,7 @@ public class FileBrowser extends Activity {
 		case DIALOG_LOAD_FILE:
 			builder.setTitle("Choose your file");
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+				@SuppressWarnings("deprecation")
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					chosenFile = fileList[which].file;

@@ -6,8 +6,10 @@ public class RouteStatus {
 	
 	public String mRouteName;
 	public double mCrossTrackError;
-	public Location mCurrLocation;
+	public double mBearing;
 	public Location mCurrWaypt;
 	public Location mNextWaypt;
+	public double mGroundSpeed;
+	// need to convey route state
 
 }

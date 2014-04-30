@@ -1,5 +1,6 @@
 package com.vulcan.flightlogger.altimeter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import slickdevlabs.apps.usb2seriallib.AdapterConnectionListener;
@@ -9,27 +10,39 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.BaudRate;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.DataBits;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.ParityOption;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
-import android.app.IntentService;
+
+import android.app.Service;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Binder;
+import android.os.IBinder;
 
 public class AltimeterService 
-	extends IntentService 
+	extends Service 
 	implements AdapterConnectionListener, USB2SerialAdapter.DataListener
 {
-	private String mCurrentAltitude;
+	private final static float METERS_CONVERSION = (float) 3.28084;
+	
+	private final IBinder mBinder = new LocalBinder();
+	private final ArrayList<AltitudeUpdateListener> mListeners = new ArrayList<AltitudeUpdateListener>();
+	
+	private float mCurrentAltitude;
 	private USB2SerialAdapter mSelectedAdapter;
 
-	public AltimeterService(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
-	}
-
+	public class LocalBinder extends Binder {
+        public AltimeterService getService() {
+            return AltimeterService.this;
+        }
+    }
+	
 	@Override
-	protected void onHandleIntent(Intent intent) {
-		initSerialCommunication();
-
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return mBinder;
 	}
+	
+    public void onCreate() {
+    	initSerialCommunication();
+    }
 	
 	private void initSerialCommunication() {
 		SlickUSB2Serial.initialize(this);
@@ -40,13 +53,10 @@ public class AltimeterService
 	public void onDataReceived(int arg0, byte[] data) {
 		if (validateDataPayload(data))
 		{
-			//mCurrentAltitude = new String(data);
-			Log.d("Altimeter", mCurrentAltitude);
-//			runOnUiThread(new Runnable() {
-//				public void run() {
-//					mAltitudeView.setText(mCurrentAltitude);
-//				}
-//			});
+			for (AltitudeUpdateListener listener : mListeners)
+			{
+				listener.onAltitudeUpdate(mCurrentAltitude);
+			}
 		}
 	}
 
@@ -56,10 +66,8 @@ public class AltimeterService
 		if (isValid)
 		{
 			byte [] stripMeters = Arrays.copyOfRange(data, 0, data.length-2);
-			float feet = (float) (Float.parseFloat(new String(stripMeters)) * 3.28084);
-			mCurrentAltitude = String.format("%f ft", feet);
-//			// next, is the payload a number > 0 && < 250m?
-//			isValid = (f > 0 && f < 250);
+			float feet = (float) (Float.parseFloat(new String(stripMeters)) * METERS_CONVERSION);
+			mCurrentAltitude = feet;
 		}
 
 		return isValid;
@@ -79,4 +87,5 @@ public class AltimeterService
 	public void onAdapterConnectionError(int arg0, String errMsg) {
 		
 	}
+
 }

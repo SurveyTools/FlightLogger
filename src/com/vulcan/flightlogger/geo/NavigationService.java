@@ -16,11 +16,12 @@ import android.os.IBinder;
 public class NavigationService extends Service implements LocationListener {
 	
 	// if within threshold, the next waypoint is chosen for navigation. 
-	// Yes, this may be too simplistic, but we need to start somewhere
+	// Yes, this may be too simplistic in the long run, but we need to start somewhere
 	private final int WAYPOINT_THRESHOLD_METERS = 200; 
 	
 	public List<Route> mRouteList;
 	public Route mCurrentRoute;
+	public Location mCurrentWaypt;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<RouteUpdateListener> mListeners
 			= new ArrayList<RouteUpdateListener>();
@@ -94,35 +95,9 @@ public class NavigationService extends Service implements LocationListener {
 	 * in the same execution space. If that proves not true, we'll need to 
 	 * to make a parceable, serializing the data
 	 */
-	public void setNewRoute(Route newRoute) //should we throw exception?
+	public void setNewRouteWaypoint(Location newWayPt) //should we throw exception?
 	{
-		for (Route r : mRouteList)
-		{
-			if(r.equals(newRoute))
-			{
-				mCurrentRoute = newRoute;
-			}
-		}
-	}
-	
-	/*
-	 * We assume the route list is an ordered list - we fly
-	 * the first route in the list, and end with the last 
-	 * route in the list. 
-	 */	
-	private void nextRouteWaypoint()
-	{
-		int index = mRouteList.indexOf(mCurrentRoute);
-		if (index < 0 || index + 1 >= mRouteList.size())
-		{
-			// signal the routes are complete
-		}
-		else 
-		{
-			// set the next route in the list to be the current route
-			// TODO - signal we are moving to next 
-			mCurrentRoute = mRouteList.get(++index);
-		}
+		
 	}
 	
 	public List<Route> getCurrentRoutes()
