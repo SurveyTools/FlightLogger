@@ -4,11 +4,12 @@ import java.io.File;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
 
+import com.vulcan.flightlogger.FileBrowser;
 import com.vulcan.flightlogger.R;
-
 import com.vulcan.flightlogger.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -147,6 +148,14 @@ public class GPSActivity extends Activity implements LocationListener {
 		});
 
 	}
+	
+	public void loadGPX(View view) {
+	    // Do something in response to button click
+		Log.d("Foo", "Foo");
+		// load gpx
+		Intent intent = new Intent(this, FileBrowser.class);
+		this.startActivityForResult(intent, LOAD_GPX_FILE);
+	}
 
 	/**
 	 * Callbacks from activities that return results
@@ -158,8 +167,9 @@ public class GPSActivity extends Activity implements LocationListener {
 			// Make sure the load activity was successful
 			if (resultCode == RESULT_OK) {
 				String gpxName = data.getStringExtra("gpxfile");
-				File gpxFile = new File(gpxName);
-				// todo load and display the file
+				Intent it = new Intent(this, RouteListActivity.class);
+	            it.putExtra("gpxfile", gpxName);
+	            startActivity(it);
 			}
 		}
 	}

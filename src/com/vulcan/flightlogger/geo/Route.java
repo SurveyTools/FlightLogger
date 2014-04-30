@@ -1,17 +1,27 @@
 package com.vulcan.flightlogger.geo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.location.Location;
 
-public class Route {	
-	
+public class Route {
 	public String name;
-	public RoutePoint[] wayPoints;
-	public Location lastWaypoint;
+	public List<Location> wayPoints;
 	
-	class RoutePoint
+	public Route()
 	{
-		public String name;
-		public Location[] wayPoints;		
+		wayPoints = new ArrayList<Location>();
+	}
+	
+	public void addWayPoint(Location location)
+	{
+		wayPoints.add(location);
+	}
+	
+	public String toString()
+	{
+		return name;
 	}
 	
 }

@@ -38,8 +38,8 @@ import android.location.Location;
 
 public class GPXParser {
 	
-	public static Map<String,Location[]> parseRoutePoints(File gpxFile) {
-		Map<String,Location[]>routeMap = new HashMap<String,Location[]>();
+	public static List<Route> parseRoutePoints(File gpxFile) {
+		List<Route>routeMap = new ArrayList<Route>();
 
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 				.newInstance();
@@ -54,13 +54,15 @@ public class GPXParser {
 			
 			for (int i = 0; i < nodelist_routes.getLength(); i++) 
 			{
-				
-				List<Location> list = new ArrayList<Location>();
+				Node routeNode = nodelist_routes.item(i);
+				Element routeEl = (Element) routeNode;
+				Route r = new Route();
+				r.name = routeEl.getElementsByTagName("name").item(0).getTextContent();
 				// see if there are waypoints marked by the element 'rtept'
 				NodeList nodelist_rtkpt = elementRoot.getElementsByTagName("rtept");
 	
 				for (int j = 0; j < nodelist_rtkpt.getLength(); j++) {
-	
+			
 					Node node = nodelist_rtkpt.item(j);
 					NamedNodeMap attributes = node.getAttributes();
 	
@@ -76,13 +78,14 @@ public class GPXParser {
 					// the waypt ordinal. TODO: Need to really go through the 
 					// child nodes and find 'name'
 					Element e = (Element)node;
-					String newLocationName = e.getElementsByTagName("name").item(0).getTextContent();
-					Location newLocation = new Location(newLocationName);
-					newLocation.setLatitude(newLatitude_double);
-					newLocation.setLongitude(newLongitude_double);
-	
-					list.add(newLocation);
+					String wayptName = e.getElementsByTagName("name").item(0).getTextContent();
+					Location loc = new Location(wayptName);
+					loc.setLatitude(newLatitude_double);
+					loc.setLongitude(newLongitude_double);
+					
+					r.addWayPoint(loc);
 				}
+				routeMap.add(r);
 			}
 			fileInputStream.close();	
 

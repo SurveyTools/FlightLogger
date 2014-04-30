@@ -19,8 +19,8 @@ public class NavigationService extends Service implements LocationListener {
 	public List<Route> mRouteList;
 	public Route mCurrentRoute;
 	private final IBinder mBinder = new LocalBinder();
-	private final ArrayList<GeoUpdateListener> mListeners
-			= new ArrayList<GeoUpdateListener>();
+	private final ArrayList<RouteUpdateListener> mListeners
+			= new ArrayList<RouteUpdateListener>();
 	private final Handler mHandler = new Handler();
 	
 	public class LocalBinder extends Binder {
@@ -29,16 +29,16 @@ public class NavigationService extends Service implements LocationListener {
         }
     }
 	
-    public void registerListener(GeoUpdateListener listener) {
+    public void registerListener(RouteUpdateListener listener) {
         mListeners.add(listener);
     }
 
-    public void unregisterListener(GeoUpdateListener listener) {
+    public void unregisterListener(RouteUpdateListener listener) {
         mListeners.remove(listener);
     }
 
     private void sendLocationUpdate(Location location) {
-        for (GeoUpdateListener listener : mListeners) {
+        for (RouteUpdateListener listener : mListeners) {
             listener.onLocationUpdate(location);
         }
     }
@@ -106,7 +106,7 @@ public class NavigationService extends Service implements LocationListener {
 	 * the first route in the list, and end with the last 
 	 * route in the list. 
 	 */	
-	public void nextRoute()
+	private void nextRoute()
 	{
 		int index = mRouteList.indexOf(mCurrentRoute);
 		if (index < 0 || index + 1 >= mRouteList.size())

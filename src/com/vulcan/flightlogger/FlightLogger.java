@@ -5,6 +5,7 @@ import java.io.File;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSActivity;
+import com.vulcan.flightlogger.geo.RouteListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,22 +28,6 @@ public class FlightLogger extends Activity {
 
 		setContentView(R.layout.main);
 
-	}
-
-	/**
-	 * Callbacks from activities that return results
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// Check which request we're responding to
-		if (requestCode == LOAD_GPX_FILE) {
-			// Make sure the load activity was successful
-			if (resultCode == RESULT_OK) {
-				String gpxName = data.getStringExtra("gpxfile");
-				File gpxFile = new File(gpxName);
-				// todo load and display the file
-			}
-		}
 	}
 
 	/**
@@ -74,12 +59,9 @@ public class FlightLogger extends Activity {
 			intent = new Intent(this, LaserAltimeterActivity.class);
 			startActivity(intent);
 			break;
-		// load gpx
-		case R.id.action_load_gpx:
-			intent = new Intent(this, FileBrowser.class);
-			this.startActivityForResult(intent, LOAD_GPX_FILE);
-			break;
-		default:
+		case R.id.action_show_route_list:
+			intent = new Intent(this, RouteListActivity.class);
+			startActivity(intent);
 			break;
 		}
 		return true;

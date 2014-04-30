@@ -163,6 +163,13 @@
                 android:textSize="32sp"
                 android:ems="10" >
             </TextView>
+            
+   			<Button
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="Load GPX File"
+			    android:onClick="loadGPX" 
+			/>         
 
         </GridLayout>
         

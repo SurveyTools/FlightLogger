@@ -58,6 +58,10 @@
             android:name="com.vulcan.flightlogger.altimeter.SerialConsole"
             android:label="@string/action_show_serial_console" >
         </activity>
+        <activity
+            android:name="com.vulcan.flightlogger.geo.RouteListActivity"
+            android:label="Route List" >
+        </activity>
         <!-- Uncommenting the following block will (in theory) start this app on reboot -->
         <!--
         <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"
