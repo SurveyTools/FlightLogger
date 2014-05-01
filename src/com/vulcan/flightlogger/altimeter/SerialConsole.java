@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -27,6 +28,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+// superdevo
+import android.util.Log;
 
 public class SerialConsole extends Activity implements 
 		OnClickListener, AdapterConnectionListener, USB2SerialAdapter.DataListener, OnItemSelectedListener{
@@ -254,8 +258,13 @@ public class SerialConsole extends Activity implements
 
 	@Override
 	public void onDataReceived(int id, byte[] data) {
-		final String newText = mReceiveBox.getText().toString()+" "+
+		final String newTextRaw = mReceiveBox.getText().toString()+" "+
 				(mShowHex.isChecked()?SlickUSB2Serial.convertByte2String(data):new String(data));
+
+		// truncate the text so we don't grind to a halt
+		final int maxChars = 666; // last n chars
+		final String newText =  (newTextRaw.length() < maxChars) ? newTextRaw : newTextRaw.substring(newTextRaw.length() - maxChars);
+
 		runOnUiThread(new Runnable(){
 			public void run(){
 				mReceiveBox.setText(newText);
