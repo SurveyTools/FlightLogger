@@ -3,6 +3,10 @@ package com.vulcan.flightlogger.geo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vulcan.flightlogger.geo.data.FlightStatus;
+import com.vulcan.flightlogger.geo.data.TransectPath;
+import com.vulcan.flightlogger.geo.data.TransectStatus;
+
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
@@ -16,23 +20,30 @@ import android.os.IBinder;
 public class NavigationService extends Service implements LocationListener {
 	
 	// if within threshold, the next waypoint is chosen for navigation. 
-	// Yes, this may be too simplistic in the long run, but we need to start somewhere
-	private final int WAYPOINT_THRESHOLD_METERS = 200; 
+	// this will likely prove too simplistic in the long run
+	private final int WAYPOINT_THRESHOLD_METERS = 500; 
+	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
 	
-	public List<Route> mRouteList;
-	public Route mCurrentRoute;
+	public boolean doNavigation = false;
+	
+	public List<TransectPath> mTransectList;
+	public TransectPath mCurrTransect;
 	public Location mCurrentWaypt;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<RouteUpdateListener> mListeners
 			= new ArrayList<RouteUpdateListener>();
-	// TODO - Not sure if we need to dispatch on separate thread yet
-	// private final Handler mHandler = new Handler();
-	
+
 	public class LocalBinder extends Binder {
         public NavigationService getService() {
             return NavigationService.this;
         }
     }
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return mBinder;
+	}
 	
     public void registerListener(RouteUpdateListener listener) {
         mListeners.add(listener);
@@ -42,67 +53,106 @@ public class NavigationService extends Service implements LocationListener {
         mListeners.remove(listener);
     }
 
-    private void sendRouteUpdate(RouteStatus routeUpdate) {
+	private void calcFlightStatus(Location currLoc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private TransectStatus calcTransectStatus(Location currLoc) {
+		// TODO validate before constructing TransectStatus
+		double distance = currLoc.distanceTo(mCurrTransect.mEndWaypt);
+		double crossTrackErr = calcCrossTrackError(currLoc, mCurrTransect.mStartWaypt, mCurrTransect.mEndWaypt);
+		float currBearing = currLoc.bearingTo(mCurrTransect.mEndWaypt);
+		float speed = currLoc.getSpeed();
+		TransectStatus ts = new TransectStatus(mCurrTransect, distance, crossTrackErr,  currBearing, speed);
+		return ts;
+	}
+	
+	private double calcCrossTrackError(Location curr, Location start, Location end)
+	{
+		double dist = Math.asin(Math.sin(start.distanceTo(curr)/EARTH_RADIUS_METERS) * 
+		         Math.sin(start.bearingTo(curr) - curr.bearingTo(end))) * EARTH_RADIUS_METERS;
+		
+		return dist;
+	}
+	
+	public void setTransectRoute(List<TransectPath> transects)
+	{
+		mTransectList = transects;
+		startNavigation();
+	}
+	
+	// TODO - may want to think about a state machine to handle all of this
+	private void startNavigation() {
+		mCurrTransect = findNextTransect();
+		if(mCurrTransect == null)
+		{
+			// signal the route is finished
+		}
+	
+	}
+	
+	private TransectPath findNextTransect()
+	{
+		TransectPath currPath = null;
+		
+		for( TransectPath tPath : mTransectList)
+		{
+			if(tPath.status == FlightStatus.NOT_ACTIVATED || tPath.status == FlightStatus.NAVIGATE_TO)
+			{
+				// really we need to see where we currently are at, but to start, set it
+				// to navigate to, and let the state be changed on the next location update
+				tPath.status = FlightStatus.NAVIGATE_TO;
+				currPath = tPath;
+			}
+		}
+		return currPath;
+	}
+	
+    private void sendTransectChange(TransectPath newTransect) {
+        for (RouteUpdateListener listener : mListeners) {
+        	listener.onTransectChange(newTransect);
+        }
+    }
+    
+    private void sendTransectUpdate(TransectStatus routeUpdate) {
         for (RouteUpdateListener listener : mListeners) {
         	listener.onRouteUpdate(routeUpdate);
         }
     }
+	
+	/**
+	 * TODO - Will likely need a state machine to run navigation service
+	 * based on Location updates
+	 */
 
+
+	/**
+	 * Location callbacks
+	 */
 	@Override
-	public void onLocationChanged(Location loc) {
-		RouteStatus currStatus = calculateRouteStatus(loc);
-    	if (currStatus != null)
-    	{
-    		sendRouteUpdate(currStatus);
-    	}
-
+	public void onLocationChanged(Location currLoc) {
+		TransectStatus stat = calcTransectStatus(currLoc);
+		sendTransectUpdate(stat);
+		calcFlightStatus(currLoc);
 	}
-
-	// determine current waypoint, distance and deviation from
-	// next waypoint
-	private RouteStatus calculateRouteStatus(Location loc) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public void onProviderDisabled(String arg0) {
-		// TODO Auto-generated method stub
+		// TODO GPS is disabled
 
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		// TODO Auto-generated method stub
+		// TODO GPS is enabled
 
 	}
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		// TODO Auto-generated method stub
+		// TODO GPS status has changed
 
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return mBinder;
-	}
-	
-	/*
-	 * Let the user specify/override which route we are flying on. Must match 
-	 * a route instance currently loaded by the service. We're assuming we are 
-	 * in the same execution space. If that proves not true, we'll need to 
-	 * to make a parceable, serializing the data
-	 */
-	public void setNewRouteWaypoint(Location newWayPt) //should we throw exception?
-	{
-		
-	}
-	
-	public List<Route> getCurrentRoutes()
-	{
-		return mRouteList;
 	}
 
 }

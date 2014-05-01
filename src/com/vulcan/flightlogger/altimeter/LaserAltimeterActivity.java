@@ -45,7 +45,6 @@ public class LaserAltimeterActivity extends Activity implements
 	public void onDataReceived(int arg0, byte[] data) {
 		if (validateDataPayload(data))
 		{
-			//mCurrentAltitude = new String(data);
 			Log.d("Altimeter", mCurrentAltitude);
 			runOnUiThread(new Runnable() {
 				public void run() {

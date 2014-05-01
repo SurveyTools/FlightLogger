@@ -18,6 +18,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.vulcan.flightlogger.geo.data.Route;
+
 import android.location.Location;
 
 /**
@@ -55,7 +57,7 @@ public class GPXParser {
 				Node routeNode = nodelist_routes.item(i);
 				Element routeEl = (Element) routeNode;
 				Route r = new Route();
-				r.name = routeEl.getElementsByTagName("name").item(0).getTextContent();
+				r.mName = routeEl.getElementsByTagName("name").item(0).getTextContent();
 				// see if there are waypoints marked by the element 'rtept'
 				NodeList nodelist_rtkpt = elementRoot.getElementsByTagName("rtept");
 	
