@@ -1,7 +1,9 @@
 package com.vulcan.flightlogger.geo;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.vulcan.flightlogger.geo.data.FlightStatus;
 import com.vulcan.flightlogger.geo.data.TransectPath;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 
@@ -11,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Binder;
 import android.os.Bundle;
+//import android.os.Handler;
 import android.os.IBinder;
 
 /**
@@ -19,20 +22,25 @@ import android.os.IBinder;
  *
  */
 
-public class NavigationService extends Service implements LocationListener {
+public class AutoNavigationService extends Service implements LocationListener {
 	
+	// if within threshold, the next waypoint is chosen for navigation. 
+	// this will likely prove too simplistic in the long run
+	private final int WAYPOINT_THRESHOLD_METERS = 500; 
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
 	
 	public boolean doNavigation = false;
 	
+	public List<TransectPath> mTransectList;
 	public TransectPath mCurrTransect;
+	public Location mCurrentWaypt;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<TransectUpdateListener> mListeners
 			= new ArrayList<TransectUpdateListener>();
 
 	public class LocalBinder extends Binder {
-        public NavigationService getService() {
-            return NavigationService.this;
+        public AutoNavigationService getService() {
+            return AutoNavigationService.this;
         }
     }
 	
@@ -49,6 +57,11 @@ public class NavigationService extends Service implements LocationListener {
     public void unregisterListener(TransectUpdateListener listener) {
         mListeners.remove(listener);
     }
+
+	private void calcFlightStatus(Location currLoc) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private TransectStatus calcTransectStatus(Location currLoc) {
 		// TODO validate before constructing TransectStatus
@@ -67,32 +80,60 @@ public class NavigationService extends Service implements LocationListener {
 		
 		return dist;
 	}
+	
+	public void setTransectRoute(List<TransectPath> transects)
+	{
+		mTransectList = transects;
+		startNavigation();
+	}
+	
+	// TODO - may want to think about a state machine to handle all of this
+	private void startNavigation() {
+		mCurrTransect = findNextTransect();
+		if(mCurrTransect == null)
+		{
+			// signal the route is finished
+		}
+	
+	}
+	
+	private TransectPath findNextTransect()
+	{
+		TransectPath currPath = null;
+		
+		for( TransectPath tPath : mTransectList)
+		{
+			if(tPath.status == FlightStatus.NOT_ACTIVATED || tPath.status == FlightStatus.NAVIGATE_TO)
+			{
+				// really we need to see where we currently are at, but to start, set it
+				// to navigate to, and let the state be changed on the next location update
+				tPath.status = FlightStatus.NAVIGATE_TO;
+				currPath = tPath;
+			}
+		}
+		return currPath;
+	}
     
     private void sendTransectUpdate(TransectStatus routeUpdate) {
         for (TransectUpdateListener listener : mListeners) {
         	listener.onRouteUpdate(routeUpdate);
         }
     }
-    
-	public void startNavigation(TransectPath transect) {
-		mCurrTransect = transect;
-		doNavigation = true;
-	}
 	
-	public void stopNavigation() {
-		doNavigation = false;
-	}
+	/**
+	 * TODO - Will likely need a state machine to run navigation service
+	 * based on Location updates
+	 */
+
 
 	/**
 	 * Location callbacks
 	 */
 	@Override
 	public void onLocationChanged(Location currLoc) {
-		if (doNavigation)
-		{
-			TransectStatus stat = calcTransectStatus(currLoc);
-			sendTransectUpdate(stat);
-		}
+		TransectStatus stat = calcTransectStatus(currLoc);
+		sendTransectUpdate(stat);
+		calcFlightStatus(currLoc);
 	}
 	
 	@Override
