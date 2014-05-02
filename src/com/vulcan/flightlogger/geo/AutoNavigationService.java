@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vulcan.flightlogger.geo.data.FlightStatus;
-import com.vulcan.flightlogger.geo.data.TransectPath;
+import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.app.Service;
@@ -17,9 +17,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 /**
- * A work in progress
+ * A work in progress - intent is to take a list of TrasectPaths, and navigate between them.
  * @author jayl
- *
  */
 
 public class AutoNavigationService extends Service implements LocationListener {
@@ -31,8 +30,8 @@ public class AutoNavigationService extends Service implements LocationListener {
 	
 	public boolean doNavigation = false;
 	
-	public List<TransectPath> mTransectList;
-	public TransectPath mCurrTransect;
+	public List<Transect> mTransectList;
+	public Transect mCurrTransect;
 	public Location mCurrentWaypt;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<TransectUpdateListener> mListeners
@@ -81,7 +80,7 @@ public class AutoNavigationService extends Service implements LocationListener {
 		return dist;
 	}
 	
-	public void setTransectRoute(List<TransectPath> transects)
+	public void setTransectRoute(List<Transect> transects)
 	{
 		mTransectList = transects;
 		startNavigation();
@@ -97,11 +96,11 @@ public class AutoNavigationService extends Service implements LocationListener {
 	
 	}
 	
-	private TransectPath findNextTransect()
+	private Transect findNextTransect()
 	{
-		TransectPath currPath = null;
+		Transect currPath = null;
 		
-		for( TransectPath tPath : mTransectList)
+		for( Transect tPath : mTransectList)
 		{
 			if(tPath.status == FlightStatus.NOT_ACTIVATED || tPath.status == FlightStatus.NAVIGATE_TO)
 			{

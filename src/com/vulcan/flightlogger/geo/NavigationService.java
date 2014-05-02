@@ -2,7 +2,7 @@ package com.vulcan.flightlogger.geo;
 
 import java.util.ArrayList;
 
-import com.vulcan.flightlogger.geo.data.TransectPath;
+import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.app.Service;
@@ -29,17 +29,17 @@ public class NavigationService extends Service implements LocationListener {
 	// need to get a better number in here to save battery life, once testing
 	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
 	
-	// need to revisit this guy, to see if we need more accuracy. Currently they
+	// need to revisit this guy, to see if we need more accuracy. Currently we
 	// sample at 3 seconds
 	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
 	
-	private final String LOGGER_TAG = GPSDebugActivity.class.getSimpleName();
+	private final String LOGGER_TAG = NavigationService.class.getSimpleName();
 
 	private LocationManager mLocationManager;
 	
 	public boolean doNavigation = false;
 	
-	public TransectPath mCurrTransect;
+	public Transect mCurrTransect;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<TransectUpdateListener> mListeners
 			= new ArrayList<TransectUpdateListener>();
@@ -88,8 +88,8 @@ public class NavigationService extends Service implements LocationListener {
         }
     }
     
-	public void startNavigation(TransectPath transect) {
-		initGps();
+	public void startNavigation(Transect transect) {
+		initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		mCurrTransect = transect;
 		doNavigation = true;
 	}
@@ -98,7 +98,7 @@ public class NavigationService extends Service implements LocationListener {
 		doNavigation = false;
 	}
 	
-	private void initGps() {
+	private void initGps(long millisBetweenUpdate, float minDistanceMoved) {
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		// getting GPS status
 		boolean isGPSEnabled = mLocationManager
@@ -106,8 +106,8 @@ public class NavigationService extends Service implements LocationListener {
 
 		if (isGPSEnabled) {
 			mLocationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, MIN_TIME_BETWEEN_UPDATES,
-					MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+					LocationManager.GPS_PROVIDER, millisBetweenUpdate,
+					minDistanceMoved, this);
 			Log.d(LOGGER_TAG, "GPS Enabled");
 		} else {
 			Log.d(LOGGER_TAG, "GPS not enabled");
