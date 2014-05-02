@@ -6,12 +6,15 @@ import com.vulcan.flightlogger.geo.data.TransectPath;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 /**
  * A work in progress
@@ -22,6 +25,17 @@ import android.os.IBinder;
 public class NavigationService extends Service implements LocationListener {
 	
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
+	
+	// need to get a better number in here to save battery life, once testing
+	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
+	
+	// need to revisit this guy, to see if we need more accuracy. Currently they
+	// sample at 3 seconds
+	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
+	
+	private final String LOGGER_TAG = GPSDebugActivity.class.getSimpleName();
+
+	private LocationManager mLocationManager;
 	
 	public boolean doNavigation = false;
 	
@@ -75,12 +89,29 @@ public class NavigationService extends Service implements LocationListener {
     }
     
 	public void startNavigation(TransectPath transect) {
+		initGps();
 		mCurrTransect = transect;
 		doNavigation = true;
 	}
 	
 	public void stopNavigation() {
 		doNavigation = false;
+	}
+	
+	private void initGps() {
+		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		// getting GPS status
+		boolean isGPSEnabled = mLocationManager
+				.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+		if (isGPSEnabled) {
+			mLocationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, MIN_TIME_BETWEEN_UPDATES,
+					MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+			Log.d(LOGGER_TAG, "GPS Enabled");
+		} else {
+			Log.d(LOGGER_TAG, "GPS not enabled");
+		}
 	}
 
 	/**
