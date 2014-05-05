@@ -2,7 +2,13 @@ package com.vulcan.flightlogger.altimeter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
+import android.util.Log;
 import slickdevlabs.apps.usb2seriallib.AdapterConnectionListener;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
 import slickdevlabs.apps.usb2seriallib.USB2SerialAdapter;
@@ -10,20 +16,20 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.BaudRate;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.DataBits;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.ParityOption;
 import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.util.Log;
 
 public class AltimeterService 
 	extends Service 
 	implements AdapterConnectionListener, USB2SerialAdapter.DataListener
 {
+	// used for mock data
+	public final int MIN_ALT = 280;
+	public final int MAX_ALT = 320;
+	
 	// how many samples for an alt avg.
-	public final String USE_MOCK_DATA = "useMockData";
+	public static final String USE_MOCK_DATA = "useMockData";
 	private final int ALT_SAMPLE_COUNT = 5;
-	private int mCurrentAltReading;
+	private float mCurrentAltitude;
+	// TODO sample altitude
 	private int[] mAltSample;
 	
 	private final static float METERS_PER_FOOT = (float) 3.28084;
@@ -32,7 +38,6 @@ public class AltimeterService
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<AltitudeUpdateListener> mListeners = new ArrayList<AltitudeUpdateListener>();
 	
-	private float mCurrentAltitude;
 	private USB2SerialAdapter mSelectedAdapter;
 
 	public class LocalBinder extends Binder {
@@ -57,7 +62,7 @@ public class AltimeterService
 		boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
 		if (useMockData)
 		{
-			// generate mock data
+			generateMockData();
 		}
 		else
 		{
@@ -70,9 +75,39 @@ public class AltimeterService
 		return START_STICKY;
 	}
 	
+	public void generateMockData()
+	{
+		final Random rand = new Random();
+
+		new Thread()
+		{
+		    public void run() {
+		    	while(true)
+		    	{
+			        mCurrentAltitude = rand.nextInt((MAX_ALT - MIN_ALT) + 1) + MIN_ALT;
+			        sendAltitudeUpdate();
+			        try {
+						Thread.sleep(300);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		    	}
+		    }
+		}.start();
+	}
+	
 	// called once at instantiation
     public void onCreate() {
     	
+    }
+    
+    public void registerListener(AltitudeUpdateListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(AltitudeUpdateListener listener) {
+        mListeners.remove(listener);
     }
 	
 	private void initSerialCommunication() {
@@ -84,7 +119,7 @@ public class AltimeterService
 	public void onDataReceived(int arg0, byte[] data) {
 		if (validateDataPayload(data))
 		{
-			sampleAltitude();
+			sendAltitudeUpdate();
 		}
 	}
 	
@@ -103,7 +138,7 @@ public class AltimeterService
 		if (isValid)
 		{
 			byte [] stripMeters = Arrays.copyOfRange(data, 0, data.length-2);
-			float feet = (int) (Float.parseFloat(new String(stripMeters)) * METERS_PER_FOOT);
+			int feet = (int) (Float.parseFloat(new String(stripMeters)) * METERS_PER_FOOT);
 			mCurrentAltitude = feet;
 		}
 
@@ -122,11 +157,17 @@ public class AltimeterService
 
 	@Override
 	public void onAdapterConnectionError(int arg0, String errMsg) {
+		for (AltitudeUpdateListener listener : mListeners)
+		{
+			listener.onAltitudeError(errMsg);
+		}
 		
 	}
 	
+	// TODO - record the five last samples, and assign the average to
+	// the current altitude value
 	public int sampleAltitude(){
-		// use arraycopy with most recent 4 values
+		// use System.arraycopy with most recent 4 values
 		return 0;
 	}
 

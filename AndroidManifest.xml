@@ -62,6 +62,7 @@
             android:name="com.vulcan.flightlogger.geo.RouteListActivity"
             android:label="Route List" >
         </activity>
+        <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />
         <!-- Uncommenting the following block will (in theory) start this app on reboot -->
         <!--
         <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"

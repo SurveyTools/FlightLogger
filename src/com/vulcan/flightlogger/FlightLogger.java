@@ -1,5 +1,6 @@
 package com.vulcan.flightlogger;
 
+import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
@@ -26,7 +27,17 @@ public class FlightLogger extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);
+		
+		startLongRunningServices();
 
+	}
+
+	private void startLongRunningServices() {
+		// TODO - this becomes a RouteManagerService, or
+		// whatever we call it. For now, spin up the AltimeterService
+        Intent intent = new Intent(this, AltimeterService.class);
+        intent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+        startService(intent);		
 	}
 
 	/**
