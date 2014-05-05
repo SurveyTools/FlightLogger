@@ -22,7 +22,7 @@ public class LaserAltimeterActivity extends Activity implements
 	
 	
     /** 
-     * Defines callbacks for service binding, passed to bindService()
+     * Defines callbacks for local service binding, ie bindService()
      * For local binds, this is where we will attach assign instance 
      * references, and add and remove listeners, 
      * since we have inprocess access to the class interface
@@ -32,7 +32,6 @@ public class LaserAltimeterActivity extends Activity implements
         @Override
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
             LocalBinder binder = (LocalBinder) service;
             mAltimeterService = (AltimeterService)binder.getService();
             mAltimeterService.registerListener(LaserAltimeterActivity.this);
@@ -66,7 +65,7 @@ public class LaserAltimeterActivity extends Activity implements
     protected void onStop() {
         super.onStop();
         // Unbind from the service, remove listener. We'll restart when we 
-        // come back into the app     
+        // come back into scope    
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
