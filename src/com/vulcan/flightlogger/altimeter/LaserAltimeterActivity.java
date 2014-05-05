@@ -23,7 +23,9 @@ public class LaserAltimeterActivity extends Activity implements
 	
     /** 
      * Defines callbacks for service binding, passed to bindService()
-     * For local binds, this is where we will add and remove listeners
+     * For local binds, this is where we will attach assign instance 
+     * references, and add and remove listeners, 
+     * since we have inprocess access to the class interface
      */
     private ServiceConnection mConnection = new ServiceConnection() {
 
