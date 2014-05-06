@@ -81,7 +81,7 @@ public class LaserAltimeterActivity extends Activity implements
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								initAltimeterCommunication();
+								initAltimeterCommunication(true);
 							}
 						})
 				.setNegativeButton(android.R.string.no,
@@ -104,11 +104,12 @@ public class LaserAltimeterActivity extends Activity implements
 		
 	}
 	
-	private void initAltimeterCommunication()
+	private void initAltimeterCommunication(boolean useMockData)
 	{
         // Bind to AltimeterService - we get a callback on the
         // binding which gives us a reference to the service
         Intent intent = new Intent(this, AltimeterService.class);
+        intent.putExtra(AltimeterService.USE_MOCK_DATA, (true == useMockData));
         bindService(intent, mConnection, 0);
 	}
 

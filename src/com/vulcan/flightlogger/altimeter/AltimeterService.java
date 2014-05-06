@@ -29,6 +29,7 @@ public class AltimeterService
 	public static final String USE_MOCK_DATA = "useMockData";
 	private final int ALT_SAMPLE_COUNT = 5;
 	private float mCurrentAltitude;
+	private boolean mGenMockData = false;
 	// TODO sample altitude
 	private int[] mAltSample;
 	
@@ -49,7 +50,6 @@ public class AltimeterService
 	@Override
 	// called when bound to an activity
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return mBinder;
 	}
 	
@@ -58,10 +58,11 @@ public class AltimeterService
 	// add guards for that scenario
 	public int onStartCommand (Intent intent, int flags, int startId)
 	{
-		// TODO - generate mock data
+		// generate mock data if the intent calls for it
 		boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
 		if (useMockData)
 		{
+			mGenMockData = true;
 			generateMockData();
 		}
 		else
@@ -75,6 +76,12 @@ public class AltimeterService
 		return START_STICKY;
 	}
 	
+	public boolean stopService(Intent intent)
+	{
+		mGenMockData = false;
+		return super.stopService(intent);
+	}
+	
 	public void generateMockData()
 	{
 		final Random rand = new Random();
@@ -82,7 +89,7 @@ public class AltimeterService
 		new Thread()
 		{
 		    public void run() {
-		    	while(true)
+		    	while(mGenMockData == true)
 		    	{
 			        mCurrentAltitude = rand.nextInt((MAX_ALT - MIN_ALT) + 1) + MIN_ALT;
 			        sendAltitudeUpdate();
