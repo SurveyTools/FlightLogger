@@ -2,8 +2,8 @@ package com.vulcan.flightlogger.altimeter;
 
 import com.vulcan.flightlogger.R;
 import com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder;
+import com.vulcan.flightlogger.USBAwareActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.TextView;
 
-public class LaserAltimeterActivity extends Activity implements
+public class LaserAltimeterActivity extends USBAwareActivity implements
 		AltitudeUpdateListener {
 
 	private AltimeterService mAltimeterService;
@@ -34,6 +34,7 @@ public class LaserAltimeterActivity extends Activity implements
                 IBinder service) {
             LocalBinder binder = (LocalBinder) service;
             mAltimeterService = (AltimeterService)binder.getService();
+            mAltimeterService.initSerialCommunication();
             mAltimeterService.registerListener(LaserAltimeterActivity.this);
             mBound = true;
         }
@@ -81,7 +82,7 @@ public class LaserAltimeterActivity extends Activity implements
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								initAltimeterCommunication(true);
+								mAltimeterService.initSerialCommunication();
 							}
 						})
 				.setNegativeButton(android.R.string.no,
@@ -104,13 +105,12 @@ public class LaserAltimeterActivity extends Activity implements
 		
 	}
 	
-	private void initAltimeterCommunication(boolean useMockData)
-	{
-        // Bind to AltimeterService - we get a callback on the
-        // binding which gives us a reference to the service
+	private void startServices() {
+		// TODO - this becomes a RouteManagerService, or
+		// whatever we call it. For now, spin up the AltimeterService
         Intent intent = new Intent(this, AltimeterService.class);
-        intent.putExtra(AltimeterService.USE_MOCK_DATA, (true == useMockData));
-        bindService(intent, mConnection, 0);
+        //intent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+        startService(intent);		
 	}
 
 	@Override

@@ -4,40 +4,38 @@ import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
+import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.RouteListActivity;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class FlightLogger extends Activity {
+public class FlightLogger extends USBAwareActivity {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
-
-	private final String LOGGER_TAG = FlightLogger.class.getSimpleName();
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.main);
-		
-		startLongRunningServices();
-
+		setContentView(R.layout.main);		
+		startServices();
 	}
 
-	private void startLongRunningServices() {
+	private void startServices() {
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
-        Intent intent = new Intent(this, AltimeterService.class);
-        intent.putExtra(AltimeterService.USE_MOCK_DATA, true);
-        startService(intent);		
+        Intent altIntent = new Intent(this, AltimeterService.class);
+        //intent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+        startService(altIntent);	
+        Intent navIntent = new Intent(this, NavigationService.class);
+        startService(navIntent);
 	}
 
 	/**
@@ -94,7 +92,6 @@ public class FlightLogger extends Activity {
 			}
 		}
 	}
-
 	
 	@Override
 	protected void onDestroy() {
@@ -104,6 +101,11 @@ public class FlightLogger extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+	}
+	
+	@Override
+	protected void initUsbDevice(UsbDevice device) {
+		super.initUsbDevice(device);
 	}
 
 }
