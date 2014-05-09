@@ -1,5 +1,40 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
+    <color name="debug0">#ff555555</color>
+    <color name="debug1">#ffaa0000</color>
+    <color name="debug2">#ff00aa00</color>
+    <color name="debug3">#ff0000aa</color>
+    <color name="debug4">#ff00aaaa</color>
+    <color name="debug5">#ffaaaaaa</color>
+    <color name="debug6">#ffaaaa00</color>
+    <color name="nav_background">#ff000000</color>
+    <!--  header and footer bg ff111111 -->
+    <color name="nav_header_bg">#ff111111</color>
+    <color name="nav_footer_bg">#ff111111</color>
+    <color name="nav_ips_circle">#ff777777</color>
+    <color name="nav_ips_notches">#ffaaaaaa</color>
+    <color name="nav_ips_axis">#ff333333</color>
+    <color name="nav_ips_guides">#ffffffff</color>
+    
+    <color name="nav_altitude_value">#ffffffff</color>
+    <color name="nav_altitude_label">#ffcccccc</color>
+    <color name="nav_altitude_units">#ff888888</color>
+    
+    <color name="nav_speed_value">#ffffffff</color>
+    <color name="nav_speed_label">#ffcccccc</color>
+    <color name="nav_speed_units">#ff888888</color>
 
+    <color name="nav_header_route_text">#ff888888</color>
+    <color name="nav_header_transect_text">#ff888888</color>
+    <color name="nav_header_status_text_over_green">#cc000000</color>
+    <color name="nav_header_status_text_over_red">#eeffffff</color>
+    <color name="nav_header_status_text_over_yellow">#cc000000</color>
+    <color name="nav_header_status_text_over_grey">#cc000000</color>
+    <color name="nav_header_status_text_over_ignore">#ccaaaaaa</color>
+        
+    <color name="nav_footer_status_recording">#ff44dd44</color>
+    <color name="nav_footer_status">#ff888888</color>
+    <color name="nav_footer_stop">#ffcccccc</color>
+    
 </resources>
