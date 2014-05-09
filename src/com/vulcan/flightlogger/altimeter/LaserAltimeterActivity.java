@@ -1,5 +1,7 @@
 package com.vulcan.flightlogger.altimeter;
 
+import java.util.Locale;
+
 import com.vulcan.flightlogger.R;
 import com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder;
 import com.vulcan.flightlogger.USBAwareActivity;
@@ -9,8 +11,10 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.TextView;
 
 public class LaserAltimeterActivity extends USBAwareActivity implements
@@ -117,6 +121,11 @@ public class LaserAltimeterActivity extends USBAwareActivity implements
 	public void onAltitudeError(String error) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	protected void initUsbDevice(UsbDevice device) {
+		super.initUsbDevice(device);
+		mAltimeterService.initSerialCommunication();
 	}
 
 }

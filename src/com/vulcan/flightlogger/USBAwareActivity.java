@@ -17,6 +17,7 @@ public class USBAwareActivity extends Activity {
 	
 private final String USB_DEVICE_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
 protected final String LOGGER_TAG = this.getClass().getSimpleName();
+protected boolean mHasInitialized = false;
 
 // listens for attachment events
 private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -46,7 +47,7 @@ private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 	}
 
 	/**
-	 * Inteneded to be a template method - the expectation is that in the derived class we'll do something of interest 
+	 * Intended to be a template method - the expectation is that in the derived class we'll do something of interest 
 	 * with the device passed in to this method
 	 * @param device
 	 */

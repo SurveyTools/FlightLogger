@@ -5,6 +5,10 @@ import java.util.List;
 
 import android.location.Location;
 
+/**
+ * A Route contains all the transect paths we find in a GPX file
+ * @author jayl
+ */
 public class Route {
 	public String mName;
 	public List<Location> mWayPoints;
