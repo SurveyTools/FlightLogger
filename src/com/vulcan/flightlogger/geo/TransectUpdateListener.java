@@ -5,6 +5,6 @@ import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 public interface TransectUpdateListener {
 	
-	public void onRouteUpdate(TransectStatus routeUpdate);
+	public void onRouteUpdate(TransectStatus status);
 
 }

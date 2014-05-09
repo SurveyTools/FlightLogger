@@ -39,8 +39,7 @@ public class GPSUtils {
 	 * @author jayl
 	 *
 	 */
-	
-	public static List<Route> parseRoutePoints(File gpxFile) {
+	public static List<Route> parseRoute(File gpxFile) {
 		List<Route>routeMap = new ArrayList<Route>();
 
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
