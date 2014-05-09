@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="nav_altitude">190dp</dimen>
+    <dimen name="nav_absalt_value">190sp</dimen>
+</resources>
