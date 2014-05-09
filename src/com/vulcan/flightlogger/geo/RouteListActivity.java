@@ -22,7 +22,7 @@ public class RouteListActivity extends ListActivity {
 	    Intent intent = getIntent();
 	    String gpxFile = intent.getExtras().getString("gpxfile");
 	    File gpxFileObj = new File(gpxFile);
-	    List<Route> routes = GPXParser.parseRoutePoints(gpxFileObj);
+	    List<Route> routes = GPSUtils.parseRoutePoints(gpxFileObj);
 	    ArrayAdapter<Route> adapter = new ArrayAdapter<Route>(this,
 	        R.layout.route_list_row, R.id.route_name, routes);
 	    setListAdapter(adapter);

@@ -30,22 +30,18 @@
             android:theme="@android:style/Theme.NoTitleBar">
               <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
         </activity>
         <activity
             android:name="com.vulcan.flightlogger.geo.GPSDebugActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/action_show_gps_debug"
             android:theme="@style/FullscreenTheme" >
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
         </activity>
         <activity
             android:name="com.vulcan.flightlogger.FileBrowser"
@@ -54,6 +50,12 @@
         <activity
             android:name="com.vulcan.flightlogger.altimeter.LaserAltimeterActivity"
             android:label="@string/action_altimeter" >
+            <intent-filter>
+            	<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
         </activity>
         <activity
             android:name="com.vulcan.flightlogger.altimeter.SerialConsole"
@@ -63,6 +65,7 @@
             android:name="com.vulcan.flightlogger.geo.RouteListActivity"
             android:label="Route List" >
         </activity>
+        <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />
         <!-- Uncommenting the following block will (in theory) start this app on reboot -->
         <!--
         <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"

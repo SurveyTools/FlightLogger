@@ -1,52 +1,45 @@
 package com.vulcan.flightlogger.geo;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.vulcan.flightlogger.geo.data.FlightStatus;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
+//import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
- * A work in progress
+ * A work in progress - intent is to take a list of TrasectPaths, and navigate between them.
  * @author jayl
- *
  */
 
-public class NavigationService extends Service implements LocationListener {
+public class AutoNavigationService extends Service implements LocationListener {
 	
+	// if within threshold, the next waypoint is chosen for navigation. 
+	// this will likely prove too simplistic in the long run
+	private final int WAYPOINT_THRESHOLD_METERS = 500; 
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
-	
-	// need to get a better number in here to save battery life, once testing
-	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
-	
-	// need to revisit this guy, to see if we need more accuracy. Currently we
-	// sample at 3 seconds
-	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
-	
-	private final String LOGGER_TAG = NavigationService.class.getSimpleName();
-
-	private LocationManager mLocationManager;
 	
 	public boolean doNavigation = false;
 	
+	public List<Transect> mTransectList;
 	public Transect mCurrTransect;
+	public Location mCurrentWaypt;
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<TransectUpdateListener> mListeners
 			= new ArrayList<TransectUpdateListener>();
 
 	public class LocalBinder extends Binder {
-        public NavigationService getService() {
-            return NavigationService.this;
+        public AutoNavigationService getService() {
+            return AutoNavigationService.this;
         }
     }
 	
@@ -63,6 +56,11 @@ public class NavigationService extends Service implements LocationListener {
     public void unregisterListener(TransectUpdateListener listener) {
         mListeners.remove(listener);
     }
+
+	private void calcFlightStatus(Location currLoc) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private TransectStatus calcTransectStatus(Location currLoc) {
 		// TODO validate before constructing TransectStatus
@@ -81,49 +79,60 @@ public class NavigationService extends Service implements LocationListener {
 		
 		return dist;
 	}
+	
+	public void setTransectRoute(List<Transect> transects)
+	{
+		mTransectList = transects;
+		startNavigation();
+	}
+	
+	// TODO - may want to think about a state machine to handle all of this
+	private void startNavigation() {
+		mCurrTransect = findNextTransect();
+		if(mCurrTransect == null)
+		{
+			// signal the route is finished
+		}
+	
+	}
+	
+	private Transect findNextTransect()
+	{
+		Transect currPath = null;
+		
+		for( Transect tPath : mTransectList)
+		{
+			if(tPath.status == FlightStatus.NOT_ACTIVATED || tPath.status == FlightStatus.NAVIGATE_TO)
+			{
+				// really we need to see where we currently are at, but to start, set it
+				// to navigate to, and let the state be changed on the next location update
+				tPath.status = FlightStatus.NAVIGATE_TO;
+				currPath = tPath;
+			}
+		}
+		return currPath;
+	}
     
     private void sendTransectUpdate(TransectStatus routeUpdate) {
         for (TransectUpdateListener listener : mListeners) {
         	listener.onRouteUpdate(routeUpdate);
         }
     }
-    
-	public void startNavigation(Transect transect) {
-		initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
-		mCurrTransect = transect;
-		doNavigation = true;
-	}
 	
-	public void stopNavigation() {
-		doNavigation = false;
-	}
-	
-	private void initGps(long millisBetweenUpdate, float minDistanceMoved) {
-		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		// getting GPS status
-		boolean isGPSEnabled = mLocationManager
-				.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	/**
+	 * TODO - Will likely need a state machine to run navigation service
+	 * based on Location updates
+	 */
 
-		if (isGPSEnabled) {
-			mLocationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, millisBetweenUpdate,
-					minDistanceMoved, this);
-			Log.d(LOGGER_TAG, "GPS Enabled");
-		} else {
-			Log.d(LOGGER_TAG, "GPS not enabled");
-		}
-	}
 
 	/**
 	 * Location callbacks
 	 */
 	@Override
 	public void onLocationChanged(Location currLoc) {
-		if (doNavigation)
-		{
-			TransectStatus stat = calcTransectStatus(currLoc);
-			sendTransectUpdate(stat);
-		}
+		TransectStatus stat = calcTransectStatus(currLoc);
+		sendTransectUpdate(stat);
+		calcFlightStatus(currLoc);
 	}
 	
 	@Override

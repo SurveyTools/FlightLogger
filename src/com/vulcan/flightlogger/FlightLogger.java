@@ -1,13 +1,15 @@
 package com.vulcan.flightlogger;
 
+import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
+import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.RouteListActivity;
 import com.vulcan.flightlogger.util.SquishyTextView;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,14 +20,46 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
-public class FlightLogger extends Activity {
+public class FlightLogger extends USBAwareActivity {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 
-	private final String LOGGER_TAG = FlightLogger.class.getSimpleName();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);		
+		startServices();
 
-	void setupSquishyFontView(int groupID, int ideal, int min) {
+		setContentView(R.layout.main);
+		// TESTING Log.i("main", "onCreate!");
+
+		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
+		TransectILSView tv = new TransectILSView(this);
+		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
+		tv.setLayoutParams(lp);
+		layout.addView(tv);
+
+		setupSquishyFontView(R.id.nav_altitude_value, 190, 20);
+		setupSquishyFontView(R.id.nav_speed_value, 130, 20);
+
+		// TESTING flag - set to false for debugging layout
+		if (true)
+			setupColors();
+	}
+
+	private void startServices() {
+		// TODO - this becomes a RouteManagerService, or
+		// whatever we call it. For now, spin up the AltimeterService
+        Intent altIntent = new Intent(this, AltimeterService.class);
+        //intent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+        startService(altIntent);	
+        Intent navIntent = new Intent(this, NavigationService.class);
+        startService(navIntent);
+	}
+
+	private void setupSquishyFontView(int groupID, int ideal, int min) {
 		SquishyTextView squishyTextView = (SquishyTextView) findViewById(groupID);
 		if (squishyTextView != null) {
 			squishyTextView.setIdealTextSizeDP(ideal);
@@ -33,21 +67,21 @@ public class FlightLogger extends Activity {
 		}
 	}
 
-	void setColorforViewWithID(int groupID, int colorID) {
+	private void setColorforViewWithID(int groupID, int colorID) {
 		View v = findViewById(groupID);
 		if (v != null)
 			v.setBackgroundColor(getResources().getColor(colorID));
 	}
 
-	void setBlackColorforViewWithID(int groupID) {
+	private void setBlackColorforViewWithID(int groupID) {
 		setColorforViewWithID(groupID, R.color.nav_background);
 	}
 
-	void setHeaderColorforViewWithID(int groupID) {
+	private void setHeaderColorforViewWithID(int groupID) {
 		setColorforViewWithID(groupID, R.color.nav_header_bg);
 	}
 
-	void setFooterColorforViewWithID(int groupID) {
+	private void setFooterColorforViewWithID(int groupID) {
 		setColorforViewWithID(groupID, R.color.nav_footer_bg);
 	}
 
@@ -84,29 +118,7 @@ public class FlightLogger extends Activity {
 		// footer
 		setFooterColorforViewWithID(R.id.nav_footer);
 	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.main);
-		// TESTING Log.i("main", "onCreate!");
-
-		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
-		TransectILSView tv = new TransectILSView(this);
-		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
-		tv.setLayoutParams(lp);
-		layout.addView(tv);
-
-		setupSquishyFontView(R.id.nav_altitude_value, 190, 20);
-		setupSquishyFontView(R.id.nav_speed_value, 130, 20);
-
-		// TESTING flag - set to false for debugging layout
-		if (true)
-			setupColors();
-	}
-
+	
 	/**
 	 * Action menu handling
 	 */
@@ -182,4 +194,8 @@ public class FlightLogger extends Activity {
 
 	}
 
+	@Override
+	protected void initUsbDevice(UsbDevice device) {
+		super.initUsbDevice(device);
+	}
 }

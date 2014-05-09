@@ -19,24 +19,26 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.vulcan.flightlogger.geo.data.Route;
+import com.vulcan.flightlogger.geo.data.Transect;
 
 import android.location.Location;
 
-/**
- * Parses GPX routes for use in navigation. Expected format of the form:
- * <rte><name>Session 1</name>
- *   <rtept lat="-3.4985590" lon="38.9554692"><ele>-32768.000</ele><name>T01_S</name><sym>Waypoint</sym></rtept>
- *   <rtept lat="-3.0642325" lon="39.2115345"><ele>-32768.000</ele><name>T01_N</name><sym>Waypoint</sym></rtept>
- *   <rtept lat="-3.0546140" lon="39.1860712"><ele>-32768.000</ele><name>T02_N</name><sym>Waypoint</sym></rtept>
- *   <rtept lat="-3.5290935" lon="38.9157593"><ele>-32768.000</ele><name>T02_S</name><sym>Waypoint</sym></rtept>
- *   <rtept lat="-3.5115202" lon="38.8969005"><ele>-32768.000</ele><name>T03_S</name><sym>Waypoint</sym></rtept>
- *   <rtept lat="-3.0044045" lon="39.1936147"><ele>-32768.000</ele><name>T03_N</name><sym>Waypoint</sym></rtept>
- * </rte>
- * @author jayl
- *
- */
 
-public class GPXParser {
+public class GPSUtils {
+	
+	/**
+	 * Parses GPX routes for use in navigation. Expected format of the form:
+	 * <rte><name>Session 1</name>
+	 *   <rtept lat="-3.4985590" lon="38.9554692"><ele>-32768.000</ele><name>T01_S</name><sym>Waypoint</sym></rtept>
+	 *   <rtept lat="-3.0642325" lon="39.2115345"><ele>-32768.000</ele><name>T01_N</name><sym>Waypoint</sym></rtept>
+	 *   <rtept lat="-3.0546140" lon="39.1860712"><ele>-32768.000</ele><name>T02_N</name><sym>Waypoint</sym></rtept>
+	 *   <rtept lat="-3.5290935" lon="38.9157593"><ele>-32768.000</ele><name>T02_S</name><sym>Waypoint</sym></rtept>
+	 *   <rtept lat="-3.5115202" lon="38.8969005"><ele>-32768.000</ele><name>T03_S</name><sym>Waypoint</sym></rtept>
+	 *   <rtept lat="-3.0044045" lon="39.1936147"><ele>-32768.000</ele><name>T03_N</name><sym>Waypoint</sym></rtept>
+	 * </rte>
+	 * @author jayl
+	 *
+	 */
 	
 	public static List<Route> parseRoutePoints(File gpxFile) {
 		List<Route>routeMap = new ArrayList<Route>();
@@ -105,6 +107,27 @@ public class GPXParser {
 
 		return routeMap;
 	}
+	
+	public static List<Transect> parseTransects(Route route) {
+		List<Transect> transects = new ArrayList<Transect>();
+		int transectIndex = 1;
+		List<Location> wp = route.mWayPoints;
+		// Naively assume that transects are ordered pairs of waypoints for now
+		if (wp.size() > 0 && wp.size() % 2 == 0)
+		{
+			for (int i=0; i<wp.size(); i+=2)
+			{
+				Transect tp = new Transect();
+				tp.mName = "transect " + transectIndex;
+				tp.mStartWaypt = wp.get(i);
+				tp.mEndWaypt = wp.get(i+1);
+				
+				transects.add(tp);
+			}
+		}
+		return transects;
+	}
+	
 	
 
 

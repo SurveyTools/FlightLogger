@@ -4,7 +4,7 @@ package com.vulcan.flightlogger.geo.data;
 public class TransectStatus {
 	
 	public TransectStatus( 
-			TransectPath path, // TODO - this should be an id/guid, if possible
+			Transect path, // TODO - this should be an id/guid, if possible
 			double distance,
 			double crossTrackErr, 
 			float bearing, 
@@ -17,7 +17,7 @@ public class TransectStatus {
 		this.mGroundSpeed = speed;
 	}
 	
-	public TransectPath mTransect;
+	public Transect mTransect;
 	public double mCrossTrackError;
 	public double mDistanceToEnd;
 	public float mBearing;
