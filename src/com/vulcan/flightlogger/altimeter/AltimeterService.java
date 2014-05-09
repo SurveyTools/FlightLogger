@@ -28,6 +28,7 @@ public class AltimeterService extends Service implements
 	private final int ALT_SAMPLE_COUNT = 5;
 	private float mCurrentAltitude;
 	private boolean mGenMockData = false;
+	private boolean mIsConnected = false;
 	// TODO sample altitude
 	private int[] mAltSample;
 
@@ -121,7 +122,11 @@ public class AltimeterService extends Service implements
 		for (AltitudeUpdateListener listener : mListeners) {
 			listener.onAltitudeUpdate(mCurrentAltitude);
 		}
-
+	}
+	
+	public boolean isConnected()
+	{
+		return mIsConnected;
 	}
 
 	private boolean validateDataPayload(byte[] data) {
@@ -140,6 +145,7 @@ public class AltimeterService extends Service implements
 	@Override
 	public void onAdapterConnected(USB2SerialAdapter adapter) {
 		adapter.setDataListener(this);
+		mIsConnected = true;
 		mSelectedAdapter = adapter;
 		mSelectedAdapter.setCommSettings(BaudRate.BAUD_9600,
 				DataBits.DATA_8_BIT, ParityOption.PARITY_NONE,
@@ -149,6 +155,7 @@ public class AltimeterService extends Service implements
 
 	@Override
 	public void onAdapterConnectionError(int arg0, String errMsg) {
+		mIsConnected = false;
 		for (AltitudeUpdateListener listener : mListeners) {
 			listener.onAltitudeError(errMsg);
 		}

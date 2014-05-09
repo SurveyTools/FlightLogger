@@ -106,7 +106,7 @@ public class LaserAltimeterActivity extends USBAwareActivity implements
 				mAltitudeView.setText(currAlt);
 			}
 		});
-		
+
 	}
 	
 	private void startServices() {

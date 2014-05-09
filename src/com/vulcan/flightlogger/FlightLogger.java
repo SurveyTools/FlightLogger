@@ -1,29 +1,70 @@
 package com.vulcan.flightlogger;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
+import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
+import com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.RouteListActivity;
 import com.vulcan.flightlogger.util.SquishyTextView;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.TextView;
 
-public class FlightLogger extends USBAwareActivity {
+public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
+	private AltimeterService mAltimeterService;
+	private boolean mBound = false;
+	private TextView mAltitudeValue;
+	
+    /** 
+     * Defines callbacks for local service binding, ie bindService()
+     * For local binds, this is where we will attach assign instance 
+     * references, and add and remove listeners, 
+     * since we have inprocess access to the class interface
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                IBinder service) {
+            LocalBinder binder = (LocalBinder) service;
+            mAltimeterService = (AltimeterService)binder.getService();
+            mAltimeterService.initSerialCommunication();
+            mAltimeterService.registerListener(FlightLogger.this);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+        	mAltimeterService.unregisterListener(FlightLogger.this);
+            mBound = false;
+        }
+    };
+    
+    protected void onStart() {
+        super.onStart();
+        // Bind to AltimeterService - we get a callback on the
+        // binding which gives us a reference to the service
+        Intent intent = new Intent(this, AltimeterService.class);
+        this.bindService(intent, mConnection, 0);
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +79,7 @@ public class FlightLogger extends USBAwareActivity {
 		TransectILSView tv = new TransectILSView(this);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
+		mAltitudeValue = (TextView) findViewById(R.id.nav_altitude_value);
 		tv.setLayoutParams(lp);
 		layout.addView(tv);
 
@@ -53,7 +95,7 @@ public class FlightLogger extends USBAwareActivity {
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
         Intent altIntent = new Intent(this, AltimeterService.class);
-        //intent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+        altIntent.putExtra(AltimeterService.USE_MOCK_DATA, false);
         startService(altIntent);	
         Intent navIntent = new Intent(this, NavigationService.class);
         startService(navIntent);
@@ -197,5 +239,21 @@ public class FlightLogger extends USBAwareActivity {
 	@Override
 	protected void initUsbDevice(UsbDevice device) {
 		super.initUsbDevice(device);
+	}
+
+	public void onAltitudeUpdate(float altValue) {
+		final String currAlt = Float.toString(altValue);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				mAltitudeValue.setText(currAlt);
+			}
+		});
+
+	}
+
+	@Override
+	public void onAltitudeError(String error) {
+		// TODO Auto-generated method stub
+		
 	}
 }
