@@ -197,5 +197,5 @@ public class FlightLogger extends USBAwareActivity {
 	@Override
 	protected void initUsbDevice(UsbDevice device) {
 		super.initUsbDevice(device);
-	}
+	}	
 }
