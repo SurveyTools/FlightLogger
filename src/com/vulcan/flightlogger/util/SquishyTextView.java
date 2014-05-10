@@ -130,7 +130,7 @@ public class SquishyTextView extends TextView {
 		int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
 		int height = getMeasuredHeight();
 
-		Log.d("onMeasure", "blah");
+		// TESTING Log.d("onMeasure", "blah");
 		refitText(this.getText().toString(), parentWidth, parentHeight);
 		this.setMeasuredDimension(parentWidth, height);
 	}
@@ -138,14 +138,14 @@ public class SquishyTextView extends TextView {
 	@Override
 	protected void onTextChanged(final CharSequence text, final int start,
 			final int before, final int after) {
-		Log.d("onTextChanged", "blah");
+		// TESTING Log.d("onTextChanged", "blah");
 		refitText(text.toString(), this.getWidth(), this.getHeight());
 	}
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		if (w != oldw) {
-			Log.d("onSizeChanged", "blah");
+			// TESTING Log.d("onSizeChanged", "blah");
 			refitText(this.getText().toString(), w, h);
 		}
 	}
