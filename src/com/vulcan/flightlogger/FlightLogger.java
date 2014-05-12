@@ -23,13 +23,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
+import android.widget.Button;
+import android.graphics.drawable.Drawable;
 
 public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
+	static final int MAX_DATA_LIFESPAN_MILLIS = 3000;
 	private AltimeterService mAltimeterService;
 	private TextView mAltitudeValue;
+	
+	private Button		mStatusButtonGPS;
+	private Button		mStatusButtonALT;
+	private Button		mStatusButtonBAT;
+	private Button		mStatusButtonBOX;
+	
+	private Drawable	mStatusButtonBackgroundRed;
+	private Drawable	mStatusButtonBackgroundYellow;
+	private Drawable	mStatusButtonBackgroundGreen;
+	private Drawable	mStatusButtonBackgroundGrey;
+	private Drawable	mStatusButtonBackgroundIgnore;
+	
+	// altitude
+	private float 	mCurAltitudeRawValue;
+	private int		mCurAltitudeDisplayValue;
+	private long	mCurAltitudeTimestampMillis;
 	
     /** 
      * Defines callbacks for local service binding, ie bindService()
@@ -75,7 +94,21 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		TransectILSView tv = new TransectILSView(this);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
+		
 		mAltitudeValue = (TextView) findViewById(R.id.nav_altitude_value);
+
+		mStatusButtonGPS = (Button) findViewById(R.id.nav_header_status_gps);
+		mStatusButtonALT = (Button) findViewById(R.id.nav_header_status_alt);
+		mStatusButtonBAT = (Button) findViewById(R.id.nav_header_status_bat);
+		mStatusButtonBOX = (Button) findViewById(R.id.nav_header_status_box);
+
+		// backgrounds for status lights
+		mStatusButtonBackgroundRed = getResources().getDrawable( R.drawable.nav_status_red );
+		mStatusButtonBackgroundYellow = getResources().getDrawable( R.drawable.nav_status_yellow );
+		mStatusButtonBackgroundGreen = getResources().getDrawable( R.drawable.nav_status_green );
+		mStatusButtonBackgroundGrey = getResources().getDrawable( R.drawable.nav_status_grey );
+		mStatusButtonBackgroundIgnore = getResources().getDrawable( R.drawable.nav_status_ignore );
+	
 		tv.setLayoutParams(lp);
 		layout.addView(tv);
 
@@ -85,6 +118,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// TESTING flag - set to false for debugging layout
 		if (true)
 			setupColors();
+		
+		resetData();
 	}
 
 	private void startServices() {
@@ -157,6 +192,14 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		setFooterColorforViewWithID(R.id.nav_footer);
 	}
 	
+	protected void resetData() {
+		mCurAltitudeRawValue = 0;
+		mCurAltitudeDisplayValue = 0;
+		mCurAltitudeTimestampMillis = 0;
+		
+		// todo, update UI?
+	}
+	
 	/**
 	 * Action menu handling
 	 */
@@ -224,6 +267,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 				| View.SYSTEM_UI_FLAG_FULLSCREEN
 				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+		
+		updateUI();
 
 	}
 
@@ -232,11 +277,79 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		super.initUsbDevice(device);
 	}
 
+	protected void updateAltitudeUI() {
+		// main value
+		final String altString = Integer.toString(mCurAltitudeDisplayValue);
+		mAltitudeValue.setText(altString);
+	}
+
+	protected Boolean dataTimestampIsOld(long dataTimestampMillis) {
+		
+		if (dataTimestampMillis == 0)
+			return true;
+		
+		long elapsedMilllis = curDataTimestamp() - dataTimestampMillis;
+		
+		if (elapsedMilllis > MAX_DATA_LIFESPAN_MILLIS)
+			return true;
+		
+		// must be ok
+		return false;
+	}
+
+	protected void updateStatusLights() {
+		
+		// altitude
+		// todo: invalid, out of range, old
+
+		if (mCurAltitudeDisplayValue == 0) {
+			// no data
+			mStatusButtonALT.setBackground(mStatusButtonBackgroundRed);
+		}
+		else if (dataTimestampIsOld(mCurAltitudeTimestampMillis)) {
+			// old data
+			mStatusButtonALT.setBackground(mStatusButtonBackgroundYellow);
+		} else {
+			// aok
+			mStatusButtonALT.setBackground(mStatusButtonBackgroundGreen);
+		}
+	}
+
+	protected void updateUI() {
+		updateStatusLights();
+		updateAltitudeUI();
+	}
+	
+	protected int calcDisplayAltitudeFromRaw(float rawAltitude) {
+		// convert.  do units here too
+		return (int) rawAltitude;
+	}
+	
+	protected long curDataTimestamp() {
+		return System.currentTimeMillis();
+	}
+	
+	protected void setRawAltitude(float altValue) {
+		mCurAltitudeRawValue = altValue;
+		int newAltDisplay = calcDisplayAltitudeFromRaw(altValue);
+		
+		if (newAltDisplay != mCurAltitudeDisplayValue) {
+			// changed
+			mCurAltitudeDisplayValue = newAltDisplay;
+			updateUI();
+		}
+		
+		// changed or not, take a timestamp
+		mCurAltitudeTimestampMillis = curDataTimestamp();
+		
+		updateStatusLights();
+	}
+	
 	public void onAltitudeUpdate(float altValue) {
-		final String currAlt = Float.toString(altValue);
+		final float currAlt = altValue;
 		runOnUiThread(new Runnable() {
 			public void run() {
-				mAltitudeValue.setText(currAlt);
+				setRawAltitude(currAlt);
 			}
 		});
 
