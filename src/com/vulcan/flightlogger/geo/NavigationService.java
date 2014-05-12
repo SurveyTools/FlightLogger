@@ -24,8 +24,6 @@ import android.util.Log;
 
 public class NavigationService extends Service implements LocationListener {
 	
-	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
-	
 	// need to get a better number in here to save battery life, once testing
 	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
 	
@@ -76,8 +74,8 @@ public class NavigationService extends Service implements LocationListener {
 	
 	private double calcCrossTrackError(Location curr, Location start, Location end)
 	{
-		double dist = Math.asin(Math.sin(start.distanceTo(curr)/EARTH_RADIUS_METERS) * 
-		         Math.sin(start.bearingTo(curr) - curr.bearingTo(end))) * EARTH_RADIUS_METERS;
+		double dist = Math.asin(Math.sin(start.distanceTo(curr)/GPSUtils.EARTH_RADIUS_METERS) * 
+		         Math.sin(start.bearingTo(curr) - curr.bearingTo(end))) * GPSUtils.EARTH_RADIUS_METERS;
 		
 		return dist;
 	}

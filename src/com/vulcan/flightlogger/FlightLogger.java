@@ -2,7 +2,6 @@ package com.vulcan.flightlogger;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
-import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
@@ -30,7 +29,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 	private AltimeterService mAltimeterService;
-	private boolean mBound = false;
 	private TextView mAltitudeValue;
 	
     /** 
@@ -48,13 +46,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
             mAltimeterService = (AltimeterService)binder.getService();
             mAltimeterService.initSerialCommunication();
             mAltimeterService.registerListener(FlightLogger.this);
-            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
         	mAltimeterService.unregisterListener(FlightLogger.this);
-            mBound = false;
         }
     };
     
@@ -185,11 +181,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			intent = new Intent(this, SerialConsole.class);
 			startActivity(intent);
 			break;
-		// use laser altimeter
-		case R.id.action_show_laser_alt:
-			intent = new Intent(this, LaserAltimeterActivity.class);
-			startActivity(intent);
-			break;
 		case R.id.action_show_route_list:
 			// load gpx
 			intent = new Intent(this, FileBrowser.class);
@@ -253,6 +244,18 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	@Override
 	public void onAltitudeError(String error) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectionEnabled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectionDisabled() {
 		// TODO Auto-generated method stub
 		
 	}

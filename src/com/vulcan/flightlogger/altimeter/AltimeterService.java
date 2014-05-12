@@ -32,7 +32,6 @@ public class AltimeterService extends Service implements
 	// TODO sample altitude
 	private int[] mAltSample;
 
-	private final static float METERS_PER_FOOT = (float) 3.28084;
 	private final String LOGGER_TAG = AltimeterService.class.getSimpleName();
 
 	private final IBinder mBinder = new LocalBinder();
@@ -135,8 +134,8 @@ public class AltimeterService extends Service implements
 				&& (data.length == 10);
 		if (isValid) {
 			byte[] stripMeters = Arrays.copyOfRange(data, 0, data.length - 2);
-			float feet = (Float.parseFloat(new String(stripMeters)) * METERS_PER_FOOT);
-			mCurrentAltitude = feet;
+			float meters = Float.parseFloat(new String(stripMeters));
+			mCurrentAltitude = meters;
 		}
 
 		return isValid;
