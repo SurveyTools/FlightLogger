@@ -142,7 +142,8 @@
             android:layout_marginRight="20dp"
             android:contentDescription="@string/image_button_no_desc"
             android:scaleType="fitXY"
-            android:src="@drawable/geargrey64" />
+            android:src="@drawable/geargrey64" 
+            android:onClick="showSettingsPopup"/>
     </LinearLayout>
 
     <LinearLayout

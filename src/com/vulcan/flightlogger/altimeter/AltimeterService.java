@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.vulcan.flightlogger.geo.GPSUtils;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -19,9 +21,9 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
 
 public class AltimeterService extends Service implements
 		AdapterConnectionListener, USB2SerialAdapter.DataListener {
-	// used for mock data
-	public final int MIN_ALT = 280;
-	public final int MAX_ALT = 320;
+	// used for mock data, assume a range of 300 ft +/- 20
+	public final float DELTA_ALT = 40/GPSUtils.METERS_PER_FOOT;
+	public final float MIN_ALT = 280/GPSUtils.METERS_PER_FOOT;
 
 	// how many samples for an alt avg.
 	public static final String USE_MOCK_DATA = "useMockData";
@@ -32,7 +34,6 @@ public class AltimeterService extends Service implements
 	// TODO sample altitude
 	private int[] mAltSample;
 
-	private final static float METERS_PER_FOOT = (float) 3.28084;
 	private final String LOGGER_TAG = AltimeterService.class.getSimpleName();
 
 	private final IBinder mBinder = new LocalBinder();
@@ -79,8 +80,7 @@ public class AltimeterService extends Service implements
 		new Thread() {
 			public void run() {
 				while (mGenMockData == true) {
-					mCurrentAltitude = rand.nextInt((MAX_ALT - MIN_ALT) + 1)
-							+ MIN_ALT;
+					mCurrentAltitude = (rand.nextFloat() * DELTA_ALT)+ MIN_ALT;
 					sendAltitudeUpdate();
 					try {
 						Thread.sleep(300);
@@ -135,8 +135,8 @@ public class AltimeterService extends Service implements
 				&& (data.length == 10);
 		if (isValid) {
 			byte[] stripMeters = Arrays.copyOfRange(data, 0, data.length - 2);
-			float feet = (Float.parseFloat(new String(stripMeters)) * METERS_PER_FOOT);
-			mCurrentAltitude = feet;
+			float meters = Float.parseFloat(new String(stripMeters));
+			mCurrentAltitude = meters;
 		}
 
 		return isValid;

@@ -1,6 +1,7 @@
 package com.vulcan.flightlogger.geo;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
@@ -24,14 +25,15 @@ import android.util.Log;
 
 public class NavigationService extends Service implements LocationListener {
 	
-	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
-	
 	// need to get a better number in here to save battery life, once testing
 	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
 	
 	// need to revisit this guy, to see if we need more accuracy. Currently we
 	// sample at 3 seconds
 	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
+	
+	// how many track mock samples to create from a transect path
+	private final int NUM_MOCK_TRACKS = 100;
 	
 	private final String LOGGER_TAG = NavigationService.class.getSimpleName();
 
@@ -76,8 +78,8 @@ public class NavigationService extends Service implements LocationListener {
 	
 	private double calcCrossTrackError(Location curr, Location start, Location end)
 	{
-		double dist = Math.asin(Math.sin(start.distanceTo(curr)/EARTH_RADIUS_METERS) * 
-		         Math.sin(start.bearingTo(curr) - curr.bearingTo(end))) * EARTH_RADIUS_METERS;
+		double dist = Math.asin(Math.sin(start.distanceTo(curr)/GPSUtils.EARTH_RADIUS_METERS) * 
+		         Math.sin(start.bearingTo(curr) - curr.bearingTo(end))) * GPSUtils.EARTH_RADIUS_METERS;
 		
 		return dist;
 	}
@@ -88,6 +90,8 @@ public class NavigationService extends Service implements LocationListener {
         }
     }
     
+    // TODO - Get a 'demo' state in place, and depending on that state, 
+    // either init 'real' GPS or mock GPS
 	public void startNavigation(Transect transect) {
 		initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		mCurrTransect = transect;
@@ -112,6 +116,63 @@ public class NavigationService extends Service implements LocationListener {
 		} else {
 			Log.d(LOGGER_TAG, "GPS not enabled");
 		}
+	}
+	
+	@SuppressWarnings("unused") // for now...
+	private void initMockGps() {
+		final long sleepTime = MIN_TIME_BETWEEN_UPDATES;
+		
+		mCurrTransect = buildMockTransect();
+		
+		final double latDelta = (mCurrTransect.mEndWaypt.getLatitude() - mCurrTransect.mStartWaypt.getLatitude()) / NUM_MOCK_TRACKS;
+		final double lonDelta = (mCurrTransect.mEndWaypt.getLongitude() - mCurrTransect.mStartWaypt.getLongitude()) / NUM_MOCK_TRACKS;
+		final Random rand = new Random();
+		
+		new Thread()
+		{
+			int progressIndex = 0;		
+			
+		    public void run() {
+		        progressIndex++;
+		        Location loc = calcNewMockLocation(progressIndex);
+		        try {
+		        	onLocationChanged(loc);
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+
+			private Location calcNewMockLocation(int index) {
+				float latJitter = rand.nextFloat() * (float)latDelta;
+				float lonJitter = rand.nextFloat() * (float)lonDelta;
+				Location newLoc = new Location("waypoint" + progressIndex);
+		        newLoc.setSpeed(41); //meters, 80 knots or so...
+		        newLoc.setLatitude(latDelta * progressIndex + latJitter);
+		        newLoc.setLongitude(lonDelta * progressIndex + lonJitter);
+				return newLoc;
+			}
+		}.start();
+		
+	}
+
+	// this is here until we put the menus back in
+	private Transect buildMockTransect() {
+		Location start = new Location("work");
+		start.setLatitude(47.688719);
+		start.setLongitude(-122.372639);
+		
+		Location end = new Location("home");
+		start.setLatitude(47.598383);
+		start.setLongitude(-122.327537);
+		
+		Transect transect = new Transect();
+		transect.mName = "My Ride Home";
+		transect.mStartWaypt = start;
+		transect.mEndWaypt = end;
+		
+		return transect;
 	}
 
 	/**

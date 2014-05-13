@@ -2,12 +2,12 @@ package com.vulcan.flightlogger;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
-import com.vulcan.flightlogger.altimeter.LaserAltimeterActivity;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
-import com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.RouteListActivity;
+import com.vulcan.flightlogger.geo.TransectUpdateListener;
+import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.FlightDatum;
 
@@ -22,42 +22,42 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Button;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 
-public class FlightLogger extends USBAwareActivity implements
-		AltitudeUpdateListener {
+public class FlightLogger extends USBAwareActivity 
+	implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
 	public static final int UPDATE_IMAGE = 666;
 	private AltimeterService mAltimeterService;
-	private boolean mBound = false;
-	private TextView mAltitudeDisplay;
-	private TextView mGroundSpeedDisplay;
-
-	private Button mStatusButtonGPS;
-	private Button mStatusButtonALT;
-	private Button mStatusButtonBAT;
-	private Button mStatusButtonBOX;
-
-	private Drawable mStatusButtonBackgroundRed;
-	private Drawable mStatusButtonBackgroundYellow;
-	private Drawable mStatusButtonBackgroundGreen;
-	private Drawable mStatusButtonBackgroundGrey;
-	private Drawable mStatusButtonBackgroundIgnore;
-
+	private NavigationService mNavigationService;
+private TextView mAltitudeDisplay;
+private TextView mGroundSpeedDisplay;
+	
+	private Button		mStatusButtonGPS;
+	private Button		mStatusButtonALT;
+	private Button		mStatusButtonBAT;
+	private Button		mStatusButtonBOX;
+	
+	private Drawable	mStatusButtonBackgroundRed;
+	private Drawable	mStatusButtonBackgroundYellow;
+	private Drawable	mStatusButtonBackgroundGreen;
+	private Drawable	mStatusButtonBackgroundGrey;
+	private Drawable	mStatusButtonBackgroundIgnore;
+	
 	private int mStatusButtonTextColorOnRed;
 	private int mStatusButtonTextColorOnYellow;
 	private int mStatusButtonTextColorOnGreen;
@@ -71,44 +71,55 @@ public class FlightLogger extends USBAwareActivity implements
 	protected BoxDatum mBoxData;
 
 	private Handler mUpdateUIHandler;
-
-	/**
-	 * Defines callbacks for local service binding, ie bindService() For local
-	 * binds, this is where we will attach assign instance references, and add
-	 * and remove listeners, since we have inprocess access to the class
-	 * interface
-	 */
-	private ServiceConnection mConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			LocalBinder binder = (LocalBinder) service;
-			mAltimeterService = (AltimeterService) binder.getService();
-			mAltimeterService.initSerialCommunication();
-			mAltimeterService.registerListener(FlightLogger.this);
-			mBound = true;
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			mAltimeterService.unregisterListener(FlightLogger.this);
-			mBound = false;
-		}
-	};
-
-	@Override
-	protected void updateBatteryStatus(Intent batteryStatus) {
-		if (mBatteryData.updateBatteryStatus(batteryStatus))
-			updateBatteryUI();
-	}
 	
-	protected void onStart() {
-		super.onStart();
-		// Bind to AltimeterService - we get a callback on the
-		// binding which gives us a reference to the service
-		Intent intent = new Intent(this, AltimeterService.class);
-		this.bindService(intent, mConnection, 0);
-}
+    /** 
+     * Defines callbacks for local service binding, ie bindService()
+     * For local binds, this is where we will attach assign instance 
+     * references, and add and remove listeners, 
+     * since we have inprocess access to the class interface
+     */
+    private ServiceConnection mNavigationConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                IBinder service) {
+        	com.vulcan.flightlogger.geo.NavigationService.LocalBinder binder = 
+        			(com.vulcan.flightlogger.geo.NavigationService.LocalBinder) service;
+            mNavigationService = (NavigationService)binder.getService();
+            mNavigationService.registerListener(FlightLogger.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+        	mNavigationService.unregisterListener(FlightLogger.this);
+        }
+    };
+    
+    private ServiceConnection mAltimeterConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                IBinder service) {
+        	com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder binder = 
+        			(com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder) service;
+            mAltimeterService = (AltimeterService)binder.getService();
+            mAltimeterService.initSerialCommunication();
+            mAltimeterService.registerListener(FlightLogger.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+        	mAltimeterService.unregisterListener(FlightLogger.this);
+        }
+    };
+    
+    protected void onStart() {
+        super.onStart();
+        // Bind to AltimeterService - we get a callback on the
+        // binding which gives us a reference to the service
+        Intent intent = new Intent(this, AltimeterService.class);
+        this.bindService(intent, mAltimeterConnection, 0);
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -166,13 +177,18 @@ public class FlightLogger extends USBAwareActivity implements
 	private void startServices() {
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
-		Intent altIntent = new Intent(this, AltimeterService.class);
-		altIntent.putExtra(AltimeterService.USE_MOCK_DATA, false);
-		startService(altIntent);
-		Intent navIntent = new Intent(this, NavigationService.class);
-		startService(navIntent);
+        Intent altIntent = new Intent(this, AltimeterService.class);
+        // altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+        startService(altIntent);	
+        Intent navIntent = new Intent(this, NavigationService.class);
+        startService(navIntent);
 	}
 
+	protected void updateBatteryStatus(Intent batteryStatus) {
+		if (mBatteryData.updateBatteryStatus(batteryStatus))
+			updateBatteryUI();
+	}
+	
 	private void setupSquishyFontView(int groupID, int ideal, int min) {
 		SquishyTextView squishyTextView = (SquishyTextView) findViewById(groupID);
 		if (squishyTextView != null) {
@@ -258,20 +274,16 @@ public class FlightLogger extends USBAwareActivity implements
 		mBoxData.reset();
 		// note: might want to update the ui (last param) depending on use
 	}
-
-	/**
-	 * Action menu handling
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_activity_actions, menu);
-		return super.onCreateOptionsMenu(menu);
+	public boolean showSettingsPopup(View v) {
+		PopupMenu popup = new PopupMenu(this, v);
+		popup.setOnMenuItemClickListener(this);
+	    MenuInflater inflater = popup.getMenuInflater();
+	    inflater.inflate(R.menu.main_activity_actions, popup.getMenu());
+	    popup.show();
+	    return true;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	
+	public boolean onMenuItemClick(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.action_show_gps_debug:
@@ -281,11 +293,6 @@ public class FlightLogger extends USBAwareActivity implements
 		// use laser altimeter
 		case R.id.action_show_serial_console:
 			intent = new Intent(this, SerialConsole.class);
-			startActivity(intent);
-			break;
-		// use laser altimeter
-		case R.id.action_show_laser_alt:
-			intent = new Intent(this, LaserAltimeterActivity.class);
 			startActivity(intent);
 			break;
 		case R.id.action_show_route_list:
@@ -475,6 +482,23 @@ public class FlightLogger extends USBAwareActivity implements
 		}
 	}
 
+	@Override
+	public void onConnectionEnabled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectionDisabled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRouteUpdate(TransectStatus status) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 
