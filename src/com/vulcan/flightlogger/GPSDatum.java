@@ -32,7 +32,7 @@ public class GPSDatum extends FlightDatum {
 	@Override
 	public void reset() {
 		super.reset();
-		setRawGPS(0, false, curDataTimestamp());
+		setRawGroundSpeed(0, false, curDataTimestamp());
 	}
 
 	public String getGroundSpeedDisplayText() {
@@ -44,7 +44,7 @@ public class GPSDatum extends FlightDatum {
 			return mValueToDisplay;
 	}
 
-	public boolean setRawGPS(float rawGroundSpeedValue, boolean validData, long timestamp) {
+	public boolean setRawGroundSpeed(float rawGroundSpeedValue, boolean validData, long timestamp) {
 		// snapshot cur data
 		final String oldGroundSpeedDisplayValue = mValueToDisplay;
 		final boolean oldGroundSpeedDataValid = mDataIsValid;

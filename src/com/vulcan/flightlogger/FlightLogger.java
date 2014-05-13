@@ -35,8 +35,7 @@ import android.widget.Button;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 
-public class FlightLogger extends USBAwareActivity 
-	implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
+public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
@@ -44,20 +43,20 @@ public class FlightLogger extends USBAwareActivity
 	public static final int UPDATE_IMAGE = 666;
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
-private TextView mAltitudeDisplay;
-private TextView mGroundSpeedDisplay;
-	
-	private Button		mStatusButtonGPS;
-	private Button		mStatusButtonALT;
-	private Button		mStatusButtonBAT;
-	private Button		mStatusButtonBOX;
-	
-	private Drawable	mStatusButtonBackgroundRed;
-	private Drawable	mStatusButtonBackgroundYellow;
-	private Drawable	mStatusButtonBackgroundGreen;
-	private Drawable	mStatusButtonBackgroundGrey;
-	private Drawable	mStatusButtonBackgroundIgnore;
-	
+	private TextView mAltitudeDisplay;
+	private TextView mGroundSpeedDisplay;
+
+	private Button mStatusButtonGPS;
+	private Button mStatusButtonALT;
+	private Button mStatusButtonBAT;
+	private Button mStatusButtonBOX;
+
+	private Drawable mStatusButtonBackgroundRed;
+	private Drawable mStatusButtonBackgroundYellow;
+	private Drawable mStatusButtonBackgroundGreen;
+	private Drawable mStatusButtonBackgroundGrey;
+	private Drawable mStatusButtonBackgroundIgnore;
+
 	private int mStatusButtonTextColorOnRed;
 	private int mStatusButtonTextColorOnYellow;
 	private int mStatusButtonTextColorOnGreen;
@@ -71,55 +70,51 @@ private TextView mGroundSpeedDisplay;
 	protected BoxDatum mBoxData;
 
 	private Handler mUpdateUIHandler;
-	
-    /** 
-     * Defines callbacks for local service binding, ie bindService()
-     * For local binds, this is where we will attach assign instance 
-     * references, and add and remove listeners, 
-     * since we have inprocess access to the class interface
-     */
-    private ServiceConnection mNavigationConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                IBinder service) {
-        	com.vulcan.flightlogger.geo.NavigationService.LocalBinder binder = 
-        			(com.vulcan.flightlogger.geo.NavigationService.LocalBinder) service;
-            mNavigationService = (NavigationService)binder.getService();
-            mNavigationService.registerListener(FlightLogger.this);
-        }
+	/**
+	 * Defines callbacks for local service binding, ie bindService() For local
+	 * binds, this is where we will attach assign instance references, and add
+	 * and remove listeners, since we have inprocess access to the class
+	 * interface
+	 */
+	private ServiceConnection mNavigationConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-        	mNavigationService.unregisterListener(FlightLogger.this);
-        }
-    };
-    
-    private ServiceConnection mAltimeterConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			com.vulcan.flightlogger.geo.NavigationService.LocalBinder binder = (com.vulcan.flightlogger.geo.NavigationService.LocalBinder) service;
+			mNavigationService = (NavigationService) binder.getService();
+			mNavigationService.registerListener(FlightLogger.this);
+		}
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                IBinder service) {
-        	com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder binder = 
-        			(com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder) service;
-            mAltimeterService = (AltimeterService)binder.getService();
-            mAltimeterService.initSerialCommunication();
-            mAltimeterService.registerListener(FlightLogger.this);
-        }
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mNavigationService.unregisterListener(FlightLogger.this);
+		}
+	};
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-        	mAltimeterService.unregisterListener(FlightLogger.this);
-        }
-    };
-    
-    protected void onStart() {
-        super.onStart();
-        // Bind to AltimeterService - we get a callback on the
-        // binding which gives us a reference to the service
-        Intent intent = new Intent(this, AltimeterService.class);
-        this.bindService(intent, mAltimeterConnection, 0);
-    }
+	private ServiceConnection mAltimeterConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder binder = (com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder) service;
+			mAltimeterService = (AltimeterService) binder.getService();
+			mAltimeterService.initSerialCommunication();
+			mAltimeterService.registerListener(FlightLogger.this);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mAltimeterService.unregisterListener(FlightLogger.this);
+		}
+	};
+
+	protected void onStart() {
+		super.onStart();
+		// Bind to AltimeterService - we get a callback on the
+		// binding which gives us a reference to the service
+		Intent intent = new Intent(this, AltimeterService.class);
+		this.bindService(intent, mAltimeterConnection, 0);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,8 +127,7 @@ private TextView mGroundSpeedDisplay;
 
 		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
 		TransectILSView tv = new TransectILSView(this);
-		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
 		// superdevo
 		mAltitudeData = new AltitudeDatum(false);
@@ -150,16 +144,11 @@ private TextView mGroundSpeedDisplay;
 		mStatusButtonBOX = (Button) findViewById(R.id.nav_header_status_box);
 
 		// backgrounds for status lights
-		mStatusButtonBackgroundRed = getResources().getDrawable(
-				R.drawable.nav_status_red);
-		mStatusButtonBackgroundYellow = getResources().getDrawable(
-				R.drawable.nav_status_yellow);
-		mStatusButtonBackgroundGreen = getResources().getDrawable(
-				R.drawable.nav_status_green);
-		mStatusButtonBackgroundGrey = getResources().getDrawable(
-				R.drawable.nav_status_grey);
-		mStatusButtonBackgroundIgnore = getResources().getDrawable(
-				R.drawable.nav_status_ignore);
+		mStatusButtonBackgroundRed = getResources().getDrawable(R.drawable.nav_status_red);
+		mStatusButtonBackgroundYellow = getResources().getDrawable(R.drawable.nav_status_yellow);
+		mStatusButtonBackgroundGreen = getResources().getDrawable(R.drawable.nav_status_green);
+		mStatusButtonBackgroundGrey = getResources().getDrawable(R.drawable.nav_status_grey);
+		mStatusButtonBackgroundIgnore = getResources().getDrawable(R.drawable.nav_status_ignore);
 
 		tv.setLayoutParams(lp);
 		layout.addView(tv);
@@ -177,18 +166,18 @@ private TextView mGroundSpeedDisplay;
 	private void startServices() {
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
-        Intent altIntent = new Intent(this, AltimeterService.class);
-        // altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
-        startService(altIntent);	
-        Intent navIntent = new Intent(this, NavigationService.class);
-        startService(navIntent);
+		Intent altIntent = new Intent(this, AltimeterService.class);
+		// altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+		startService(altIntent);
+		Intent navIntent = new Intent(this, NavigationService.class);
+		startService(navIntent);
 	}
 
 	protected void updateBatteryStatus(Intent batteryStatus) {
 		if (mBatteryData.updateBatteryStatus(batteryStatus))
 			updateBatteryUI();
 	}
-	
+
 	private void setupSquishyFontView(int groupID, int ideal, int min) {
 		SquishyTextView squishyTextView = (SquishyTextView) findViewById(groupID);
 		if (squishyTextView != null) {
@@ -255,16 +244,11 @@ private TextView mGroundSpeedDisplay;
 		}
 
 		// status button colors
-		mStatusButtonTextColorOnRed = getResources().getColor(
-				R.color.nav_header_status_text_over_red);
-		mStatusButtonTextColorOnYellow = getResources().getColor(
-				R.color.nav_header_status_text_over_yellow);
-		mStatusButtonTextColorOnGreen = getResources().getColor(
-				R.color.nav_header_status_text_over_green);
-		mStatusButtonTextColorOnGrey = getResources().getColor(
-				R.color.nav_header_status_text_over_grey);
-		mStatusButtonTextColorOnIgnore = getResources().getColor(
-				R.color.nav_header_status_text_over_ignore);
+		mStatusButtonTextColorOnRed = getResources().getColor(R.color.nav_header_status_text_over_red);
+		mStatusButtonTextColorOnYellow = getResources().getColor(R.color.nav_header_status_text_over_yellow);
+		mStatusButtonTextColorOnGreen = getResources().getColor(R.color.nav_header_status_text_over_green);
+		mStatusButtonTextColorOnGrey = getResources().getColor(R.color.nav_header_status_text_over_grey);
+		mStatusButtonTextColorOnIgnore = getResources().getColor(R.color.nav_header_status_text_over_ignore);
 	}
 
 	protected void resetData() {
@@ -274,15 +258,16 @@ private TextView mGroundSpeedDisplay;
 		mBoxData.reset();
 		// note: might want to update the ui (last param) depending on use
 	}
+
 	public boolean showSettingsPopup(View v) {
 		PopupMenu popup = new PopupMenu(this, v);
 		popup.setOnMenuItemClickListener(this);
-	    MenuInflater inflater = popup.getMenuInflater();
-	    inflater.inflate(R.menu.main_activity_actions, popup.getMenu());
-	    popup.show();
-	    return true;
+		MenuInflater inflater = popup.getMenuInflater();
+		inflater.inflate(R.menu.main_activity_actions, popup.getMenu());
+		popup.show();
+		return true;
 	}
-	
+
 	public boolean onMenuItemClick(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
@@ -332,17 +317,12 @@ private TextView mGroundSpeedDisplay;
 
 		// note: requires Android 4.4 / api level 16 & 19
 		View decorView = getWindow().getDecorView();
-		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_FULLSCREEN
-				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-		// TESTING  mAltitudeData.setRawAltitude(299, true, curDataTimestamp());
+		// TESTING mAltitudeData.setRawAltitude(299, true, curDataTimestamp());
 
 		updateUI();
-		
+
 		mUpdateUIHandler.postDelayed(mUpdateUIRunnable, UI_UPDATE_TIMER_MILLIS);
 	}
 
@@ -360,7 +340,7 @@ private TextView mGroundSpeedDisplay;
 		}
 	};
 
-	 @Override
+	@Override
 	protected void initUsbDevice(UsbDevice device) {
 		super.initUsbDevice(device);
 	}
@@ -463,7 +443,6 @@ private TextView mGroundSpeedDisplay;
 				}
 			});
 		}
-
 	}
 
 	@Override
@@ -485,20 +464,29 @@ private TextView mGroundSpeedDisplay;
 	@Override
 	public void onConnectionEnabled() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onConnectionDisabled() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRouteUpdate(TransectStatus status) {
-		// TODO Auto-generated method stub
-		
+
+		// ground speed update
+		if (status != null) {
+			final float groundSpeed = status.mGroundSpeed;
+			final long timestamp = curDataTimestamp();
+			runOnUiThread(new Runnable() {
+				public void run() {
+					// update the altitude data (and ui if something changed)
+					if (mGPSData.setRawGroundSpeed(groundSpeed, true, timestamp))
+						updateGPSUI();
+				}
+			});
+		}
 	}
 }
-
-
