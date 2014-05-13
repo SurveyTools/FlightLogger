@@ -13,8 +13,8 @@ public class BatteryDatum extends FlightDatum {
 	static final String INVALID_BATTERY_STRING = "";
 	static final String IGNORE_BATTERY_STRING = "";
 
-	public BatteryDatum(boolean ignore) {
-		super(ignore);
+	public BatteryDatum(boolean ignore, boolean demoMode) {
+		super(ignore, demoMode);
 	}
 
 	protected String calcDisplayBatteryFromRaw(float rawBatteryLevel, boolean validData) {
@@ -54,6 +54,8 @@ public class BatteryDatum extends FlightDatum {
 		
 		if (mIgnore)
 			color = FLIGHT_STATUS_IGNORE;
+		else if (mDemoMode)
+			color = FLIGHT_STATUS_RED; // DEMO_MODE
 		else if (!mDataIsValid)
 			color = FLIGHT_STATUS_RED;
 		else {

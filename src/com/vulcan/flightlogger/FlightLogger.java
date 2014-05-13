@@ -129,12 +129,12 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		TransectILSView tv = new TransectILSView(this);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		// superdevo
-		mAltitudeData = new AltitudeDatum(false);
-		mGPSData = new GPSDatum(false);
-		mBatteryData = new BatteryDatum(false);
-		mBoxData = new BoxDatum(true);
-
+		boolean demoMode = false; // DEMO_MODE
+		mAltitudeData = new AltitudeDatum(false, demoMode);
+		mGPSData = new GPSDatum(false, demoMode);
+		mBatteryData = new BatteryDatum(false, demoMode);
+		mBoxData = new BoxDatum(true, demoMode);
+		
 		mAltitudeDisplay = (TextView) findViewById(R.id.nav_altitude_value);
 		mGroundSpeedDisplay = (TextView) findViewById(R.id.nav_speed_value);
 

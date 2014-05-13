@@ -7,8 +7,8 @@ public class BoxDatum extends FlightDatum {
 	static final String INVALID_BOX_STRING = "";
 	static final String IGNORE_BOX_STRING = "";
 
-	public BoxDatum(boolean ignore) {
-		super(ignore);
+	public BoxDatum(boolean ignore, boolean demoMode) {
+		super(ignore, demoMode);
 	}
 
 	protected String calcDisplayBoxFromRaw(float rawAltitude, boolean validData) {
