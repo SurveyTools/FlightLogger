@@ -131,7 +131,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 		// superdevo
 		mAltitudeData = new AltitudeDatum(false);
-		mGPSData = new GPSDatum(true);
+		mGPSData = new GPSDatum(false);
 		mBatteryData = new BatteryDatum(false);
 		mBoxData = new BoxDatum(true);
 
