@@ -51,7 +51,8 @@ public class SquishyTextView extends TextView {
 	private void initialise() {
 		mTestPaint = new Paint();
 		mTestPaint.set(this.getPaint());
-		// max size defaults to the initially specified text size unless it is too small
+		// max size defaults to the initially specified text size unless it is
+		// too small
 	}
 
 	private float calcPixelsFromDP(float dp) {
@@ -71,10 +72,8 @@ public class SquishyTextView extends TextView {
 		if (textHeight <= 0)
 			return;
 
-		int targetWidth = textWidth - this.getPaddingLeft()
-				- this.getPaddingRight();
-		int targetHeight = textHeight - this.getPaddingTop()
-				- this.getPaddingBottom();
+		int targetWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
+		int targetHeight = textHeight - this.getPaddingTop() - this.getPaddingBottom();
 
 		// note: mod min & max font size
 		float hi = calcPixelsFromDP(mIdealTextSizeDP);
@@ -106,8 +105,7 @@ public class SquishyTextView extends TextView {
 			// " -->  text w = " + bounds.width() + ", h = " + bounds.height() +
 			// ", trueTextHeight = " + trueTextHeight);
 
-			if ((bounds.width() >= targetWidth)
-					|| (trueTextHeight >= targetHeight))
+			if ((bounds.width() >= targetWidth) || (trueTextHeight >= targetHeight))
 				hi = size; // too big
 			else
 				lo = size; // too small
@@ -124,20 +122,24 @@ public class SquishyTextView extends TextView {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		try {
+			// crashes
+			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-		int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
-		int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-		int height = getMeasuredHeight();
+			int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+			int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+			int height = getMeasuredHeight();
 
-		// TESTING Log.d("onMeasure", "blah");
-		refitText(this.getText().toString(), parentWidth, parentHeight);
-		this.setMeasuredDimension(parentWidth, height);
+			// TESTING Log.d("onMeasure", "blah");
+			refitText(this.getText().toString(), parentWidth, parentHeight);
+			this.setMeasuredDimension(parentWidth, height);
+		} catch (Exception e) {
+			Log.e("SquishyTextView.onMeasure", "ERROR");
+		}
 	}
 
 	@Override
-	protected void onTextChanged(final CharSequence text, final int start,
-			final int before, final int after) {
+	protected void onTextChanged(final CharSequence text, final int start, final int before, final int after) {
 		// TESTING Log.d("onTextChanged", "blah");
 		refitText(text.toString(), this.getWidth(), this.getHeight());
 	}

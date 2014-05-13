@@ -19,7 +19,6 @@ public class SquareRelativeLayout extends RelativeLayout {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
 		int size = Math.min(width, height);
-		super.onMeasure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY),
-				MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY));
+		super.onMeasure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY));
 	}
 }
