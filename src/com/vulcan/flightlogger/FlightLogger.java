@@ -430,15 +430,15 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		return System.currentTimeMillis();
 	}
 
-	public void onAltitudeUpdate(float altValue) {
+	public void onAltitudeUpdate(float altitudeInMeters) {
 		// rough validation
-		if (altValue < 32000) {
-			final float currAlt = altValue;
+		if (altitudeInMeters < 32000) {
+			final float currAltitudeInMeters = altitudeInMeters;
 			final long timestamp = curDataTimestamp();
 			runOnUiThread(new Runnable() {
 				public void run() {
 					// update the altitude data (and ui if something changed)
-					if (mAltitudeData.setRawAltitude(currAlt, true, timestamp))
+					if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, timestamp))
 						updateAltitudeUI();
 				}
 			});

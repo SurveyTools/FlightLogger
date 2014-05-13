@@ -28,7 +28,7 @@ public class AltimeterService extends Service implements
 	// how many samples for an alt avg.
 	public static final String USE_MOCK_DATA = "useMockData";
 	private final int ALT_SAMPLE_COUNT = 5;
-	private float mCurrentAltitude;
+	private float mCurrentAltitudeInMeters;
 	private boolean mGenMockData = false;
 	private boolean mIsConnected = false;
 	// TODO sample altitude
@@ -80,7 +80,7 @@ public class AltimeterService extends Service implements
 		new Thread() {
 			public void run() {
 				while (mGenMockData == true) {
-					mCurrentAltitude = (rand.nextFloat() * DELTA_ALT)+ MIN_ALT;
+					mCurrentAltitudeInMeters = (rand.nextFloat() * DELTA_ALT)+ MIN_ALT;
 					sendAltitudeUpdate();
 					try {
 						Thread.sleep(300);
@@ -120,7 +120,7 @@ public class AltimeterService extends Service implements
 
 	public void sendAltitudeUpdate() {
 		for (AltitudeUpdateListener listener : mListeners) {
-			listener.onAltitudeUpdate(mCurrentAltitude);
+			listener.onAltitudeUpdate(mCurrentAltitudeInMeters);
 		}
 	}
 	
@@ -136,7 +136,7 @@ public class AltimeterService extends Service implements
 		if (isValid) {
 			byte[] stripMeters = Arrays.copyOfRange(data, 0, data.length - 2);
 			float meters = Float.parseFloat(new String(stripMeters));
-			mCurrentAltitude = meters;
+			mCurrentAltitudeInMeters = meters;
 		}
 
 		return isValid;
