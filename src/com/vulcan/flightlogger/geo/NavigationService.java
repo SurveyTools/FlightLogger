@@ -76,6 +76,7 @@ public class NavigationService extends Service implements LocationListener {
 		{
 			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		}
+		Log.d(LOGGER_TAG, "starting navigation service");
 		return START_STICKY;
 	}
 	
@@ -142,6 +143,7 @@ public class NavigationService extends Service implements LocationListener {
 	@SuppressWarnings("unused") // for now...
 	private void initMockGps() {
 		final long sleepTime = MIN_TIME_BETWEEN_UPDATES;
+		doNavigation = true;
 		
 		mCurrTransect = buildMockTransect();
 		final double startPointLat = mCurrTransect.mStartWaypt.getLatitude();

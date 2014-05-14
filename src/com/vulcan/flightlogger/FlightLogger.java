@@ -116,17 +116,22 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	protected void onStart() {
 		super.onStart();
-		// Bind to AltimeterService - we get a callback on the
-		// binding which gives us a reference to the service
+		startServices();
+		bindServices();
+	}
+
+	private void bindServices() {
+		// XXX we'll refactor this after we get a long lived service in place
 		Intent intent = new Intent(this, AltimeterService.class);
 		this.bindService(intent, mAltimeterConnection, 0);
+		Intent intent2 = new Intent(this, NavigationService.class);
+		this.bindService(intent2, mNavigationConnection, 0);
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		startServices();
 
 		setContentView(R.layout.main);
 		// TESTING Log.i("main", "onCreate!");
@@ -135,7 +140,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		TransectILSView tv = new TransectILSView(this);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		boolean demoMode = true; // DEMO_MODE
+		boolean demoMode = false; // DEMO_MODE
 		mAltitudeData = new AltitudeDatum(false, demoMode);
 		mGPSData = new GPSDatum(false, demoMode);
 		mBatteryData = new BatteryDatum(false, demoMode);
