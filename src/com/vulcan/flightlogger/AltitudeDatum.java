@@ -6,9 +6,10 @@ public class AltitudeDatum extends FlightDatum {
 
 	static final String INVALID_ALTITUDE_STRING = "--";
 	static final String IGNORE_ALTITUDE_STRING = "";
+	static final String DEMO_ALTITUDE_STRING = "312"; // DEMO_MODE
 
-	public AltitudeDatum(boolean ignore) {
-		super(ignore);
+	public AltitudeDatum(boolean ignore, boolean demoMode) {
+		super(ignore, demoMode);
 	}
 
 	// TODO - move to a util
@@ -40,9 +41,19 @@ public class AltitudeDatum extends FlightDatum {
 		setRawAltitudeInMeters(0, false, curDataTimestamp());
 	}
 
+	@Override
+	public short getStatusColor() {
+		if (mDemoMode)
+			return FLIGHT_STATUS_GREEN; // DEMO_MODE
+		
+		// normal
+		return super.getStatusColor();
+	}
 	public String getAltitudeDisplayText() {
 		if (mIgnore)
 			return IGNORE_ALTITUDE_STRING;
+		else if (mDemoMode)
+			return DEMO_ALTITUDE_STRING; // DEMO_MODE
 		else if (!mDataIsValid || dataIsExpired())
 			return INVALID_ALTITUDE_STRING;
 		else

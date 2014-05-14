@@ -35,6 +35,12 @@ import android.widget.Button;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 
+// superdevo
+import android.hardware.usb.*;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Iterator;
+
 public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
 
 	// used for identifying Activities that return results
@@ -129,12 +135,12 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		TransectILSView tv = new TransectILSView(this);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		// superdevo
-		mAltitudeData = new AltitudeDatum(false);
-		mGPSData = new GPSDatum(false);
-		mBatteryData = new BatteryDatum(false);
-		mBoxData = new BoxDatum(true);
-
+		boolean demoMode = true; // DEMO_MODE
+		mAltitudeData = new AltitudeDatum(false, demoMode);
+		mGPSData = new GPSDatum(false, demoMode);
+		mBatteryData = new BatteryDatum(false, demoMode);
+		mBoxData = new BoxDatum(false, demoMode);
+		
 		mAltitudeDisplay = (TextView) findViewById(R.id.nav_altitude_value);
 		mGroundSpeedDisplay = (TextView) findViewById(R.id.nav_speed_value);
 
@@ -177,6 +183,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void updateBatteryStatus(Intent batteryStatus) {
 		if (mBatteryData.updateBatteryStatus(batteryStatus))
 			updateBatteryUI();
+		
+		// the box status cues off of the usb fast/slow charing
+		if (mBoxData.updateBoxWithBatteryStatus(batteryStatus))
+			updateBoxUI();
 	}
 
 	private void setupSquishyFontView(int groupID, int ideal, int min) {

@@ -13,12 +13,14 @@ public class FlightDatum {
 	static final long DATA_IS_OLD_THRESHOLD_MILLIS = 4000;
 
 	public boolean mIgnore;
+	public boolean mDemoMode;
 	public String mValueToDisplay; // ready for display
 	public boolean mDataIsValid; // so we don't have to key off the raw value
 	public long mDataTimestamp;
 
-	public FlightDatum(boolean ignore) {
+	public FlightDatum(boolean ignore, boolean demoMode) {
 		mIgnore = ignore;
+		mDemoMode = demoMode;
 	}
 
 	protected long curDataTimestamp() {
@@ -57,6 +59,8 @@ public class FlightDatum {
 
 		if (mIgnore)
 			return FLIGHT_STATUS_IGNORE;
+		else if (mDemoMode)
+			return FLIGHT_STATUS_GREEN; // DEMO_MODE
 		else if (!mDataIsValid)
 			return FLIGHT_STATUS_RED;
 		else if (dataIsExpired())

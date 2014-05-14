@@ -13,8 +13,8 @@ public class BatteryDatum extends FlightDatum {
 	static final String INVALID_BATTERY_STRING = "";
 	static final String IGNORE_BATTERY_STRING = "";
 
-	public BatteryDatum(boolean ignore) {
-		super(ignore);
+	public BatteryDatum(boolean ignore, boolean demoMode) {
+		super(ignore, demoMode);
 	}
 
 	protected String calcDisplayBatteryFromRaw(float rawBatteryLevel, boolean validData) {
@@ -49,28 +49,28 @@ public class BatteryDatum extends FlightDatum {
 	@Override
 	public short getStatusColor() {
 		short color = FLIGHT_STATUS_UNKNOWN;
-		
+
 		// note: no old/expire here
-		
+		// note: DEMO_MODE ignored
 		if (mIgnore)
 			color = FLIGHT_STATUS_IGNORE;
 		else if (!mDataIsValid)
 			color = FLIGHT_STATUS_RED;
 		else {
 			color = FLIGHT_STATUS_GREEN;
-			
+
 			// override for low levels
 			if (mRawBatteryLevel < .15f)
 				color = FLIGHT_STATUS_RED;
 			else if (mRawBatteryLevel < .25f)
 				color = FLIGHT_STATUS_YELLOW;
 
-			// override for plugged-in
-			if (!mChargingOrFull) {
-				// not charging.. drop us down to yellow if need be
-				if (color == FLIGHT_STATUS_GREEN)
-					color = FLIGHT_STATUS_YELLOW;
-			}
+			/*
+			 * alt -- also use this for charging status. for now this is in the
+			 * Box status item. override for plugged-in if (!mChargingOrFull) {
+			 * // not charging.. drop us down to yellow if need be if (color ==
+			 * FLIGHT_STATUS_GREEN) color = FLIGHT_STATUS_YELLOW; }
+			 */
 		}
 
 		return color;

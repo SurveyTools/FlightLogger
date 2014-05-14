@@ -1,17 +1,22 @@
 package com.vulcan.flightlogger;
 
+import android.content.Intent;
+import android.os.BatteryManager;
+
 public class BoxDatum extends FlightDatum {
 
-	protected float mRawBox; // raw float value
+	protected boolean mChargingOrFull;
+	protected boolean mSlowCharging;
+	protected boolean mFastCharging;
 
 	static final String INVALID_BOX_STRING = "";
 	static final String IGNORE_BOX_STRING = "";
 
-	public BoxDatum(boolean ignore) {
-		super(ignore);
+	public BoxDatum(boolean ignore, boolean demoMode) {
+		super(ignore, demoMode);
 	}
 
-	protected String calcDisplayBoxFromRaw(float rawAltitude, boolean validData) {
+	protected String calcDisplayBatteryFromRaw(float rawBatteryLevel, boolean validData) {
 		// convert. do units here too
 		if (mIgnore) {
 			// ignore data
@@ -19,10 +24,10 @@ public class BoxDatum extends FlightDatum {
 		} else if (validData) {
 			// good data -- eval
 			// float to int
-			int intValue = (int) rawAltitude;
+			int intPercentValue = (int) (rawBatteryLevel * 100.0f);
 
 			// int to string
-			return Integer.toString(intValue);
+			return Integer.toString(intPercentValue);
 		} else {
 			// bad data
 			return INVALID_BOX_STRING;
@@ -32,28 +37,65 @@ public class BoxDatum extends FlightDatum {
 	@Override
 	public void reset() {
 		super.reset();
-		setRawBox(0, false, curDataTimestamp());
+
+		setChargingState(false, false, false, curDataTimestamp());
 	}
 
-	public boolean setRawBox(float rawBoxValue, boolean validData, long timestamp) {
+	@Override
+	public short getStatusColor() {
+		short color = FLIGHT_STATUS_UNKNOWN;
+		
+		// note: no old/expire here
+		
+		if (mIgnore)
+			color = FLIGHT_STATUS_IGNORE;
+		else if (mDemoMode)
+			color = FLIGHT_STATUS_IGNORE;
+		else if (mChargingOrFull)
+			color = FLIGHT_STATUS_GREEN;
+		else if (mSlowCharging || mFastCharging)
+			color = FLIGHT_STATUS_GREEN;
+		else
+			color = FLIGHT_STATUS_RED;
+
+		return color;
+	}
+
+	protected boolean setChargingState(boolean slowCharging, boolean fastCharging, boolean validData, long timestamp) {
+
 		// snapshot cur data
-		final String oldBoxDisplayValue = mValueToDisplay;
-		final boolean oldBoxDataValid = mDataIsValid;
+		final boolean oldSlowCharging = mSlowCharging;
+		final boolean oldFastCharging = mFastCharging;
 
 		// update our data
-		mRawBox = rawBoxValue;
+		mSlowCharging = slowCharging;
+		mFastCharging = fastCharging;
 		mDataIsValid = validData;
 		mDataTimestamp = timestamp;
-		mValueToDisplay = calcDisplayBoxFromRaw(rawBoxValue, validData);
+		mValueToDisplay = ""; // ignored
 
 		// see if anything changed
 		boolean somethingChanged = false;
-		somethingChanged |= mValueToDisplay.equals(oldBoxDisplayValue); // value
 
-		if (!mIgnore)
-			somethingChanged |= (mDataIsValid != oldBoxDataValid);
-
+		if (!mIgnore) {
+			somethingChanged |= (mSlowCharging != oldSlowCharging);
+			somethingChanged |= (mFastCharging != oldFastCharging);
+		}
+		
 		// update the ui if anything change
 		return somethingChanged;
+	}
+
+	public boolean updateBoxWithBatteryStatus(Intent batteryStatus) {
+		// extract info
+		int chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+
+		// charging info
+		boolean slowCharging = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
+		boolean fastCharging = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
+		
+		setChargingState(slowCharging, fastCharging, true, curDataTimestamp());
+
+		return true;
 	}
 }

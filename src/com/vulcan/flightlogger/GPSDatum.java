@@ -6,9 +6,10 @@ public class GPSDatum extends FlightDatum {
 
 	static final String INVALID_GPS_STRING = "--";
 	static final String IGNORE_GPS_STRING = "";
+	static final String DEMO_GROUND_SPEED_STRING = "84"; // DEMO_MODE
 
-	public GPSDatum(boolean ignore) {
-		super(ignore);
+	public GPSDatum(boolean ignore, boolean demoMode) {
+		super(ignore, demoMode);
 	}
 
 	protected String calcDisplayGroundSpeedFromRaw(float rawGroundSpeed, boolean validData) {
@@ -38,6 +39,8 @@ public class GPSDatum extends FlightDatum {
 	public String getGroundSpeedDisplayText() {
 		if (mIgnore)
 			return IGNORE_GPS_STRING;
+		else if (mDemoMode)
+			return DEMO_GROUND_SPEED_STRING; // DEMO_MODE
 		else if (!mDataIsValid || dataIsExpired())
 			return INVALID_GPS_STRING;
 		else
