@@ -18,9 +18,9 @@
     <string name="action_show_gps_debug">GPS Debug</string>
     <string name="altitude_placeholder">312</string>
     <string name="nav_status_gps_text">GPS</string>
-    <string name="nav_status_alt_text">ALT</string>
+    <string name="nav_status_alt_text">LZR</string>
     <string name="nav_status_bat_text">BAT</string>
-    <string name="nav_status_box_text">BOX</string>
+    <string name="nav_status_box_text">PWR</string>
     <string name="image_button_no_desc"></string>
     <string name="nav_speed_title">GROUND\nSPEED</string>
     <string name="nav_speed_units">KNOTS</string>
