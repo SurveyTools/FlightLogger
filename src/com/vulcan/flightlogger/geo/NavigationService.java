@@ -18,9 +18,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 /**
- * A work in progress
+ * Provides navigation for transect paths. A work in progress
  * @author jayl
- *
  */
 
 public class NavigationService extends Service implements LocationListener {
@@ -28,12 +27,18 @@ public class NavigationService extends Service implements LocationListener {
 	// need to get a better number in here to save battery life, once testing
 	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
 	
+	// determines whether to generate test data or live GPS fixes
+	private boolean mUseMockData = false;
+	
 	// need to revisit this guy, to see if we need more accuracy. Currently we
 	// sample at 3 seconds
 	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
 	
 	// how many track mock samples to create from a transect path
 	private final int NUM_MOCK_TRACKS = 100;
+	
+	// TODO - put these into a constants file
+	public static final String USE_MOCK_DATA = "useMockData";
 	
 	private final String LOGGER_TAG = NavigationService.class.getSimpleName();
 
@@ -56,6 +61,22 @@ public class NavigationService extends Service implements LocationListener {
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return mBinder;
+	}
+	
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		// generate mock data if the intent calls for it
+		boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
+		setUseMockData(useMockData);
+		if(useMockData)
+		{
+			mCurrTransect = buildMockTransect();
+			initMockGps();
+		}
+		else
+		{
+			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
+		}
+		return START_STICKY;
 	}
 	
     public void registerListener(TransectUpdateListener listener) {
@@ -123,7 +144,8 @@ public class NavigationService extends Service implements LocationListener {
 		final long sleepTime = MIN_TIME_BETWEEN_UPDATES;
 		
 		mCurrTransect = buildMockTransect();
-		
+		final double startPointLat = mCurrTransect.mStartWaypt.getLatitude();
+		final double startPointLon = mCurrTransect.mStartWaypt.getLongitude();
 		final double latDelta = (mCurrTransect.mEndWaypt.getLatitude() - mCurrTransect.mStartWaypt.getLatitude()) / NUM_MOCK_TRACKS;
 		final double lonDelta = (mCurrTransect.mEndWaypt.getLongitude() - mCurrTransect.mStartWaypt.getLongitude()) / NUM_MOCK_TRACKS;
 		final Random rand = new Random();
@@ -133,24 +155,27 @@ public class NavigationService extends Service implements LocationListener {
 			int progressIndex = 0;		
 			
 		    public void run() {
-		        progressIndex++;
-		        Location loc = calcNewMockLocation(progressIndex);
-		        try {
-		        	onLocationChanged(loc);
-					Thread.sleep(sleepTime);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		    	while(mUseMockData)
+		    	{
+			        progressIndex++;
+			        Location loc = calcNewMockLocation(progressIndex);
+			        try {
+			        	onLocationChanged(loc);
+						Thread.sleep(sleepTime);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		    	}
 		    }
 
 			private Location calcNewMockLocation(int index) {
 				float latJitter = rand.nextFloat() * (float)latDelta;
 				float lonJitter = rand.nextFloat() * (float)lonDelta;
 				Location newLoc = new Location("waypoint" + progressIndex);
-		        newLoc.setSpeed(41); //meters, 80 knots or so...
-		        newLoc.setLatitude(latDelta * progressIndex + latJitter);
-		        newLoc.setLongitude(lonDelta * progressIndex + lonJitter);
+		        newLoc.setSpeed(38 + rand.nextInt(10)); //41 meters, 80ish knots or so...
+		        newLoc.setLatitude(startPointLat + latDelta * progressIndex + latJitter);
+		        newLoc.setLongitude(startPointLon + lonDelta * progressIndex + lonJitter);
 				return newLoc;
 			}
 		}.start();
@@ -203,6 +228,10 @@ public class NavigationService extends Service implements LocationListener {
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 		// TODO GPS status has changed
 
+	}
+
+	public void setUseMockData(boolean mUseMockData) {
+		this.mUseMockData = mUseMockData;
 	}
 
 }

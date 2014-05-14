@@ -167,9 +167,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
 		Intent altIntent = new Intent(this, AltimeterService.class);
-		// altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+		altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
 		startService(altIntent);
 		Intent navIntent = new Intent(this, NavigationService.class);
+		navIntent.putExtra(NavigationService.USE_MOCK_DATA, true);
 		startService(navIntent);
 	}
 
