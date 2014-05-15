@@ -101,7 +101,7 @@ public class NavigationService extends Service implements LocationListener {
 	private double calcCrossTrackError(Location curr, Location start, Location end)
 	{
 		double dist = Math.asin(Math.sin(start.distanceTo(curr)/GPSUtils.EARTH_RADIUS_METERS) * 
-		         Math.sin(start.bearingTo(curr) - curr.bearingTo(end))) * GPSUtils.EARTH_RADIUS_METERS;
+		         Math.sin(Math.toRadians(start.bearingTo(curr) - curr.bearingTo(end)))) * GPSUtils.EARTH_RADIUS_METERS;
 		
 		return dist;
 	}
@@ -191,8 +191,8 @@ public class NavigationService extends Service implements LocationListener {
 		start.setLongitude(-122.372639);
 		
 		Location end = new Location("home");
-		start.setLatitude(47.598383);
-		start.setLongitude(-122.327537);
+		end.setLatitude(47.598383);
+		end.setLongitude(-122.327537);
 		
 		Transect transect = new Transect();
 		transect.mName = "My Ride Home";
