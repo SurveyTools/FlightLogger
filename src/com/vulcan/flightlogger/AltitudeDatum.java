@@ -12,11 +12,6 @@ public class AltitudeDatum extends FlightDatum {
 		super(ignore, demoMode);
 	}
 
-	// TODO - move to a util
-	protected float metersToFeet(float meters) {
-		return meters * 3.2808399f;
-	}
-	
 	protected String calcDisplayAltitudeFromRaw(float rawAltitudeInMeters, boolean validData) {
 		// convert. do units here too
 		if (mIgnore) {
@@ -59,6 +54,10 @@ public class AltitudeDatum extends FlightDatum {
 		else
 			return mValueToDisplay;
 	}
+	
+	public float getAltitudeInFeet() {
+		return metersToFeet(mRawAltitudeInMeters);
+	}
 
 	public boolean setRawAltitudeInMeters(float rawAltitudeInMeters, boolean validData, long timestamp) {
 
@@ -80,7 +79,7 @@ public class AltitudeDatum extends FlightDatum {
 		// change from a number to an ignore value)
 		boolean somethingChanged = mValueToDisplay.equals(oldAltitudeDisplayValue); // value
 
-		// superdevo
+		// MEC_TODO
 		if (!mIgnore) {
 			somethingChanged |= dataIsOld() != oldDataOld;
 			somethingChanged |= dataIsExpired() != oldDataExpired;

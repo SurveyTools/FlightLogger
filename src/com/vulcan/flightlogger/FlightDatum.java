@@ -76,4 +76,9 @@ public class FlightDatum {
 		mDataIsValid = false;
 		mDataTimestamp = 0;
 	}
+
+	// TODO - move to a util
+	protected float metersToFeet(float meters) {
+		return meters * 3.2808399f;
+	}
 }

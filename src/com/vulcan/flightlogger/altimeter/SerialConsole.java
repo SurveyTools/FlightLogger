@@ -28,9 +28,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// superdevo
-// import android.util.Log;
-
 public class SerialConsole extends Activity implements 
 		OnClickListener, AdapterConnectionListener, USB2SerialAdapter.DataListener, OnItemSelectedListener{
 	private Button mConnect;

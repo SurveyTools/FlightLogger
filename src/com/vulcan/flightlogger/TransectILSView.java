@@ -1,7 +1,7 @@
 package com.vulcan.flightlogger;
 
 import android.view.View;
-
+import com.vulcan.flightlogger.AltitudeDatum;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,6 +11,24 @@ import android.graphics.RectF;
 // import android.util.Log;
 
 public class TransectILSView extends View {
+	
+	// altitude
+	private AltitudeDatum	mCurAltitude;
+	private float	mAltitudePixelOffset; // up or down position (center)
+	private float	mAltitudeTargetFeet; // e.g. 300 feet
+	private float	mAltitudeDeviationFeet; // e.g. +/- 20 feet
+	private float	mAltitudeDeltaNormalized;
+	private boolean	mAltitudeDeviationClippped;
+	
+	// path
+	private GPSDatum	mCurTansect;
+	private float	mTransectPixelOffset; // up or down position (center)
+	private float	mTransectTargetFeet; // e.g. 300 feet
+	private float	mTransectDeviationFeet; // e.g. +/- 20 feet
+	private float	mTransectDeltaNormalized;
+	private boolean	mTransectDeviationClippped;
+	
+	// drawing
 	private Paint mPaint;
 	private RectF mOvalH;
 	private RectF mOvalV;
@@ -28,6 +46,15 @@ public class TransectILSView extends View {
 	}
 
 	private void setupVars() {
+		
+		// TODO - externalize
+		mAltitudeTargetFeet = 300;
+		mAltitudeDeviationFeet = 20;
+		
+		// TODO - externalize
+		mTransectTargetFeet = 0;
+		mTransectDeviationFeet = 100;
+		
 		this.mPaint = new Paint();
 		this.mOvalH = new RectF(0, 0, 0, 0);
 		this.mOvalV = new RectF(0, 0, 0, 0);
@@ -148,15 +175,103 @@ public class TransectILSView extends View {
 		mPaint.setStrokeWidth(markerStrokeWidth);
 
 		// vertical guide marker
-		float x = centerX * 0.7f;
+		float pixelHDelta = (w/2.0f) * mTransectDeltaNormalized;
+		float x = centerX + pixelHDelta;
 		float verticalMarkerY1 = centerY - (markerLen / 2);
 		float verticalMarkerY2 = centerY + (markerLen / 2);
 		canvas.drawLine(x, verticalMarkerY1, x, verticalMarkerY2, mPaint);
 
 		// horizontal guide marker
-		float y = centerX * 0.6f;
+		float pixelVDelta = (h/2.0f) * mAltitudeDeltaNormalized;
+		float yPos = centerY + pixelVDelta;
 		float horizMarkerX1 = centerX - (markerLen / 2);
 		float horizMarkerX2 = centerX + (markerLen / 2);
-		canvas.drawLine(horizMarkerX1, y, horizMarkerX2, y, mPaint);
+		canvas.drawLine(horizMarkerX1, yPos, horizMarkerX2, yPos, mPaint);
+	}
+	
+	protected boolean updateAltitude(AltitudeDatum altitudeData) {
+		
+		float oldAtitudeDeltaNormalized = mAltitudeDeltaNormalized;
+		// TODO - old visible
+		
+		if (altitudeData != null) {
+			
+			if (altitudeData.mDataIsValid) {
+				
+				// physical delta
+				float altitudeInFeet = altitudeData.getAltitudeInFeet();
+				float physicalDeltaFeet = altitudeInFeet - mAltitudeTargetFeet;
+				
+				// normalized delta
+				mAltitudeDeltaNormalized = physicalDeltaFeet / mAltitudeDeviationFeet;
+				
+				// DEMO_MODE
+				if (altitudeData.mDemoMode)
+					mAltitudeDeltaNormalized = -0.3f;
+				
+				// validate
+				if (mAltitudeDeltaNormalized > 1.0f) {
+					mAltitudeDeltaNormalized = 1.0f;
+					mAltitudeDeviationClippped = true;
+				}
+				else if (mAltitudeDeltaNormalized < -1.0f) {
+					mAltitudeDeltaNormalized = -1.0f;
+					mAltitudeDeviationClippped = true;
+				}
+			}
+		}
+		
+		return mAltitudeDeltaNormalized != oldAtitudeDeltaNormalized;
+	}
+	
+	protected boolean updateGps(GPSDatum gpsData) {
+	
+		float oldTransectDeltaNormalized = mTransectDeltaNormalized;
+		// TODO - old visible
+		
+		if (gpsData != null) {
+			
+			if (gpsData.mDataIsValid) {
+				
+				// physical delta
+				float pathDeviationInFeet = gpsData.getTransectDeltaInFeet();
+				float physicalDeltaFeet = pathDeviationInFeet - mTransectTargetFeet;
+				
+				// normalized delta
+				mTransectDeltaNormalized = physicalDeltaFeet / mTransectDeviationFeet;
+				
+				// DEMO_MODE
+				if (gpsData.mDemoMode)
+					mTransectDeltaNormalized = -0.4f;
+				
+				// validate
+				if (mTransectDeltaNormalized > 1.0f) {
+					mTransectDeltaNormalized = 1.0f;
+					mTransectDeviationClippped = true;
+				}
+				else if (mTransectDeltaNormalized < -1.0f) {
+					mTransectDeltaNormalized = -1.0f;
+					mTransectDeviationClippped = true;
+				}
+			}
+		}
+		
+		return mTransectDeltaNormalized != oldTransectDeltaNormalized;
+	}
+	
+	public boolean update(AltitudeDatum atitudeData, GPSDatum gpsData) {
+		boolean somethingChanged = false;
+		
+		somethingChanged |= updateAltitude(atitudeData);
+		somethingChanged |= updateGps(gpsData);
+		
+		if (somethingChanged)
+			invalidate();
+		
+		return somethingChanged;
+	}
+	
+	public void reset() {
+		// todo
 	}
 }

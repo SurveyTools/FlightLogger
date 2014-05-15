@@ -2,8 +2,10 @@ package com.vulcan.flightlogger;
 
 public class GPSDatum extends FlightDatum {
 
+	// TODO change to TransectStatus
 	protected float mRawGroundSpeed; // raw float value
-
+	protected double mRawCrossTrackErrorMeters;
+	
 	static final String INVALID_GPS_STRING = "--";
 	static final String IGNORE_GPS_STRING = "";
 	static final String DEMO_GROUND_SPEED_STRING = "84"; // DEMO_MODE
@@ -33,7 +35,7 @@ public class GPSDatum extends FlightDatum {
 	@Override
 	public void reset() {
 		super.reset();
-		setRawGroundSpeed(0, false, curDataTimestamp());
+		setRawGroundSpeed(0, 0, false, curDataTimestamp());
 	}
 
 	public String getGroundSpeedDisplayText() {
@@ -46,14 +48,20 @@ public class GPSDatum extends FlightDatum {
 		else
 			return mValueToDisplay;
 	}
+	
+	public float getTransectDeltaInFeet() {
+		// TODO fix units
+		return metersToFeet((float)mRawCrossTrackErrorMeters);
+	}
 
-	public boolean setRawGroundSpeed(float rawGroundSpeedValue, boolean validData, long timestamp) {
+	public boolean setRawGroundSpeed(float rawGroundSpeedValue, double crossTrackErrorMeters, boolean validData, long timestamp) {
 		// snapshot cur data
 		final String oldGroundSpeedDisplayValue = mValueToDisplay;
 		final boolean oldGroundSpeedDataValid = mDataIsValid;
 
 		// update our data
 		mRawGroundSpeed = rawGroundSpeedValue;
+		mRawCrossTrackErrorMeters = crossTrackErrorMeters;
 		mDataIsValid = validData;
 		mDataTimestamp = timestamp;
 		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedValue, validData);

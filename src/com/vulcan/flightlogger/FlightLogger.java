@@ -11,14 +11,10 @@ import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.FlightDatum;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -33,13 +29,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Button;
 import android.graphics.drawable.Drawable;
-import android.os.BatteryManager;
-
-// superdevo
-import android.hardware.usb.*;
-import java.util.HashMap;
-import java.util.Collection;
-import java.util.Iterator;
 
 public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
 
@@ -50,6 +39,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	public static final int UPDATE_IMAGE = 666;
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
+	private TransectILSView mNavigationDisplay;
 	private TextView mAltitudeDisplay;
 	private TextView mGroundSpeedDisplay;
 
@@ -149,6 +139,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		
 		mAltitudeDisplay = (TextView) findViewById(R.id.nav_altitude_value);
 		mGroundSpeedDisplay = (TextView) findViewById(R.id.nav_speed_value);
+		mNavigationDisplay = tv;
 
 		mStatusButtonGPS = (Button) findViewById(R.id.nav_header_status_gps);
 		mStatusButtonALT = (Button) findViewById(R.id.nav_header_status_alt);
@@ -413,6 +404,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// transect
 	}
 
+	protected void updateNavigationUI() {
+		mNavigationDisplay.update(mAltitudeData, mGPSData);
+	}
+
 	protected void updateAltitudeUI() {
 		updateStatusButton(mStatusButtonALT, mAltitudeData);
 		mAltitudeDisplay.setText(mAltitudeData.getAltitudeDisplayText());
@@ -440,6 +435,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	protected void updateUI() {
 		updateRouteUI();
+		updateNavigationUI();
 		updateAltitudeUI();
 		updateGPSUI();
 		updateBatteryUI();
@@ -459,8 +455,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			runOnUiThread(new Runnable() {
 				public void run() {
 					// update the altitude data (and ui if something changed)
-					if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, timestamp))
+					if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, timestamp)) {
 						updateAltitudeUI();
+						updateNavigationUI();
+					}
 				}
 			});
 		}
@@ -500,12 +498,15 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// ground speed update
 		if (status != null) {
 			final float groundSpeed = status.mGroundSpeed;
+			final double crossTrackErrorMeters = status.mCrossTrackError;
 			final long timestamp = curDataTimestamp();
 			runOnUiThread(new Runnable() {
 				public void run() {
 					// update the altitude data (and ui if something changed)
-					if (mGPSData.setRawGroundSpeed(groundSpeed, true, timestamp))
+					if (mGPSData.setRawGroundSpeed(groundSpeed, crossTrackErrorMeters, true, timestamp)) {
 						updateGPSUI();
+						updateNavigationUI();
+					}
 				}
 			});
 		}
