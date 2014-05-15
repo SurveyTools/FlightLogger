@@ -210,7 +210,7 @@
                     android:gravity="top"
                     android:orientation="horizontal" >
 
-                    <!-- TODO problem - texts wraps and disappears! -->
+                    <!-- MEC_TODO problem - texts wraps and disappears! -->
 
                     <com.vulcan.flightlogger.util.SquishyTextView
                         android:id="@+id/nav_altitude_value"

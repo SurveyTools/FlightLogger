@@ -16,6 +16,8 @@
     <color name="nav_ips_notches">#ffaaaaaa</color>
     <color name="nav_ips_axis">#ff333333</color>
     <color name="nav_ips_guides">#ffffffff</color>
+    <color name="nav_ips_guides_warning">#ffffff00</color>
+    <color name="nav_ips_guides_error">#ffff0000</color>
     
     <color name="nav_altitude_value">#ffffffff</color>
     <color name="nav_altitude_label">#ffcccccc</color>
