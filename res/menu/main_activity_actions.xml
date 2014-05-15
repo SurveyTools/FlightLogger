@@ -6,7 +6,4 @@
           android:title="@string/action_show_laser_alt" />
     <item android:id="@+id/action_show_serial_console"
           android:title="@string/action_show_serial_console" />
-    <item android:id="@+id/action_show_route_list"
-          android:title="Route List" />
-
 </menu>

@@ -45,6 +45,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
+	static final int SELECT_GPX_TRANSECT = 10002;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
 	public static final int UPDATE_IMAGE = 666;
 	private AltimeterService mAltimeterService;
@@ -283,6 +284,14 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		popup.show();
 		return true;
 	}
+	
+	public boolean browseGpxFiles(View v)
+	{
+		// load gpx
+		Intent intent = new Intent(this, FileBrowser.class);
+		this.startActivityForResult(intent, LOAD_GPX_FILE);
+		return true;
+	}
 
 	public boolean onMenuItemClick(MenuItem item) {
 		Intent intent = null;
@@ -295,11 +304,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		case R.id.action_show_serial_console:
 			intent = new Intent(this, SerialConsole.class);
 			startActivity(intent);
-			break;
-		case R.id.action_show_route_list:
-			// load gpx
-			intent = new Intent(this, FileBrowser.class);
-			this.startActivityForResult(intent, LOAD_GPX_FILE);
+			break;		
 		}
 		return true;
 	}
