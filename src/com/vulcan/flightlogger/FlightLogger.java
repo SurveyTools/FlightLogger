@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Button;
@@ -123,9 +124,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		setContentView(R.layout.main);
-		// TESTING Log.i("main", "onCreate!");
+		
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
 		TransectILSView tv = new TransectILSView(this);
