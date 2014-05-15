@@ -22,8 +22,9 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
 public class AltimeterService extends Service implements
 		AdapterConnectionListener, USB2SerialAdapter.DataListener {
 	// used for mock data, assume a range of 300 ft +/- 20
-	public final float DELTA_ALT = 40/GPSUtils.METERS_PER_FOOT;
-	public final float MIN_ALT = 280/GPSUtils.METERS_PER_FOOT;
+	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.METERS_PER_FOOT;
+	public final float MOCK_DELTA_ALT = 2/GPSUtils.METERS_PER_FOOT;
+	public final float MOCK_TARGET_ALT = 300/GPSUtils.METERS_PER_FOOT;
 
 	// how many samples for an alt avg.
 	public static final String USE_MOCK_DATA = "useMockData";
@@ -61,6 +62,7 @@ public class AltimeterService extends Service implements
 		boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
 		if (useMockData) {
 			mGenMockData = true;
+			mCurrentAltitudeInMeters = MOCK_TARGET_ALT;
 			generateMockData();
 		} else {
 			mAltSample = new int[ALT_SAMPLE_COUNT];
@@ -80,7 +82,18 @@ public class AltimeterService extends Service implements
 		new Thread() {
 			public void run() {
 				while (mGenMockData == true) {
-					mCurrentAltitudeInMeters = (rand.nextFloat() * DELTA_ALT)+ MIN_ALT;
+					
+					// flow up and down
+					mCurrentAltitudeInMeters +=  ((rand.nextFloat() * MOCK_DELTA_ALT)) - (MOCK_DELTA_ALT / 2.0f);
+					
+					// pin it in the range
+					if (mCurrentAltitudeInMeters > (MOCK_TARGET_ALT + MOCK_MAX_TOTAL_DELTA))
+						mCurrentAltitudeInMeters = MOCK_TARGET_ALT + MOCK_MAX_TOTAL_DELTA;
+					else if (mCurrentAltitudeInMeters < (MOCK_TARGET_ALT - MOCK_MAX_TOTAL_DELTA))
+						mCurrentAltitudeInMeters = MOCK_TARGET_ALT - MOCK_MAX_TOTAL_DELTA;
+								
+					// TESTING mCurrentAltitudeInMeters = MOCK_TARGET_ALT + MOCK_MAX_TOTAL_DELTA / 2.0f;
+					
 					sendAltitudeUpdate();
 					try {
 						Thread.sleep(300);

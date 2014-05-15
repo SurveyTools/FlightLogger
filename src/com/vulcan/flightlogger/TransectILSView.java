@@ -1,37 +1,46 @@
 package com.vulcan.flightlogger;
 
 import android.view.View;
+
 import com.vulcan.flightlogger.AltitudeDatum;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.graphics.RectF;
+import android.graphics.Path;
+import android.graphics.Path.Direction;
 // import android.graphics.Color;
 // import android.util.Log;
 
 public class TransectILSView extends View {
-	
+
 	// altitude
-	private AltitudeDatum	mCurAltitude;
-	private float	mAltitudePixelOffset; // up or down position (center)
-	private float	mAltitudeTargetFeet; // e.g. 300 feet
-	private float	mAltitudeDeviationFeet; // e.g. +/- 20 feet
-	private float	mAltitudeDeltaNormalized;
-	private boolean	mAltitudeDeviationClippped;
-	
+	private AltitudeDatum mCurAltitude;
+	private float mAltitudeTargetFeet; // e.g. 300 feet
+	private float mAltitudeDialRadiusFeet; // e.g. +/- 20 feet
+	private float mAltitudeDeltaNormalized;
+
 	// path
-	private GPSDatum	mCurTansect;
-	private float	mTransectPixelOffset; // up or down position (center)
-	private float	mTransectTargetFeet; // e.g. 300 feet
-	private float	mTransectDeviationFeet; // e.g. +/- 20 feet
-	private float	mTransectDeltaNormalized;
-	private boolean	mTransectDeviationClippped;
+	private GPSDatum mCurTansect;
+	private float mTransectTargetFeet; // e.g. 300 feet
+	private float mTransectDialRadiusFeet; // e.g. +/- 20 feet
+	private float mTransectDeltaNormalized;
+
+	// colors
+	private int mMarkerColorNormal;
+	private int mMarkerColorWarning;
+	private int mMarkerColorError;
 	
 	// drawing
 	private Paint mPaint;
 	private RectF mOvalH;
 	private RectF mOvalV;
+	private Path mCircleClip;
+	private float mCircleClipRadius;
+	private float mCircleClipX;
+	private float mCircleClipY;
 
 	// for xml construction
 	public TransectILSView(Context context, AttributeSet attrs) {
@@ -46,18 +55,27 @@ public class TransectILSView extends View {
 	}
 
 	private void setupVars() {
-		
+
 		// TODO - externalize
 		mAltitudeTargetFeet = 300;
-		mAltitudeDeviationFeet = 20;
-		
+		mAltitudeDialRadiusFeet = 40; // superdevo
+
 		// TODO - externalize
 		mTransectTargetFeet = 0;
-		mTransectDeviationFeet = 100;
-		
+		mTransectDialRadiusFeet = 100;
+
+		mCircleClipRadius = 0;
+		mCircleClipX = 0;
+		mCircleClipY = 0;
+		this.mCircleClip = new Path();
+
 		this.mPaint = new Paint();
 		this.mOvalH = new RectF(0, 0, 0, 0);
 		this.mOvalV = new RectF(0, 0, 0, 0);
+
+		mMarkerColorNormal = getResources().getColor(R.color.nav_ips_guides);
+		mMarkerColorWarning = getResources().getColor(R.color.nav_ips_guides_warning);
+		mMarkerColorError = getResources().getColor(R.color.nav_ips_guides_warning);
 	}
 
 	@Override
@@ -84,6 +102,10 @@ public class TransectILSView extends View {
 		float strokePad = outerStrokeWidth / 2;
 		float adjW = w - strokePad;
 		float adjH = h - strokePad;
+		float pixelRadius = w / 2.0f;
+		float contentPixelRadius = pixelRadius - outerStrokeWidth;
+		float errorPixelRadius = contentPixelRadius - markerStrokeWidth; // 15 is perfect, 18 gives you a little gap which is good
+		float warningPixelRadius = errorPixelRadius * .85f; // 15 is perfect, 18 gives you a little gap which is good
 
 		// TESTING Log.i("navView", "draw w = " + w + ", getWidth = " + ww +
 		// ", mw = " + width + ", pl = " + pl);
@@ -174,103 +196,154 @@ public class TransectILSView extends View {
 		mPaint.setColor(getResources().getColor(R.color.nav_ips_guides));
 		mPaint.setStrokeWidth(markerStrokeWidth);
 
-		// vertical guide marker
-		float pixelHDelta = (w/2.0f) * mTransectDeltaNormalized;
+		// set up the circular clipping
+		// note that this is not supported in hardware acceleraiton
+
+		// set up the clip (if need be)
+		float clipRadius = contentPixelRadius - 4;
+		if ((centerX != mCircleClipX) || (centerY != mCircleClipY) || (mCircleClipRadius != clipRadius)) {
+			// update the clip
+			mCircleClipRadius = clipRadius;
+			mCircleClipX = centerX;
+			mCircleClipY = centerY;
+			mCircleClip.reset();
+			mCircleClip.addCircle(mCircleClipX, mCircleClipY, mCircleClipRadius, Direction.CW);
+		}
+
+		// clip
+		int canvasStateRef = canvas.save();
+		canvas.clipPath(mCircleClip);
+
+		// vertical guide marker |
+		float pixelHDelta = pixelRadius * mTransectDeltaNormalized;
+
+		int markerColor = mMarkerColorNormal;
+		
+		// validate
+		if (pixelHDelta < -errorPixelRadius) {
+			// pegged
+			pixelHDelta = -errorPixelRadius;
+			markerColor = mMarkerColorError;
+		} else if (pixelHDelta < -warningPixelRadius) {
+			// warning
+			markerColor = mMarkerColorWarning;
+		} else if (pixelHDelta > errorPixelRadius) {
+			// pegged
+			pixelHDelta = errorPixelRadius;
+			markerColor = mMarkerColorError;
+		} else if (pixelHDelta > warningPixelRadius) {
+			// warning
+			markerColor = mMarkerColorWarning;
+		}
+
 		float x = centerX + pixelHDelta;
 		float verticalMarkerY1 = centerY - (markerLen / 2);
 		float verticalMarkerY2 = centerY + (markerLen / 2);
+
+		mPaint.setColor(markerColor);
 		canvas.drawLine(x, verticalMarkerY1, x, verticalMarkerY2, mPaint);
 
-		// horizontal guide marker
-		float pixelVDelta = (h/2.0f) * mAltitudeDeltaNormalized;
+		// horizontal guide marker --
+		float pixelVDelta = pixelRadius * mAltitudeDeltaNormalized;
+		
+		markerColor = mMarkerColorNormal;
+		
+		// validate
+		if (pixelVDelta < -errorPixelRadius) {
+			// pegged
+			pixelVDelta = -errorPixelRadius;
+			markerColor = mMarkerColorError;
+		} else if (pixelVDelta < -warningPixelRadius) {
+			// warning
+			markerColor = mMarkerColorWarning;
+		} else if (pixelVDelta > errorPixelRadius) {
+			// pegged
+			pixelVDelta = errorPixelRadius;
+			markerColor = mMarkerColorError;
+		} else if (pixelVDelta > warningPixelRadius) {
+			// warning
+			markerColor = mMarkerColorWarning;
+		}
+
 		float yPos = centerY + pixelVDelta;
 		float horizMarkerX1 = centerX - (markerLen / 2);
 		float horizMarkerX2 = centerX + (markerLen / 2);
+
+		mPaint.setColor(markerColor);
 		canvas.drawLine(horizMarkerX1, yPos, horizMarkerX2, yPos, mPaint);
+
+		/*
+		 * TESTING the clip: RectF bigRect = new RectF(-10, -10, w + 20, h +
+		 * 20); mPaint.setStyle(Paint.Style.FILL); canvas.drawRect(bigRect,
+		 * mPaint);
+		 */
+
+		// restore
+		canvas.restoreToCount(canvasStateRef);
 	}
-	
+
 	protected boolean updateAltitude(AltitudeDatum altitudeData) {
-		
+
 		float oldAtitudeDeltaNormalized = mAltitudeDeltaNormalized;
 		// TODO - old visible
-		
+
 		if (altitudeData != null) {
-			
+
 			if (altitudeData.mDataIsValid) {
-				
+
 				// physical delta
 				float altitudeInFeet = altitudeData.getAltitudeInFeet();
 				float physicalDeltaFeet = altitudeInFeet - mAltitudeTargetFeet;
-				
+
 				// normalized delta
-				mAltitudeDeltaNormalized = physicalDeltaFeet / mAltitudeDeviationFeet;
-				
+				mAltitudeDeltaNormalized = physicalDeltaFeet / mAltitudeDialRadiusFeet;
+
 				// DEMO_MODE
 				if (altitudeData.mDemoMode)
 					mAltitudeDeltaNormalized = -0.3f;
-				
-				// validate
-				if (mAltitudeDeltaNormalized > 1.0f) {
-					mAltitudeDeltaNormalized = 1.0f;
-					mAltitudeDeviationClippped = true;
-				}
-				else if (mAltitudeDeltaNormalized < -1.0f) {
-					mAltitudeDeltaNormalized = -1.0f;
-					mAltitudeDeviationClippped = true;
-				}
 			}
 		}
-		
+
 		return mAltitudeDeltaNormalized != oldAtitudeDeltaNormalized;
 	}
-	
+
 	protected boolean updateGps(GPSDatum gpsData) {
-	
+
 		float oldTransectDeltaNormalized = mTransectDeltaNormalized;
 		// TODO - old visible
-		
+
 		if (gpsData != null) {
-			
+
 			if (gpsData.mDataIsValid) {
-				
+
 				// physical delta
 				float pathDeviationInFeet = gpsData.getTransectDeltaInFeet();
 				float physicalDeltaFeet = pathDeviationInFeet - mTransectTargetFeet;
-				
+
 				// normalized delta
-				mTransectDeltaNormalized = physicalDeltaFeet / mTransectDeviationFeet;
-				
+				mTransectDeltaNormalized = physicalDeltaFeet / mTransectDialRadiusFeet;
+
 				// DEMO_MODE
 				if (gpsData.mDemoMode)
 					mTransectDeltaNormalized = -0.4f;
-				
-				// validate
-				if (mTransectDeltaNormalized > 1.0f) {
-					mTransectDeltaNormalized = 1.0f;
-					mTransectDeviationClippped = true;
-				}
-				else if (mTransectDeltaNormalized < -1.0f) {
-					mTransectDeltaNormalized = -1.0f;
-					mTransectDeviationClippped = true;
-				}
 			}
 		}
-		
+
 		return mTransectDeltaNormalized != oldTransectDeltaNormalized;
 	}
-	
+
 	public boolean update(AltitudeDatum atitudeData, GPSDatum gpsData) {
 		boolean somethingChanged = false;
-		
+
 		somethingChanged |= updateAltitude(atitudeData);
 		somethingChanged |= updateGps(gpsData);
-		
+
 		if (somethingChanged)
 			invalidate();
-		
+
 		return somethingChanged;
 	}
-	
+
 	public void reset() {
 		// todo
 	}

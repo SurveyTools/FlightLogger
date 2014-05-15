@@ -1,5 +1,7 @@
 package com.vulcan.flightlogger;
 
+import android.util.Log;
+
 public class GPSDatum extends FlightDatum {
 
 	// TODO change to TransectStatus
@@ -66,6 +68,8 @@ public class GPSDatum extends FlightDatum {
 		mDataTimestamp = timestamp;
 		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedValue, validData);
 
+		// TESTING Log.d("crosstrack", mRawCrossTrackErrorMeters + "meters");
+		
 		// see if anything changed
 		boolean somethingChanged = false;
 		somethingChanged |= mValueToDisplay.equals(oldGroundSpeedDisplayValue); // value
