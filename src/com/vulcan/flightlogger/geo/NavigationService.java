@@ -74,6 +74,8 @@ public class NavigationService extends Service implements LocationListener {
 		}
 		else
 		{
+			// XXX JAYL Remove me. This is a testing hack
+			mCurrTransect = buildMockTransect();
 			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		}
 		Log.d(LOGGER_TAG, "starting navigation service");
@@ -95,13 +97,16 @@ public class NavigationService extends Service implements LocationListener {
 		float currBearing = currLoc.bearingTo(mCurrTransect.mEndWaypt);
 		float speed = currLoc.getSpeed();
 		TransectStatus ts = new TransectStatus(mCurrTransect, distance, crossTrackErr,  currBearing, speed);
+		ts.mCurrGpsLat = currLoc.getLatitude();
+		ts.mCurrGpsLon = currLoc.getLongitude();
+		ts.mCurrGpsAlt = currLoc.getAltitude();
 		return ts;
 	}
 	
 	private double calcCrossTrackError(Location curr, Location start, Location end)
 	{
 		double dist = Math.asin(Math.sin(start.distanceTo(curr)/GPSUtils.EARTH_RADIUS_METERS) * 
-		         Math.sin(Math.toRadians(start.bearingTo(curr) - curr.bearingTo(end)))) * GPSUtils.EARTH_RADIUS_METERS;
+		         Math.sin(Math.toRadians(start.bearingTo(curr) - start.bearingTo(end)))) * GPSUtils.EARTH_RADIUS_METERS;
 		
 		return dist;
 	}
@@ -121,10 +126,12 @@ public class NavigationService extends Service implements LocationListener {
 	}
 	
 	public void stopNavigation() {
+		mCurrTransect = null;
 		doNavigation = false;
 	}
 	
 	private void initGps(long millisBetweenUpdate, float minDistanceMoved) {
+		doNavigation = true;
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		// getting GPS status
 		boolean isGPSEnabled = mLocationManager
@@ -134,9 +141,9 @@ public class NavigationService extends Service implements LocationListener {
 			mLocationManager.requestLocationUpdates(
 					LocationManager.GPS_PROVIDER, millisBetweenUpdate,
 					minDistanceMoved, this);
-			Log.d(LOGGER_TAG, "GPS Enabled");
+			Log.d(LOGGER_TAG, "GPS service is available");
 		} else {
-			Log.d(LOGGER_TAG, "GPS not enabled");
+			Log.d(LOGGER_TAG, "GPS service is not available");
 		}
 	}
 	
@@ -216,19 +223,19 @@ public class NavigationService extends Service implements LocationListener {
 	
 	@Override
 	public void onProviderDisabled(String arg0) {
-		// TODO GPS is disabled
+		Log.d(LOGGER_TAG, "GPS Disbled");
 
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		// TODO GPS is enabled
+		Log.d(LOGGER_TAG, "GPS Enabled");
 
 	}
 
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		// TODO GPS status has changed
+		Log.d(LOGGER_TAG, "GPS stus change: " + arg0);
 
 	}
 

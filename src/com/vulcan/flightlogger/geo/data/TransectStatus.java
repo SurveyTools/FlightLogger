@@ -22,5 +22,8 @@ public class TransectStatus {
 	public double mDistanceToEnd;
 	public float mBearing;
 	public float mGroundSpeed;
+	public double mCurrGpsLat;
+	public double mCurrGpsLon;
+	public double mCurrGpsAlt;
 
 }

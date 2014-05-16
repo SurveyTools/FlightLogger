@@ -133,7 +133,7 @@
                 android:id="@+id/gpsLabel5"
                 android:layout_width="192dp"
                 android:layout_gravity="left|top"
-                android:text="@string/time_label"
+                android:text="@string/crosstrack_label"
                 
                 android:textSize="32sp"
                 android:ems="10" >
@@ -151,7 +151,7 @@
                 android:id="@+id/gpsLabel6"
                 android:layout_width="192dp"
                 android:layout_gravity="left|top"
-                android:text="@string/accuracy_label"
+                android:text="@string/distance_label"
                 android:textSize="32sp"
                 android:ems="10" >
             </TextView>
@@ -163,13 +163,7 @@
                 android:textSize="32sp"
                 android:ems="10" >
             </TextView>
-            
-   			<Button
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="Load GPX File"
-			    android:onClick="loadGPX" 
-			/>         
+          
 
         </GridLayout>
         
