@@ -56,7 +56,7 @@
            android:layout_height="421dp"
            android:columnCount="2"
            android:orientation="horizontal"
-           android:rowCount="4" >
+           android:rowCount="8" >
 
             <TextView
                 android:id="@+id/gpsLabel1"
@@ -158,6 +158,40 @@
             
             <TextView
                 android:id="@+id/gpsVal6"
+                android:layout_width="392dp"
+                android:layout_gravity="left|top"
+                android:textSize="32sp"
+                android:ems="10" >
+            </TextView>
+            
+            <TextView
+                android:id="@+id/gpsLabel7"
+                android:layout_width="192dp"
+                android:layout_gravity="left|top"
+                android:text="Start Lat"
+                android:textSize="32sp"
+                android:ems="10" >
+            </TextView>
+            
+            <TextView
+                android:id="@+id/gpsVal7"
+                android:layout_width="392dp"
+                android:layout_gravity="left|top"
+                android:textSize="32sp"
+                android:ems="10" >
+            </TextView>
+            
+            <TextView
+                android:id="@+id/gpsLabel8"
+                android:layout_width="192dp"
+                android:layout_gravity="left|top"
+                android:text="Start Lon"
+                android:textSize="32sp"
+                android:ems="10" >
+            </TextView>
+            
+            <TextView
+                android:id="@+id/gpsVal8"
                 android:layout_width="392dp"
                 android:layout_gravity="left|top"
                 android:textSize="32sp"

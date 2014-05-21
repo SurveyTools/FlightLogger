@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -77,6 +78,9 @@
         <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />
         
         <service android:name="com.vulcan.flightlogger.geo.NavigationService" />
+        
+        <service android:name="com.vulcan.flightlogger.logger.LoggingService" />
+        
         <!-- Uncommenting the following block will (in theory) start this app on reboot -->
         <!--
         <receiver android:enabled="true" android:name="com.vulcan.flightlogger.util.BootupReceiver"

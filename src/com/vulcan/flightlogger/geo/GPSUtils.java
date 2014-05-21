@@ -20,6 +20,7 @@ import org.xml.sax.SAXException;
 
 import com.vulcan.flightlogger.geo.data.Route;
 import com.vulcan.flightlogger.geo.data.Transect;
+import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.location.Location;
 

@@ -8,6 +8,7 @@ import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.RouteListActivity;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
+import com.vulcan.flightlogger.logger.LoggingService;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.FlightDatum;
 
@@ -40,6 +41,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	public static final int UPDATE_IMAGE = 666;
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
+	private LoggingService mLogger;
 	private TransectILSView mNavigationDisplay;
 	private TextView mAltitudeDisplay;
 	private TextView mGroundSpeedDisplay;
@@ -105,6 +107,21 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mAltimeterService.unregisterListener(FlightLogger.this);
 		}
 	};
+	
+	private ServiceConnection mLoggerConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			com.vulcan.flightlogger.logger.LoggingService.LocalBinder binder = (com.vulcan.flightlogger.logger.LoggingService.LocalBinder) service;
+			mLogger = (LoggingService) binder.getService();
+	//		mLogger.registerListener(FlightLogger.this);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			//mLogger.unregisterListener(FlightLogger.this);
+		}
+	};
 
 	protected void onStart() {
 		super.onStart();
@@ -113,11 +130,12 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	private void bindServices() {
-		// XXX we'll refactor this after we get a long lived service in place
 		Intent intent = new Intent(this, AltimeterService.class);
 		this.bindService(intent, mAltimeterConnection, 0);
 		Intent intent2 = new Intent(this, NavigationService.class);
 		this.bindService(intent2, mNavigationConnection, 0);
+		Intent intent3 = new Intent(this, LoggingService.class);
+		this.bindService(intent3, mLoggerConnection, 0);
 	}
 
 	@Override
@@ -170,11 +188,13 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
 		Intent altIntent = new Intent(this, AltimeterService.class);
-		altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+		//altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
 		startService(altIntent);
 		Intent navIntent = new Intent(this, NavigationService.class);
-		navIntent.putExtra(NavigationService.USE_MOCK_DATA, true);
+		//navIntent.putExtra(NavigationService.USE_MOCK_DATA, true);
 		startService(navIntent);
+		Intent loggerIntent = new Intent(this, LoggingService.class);
+		startService(loggerIntent);
 	}
 
 	protected void updateBatteryStatus(Intent batteryStatus) {

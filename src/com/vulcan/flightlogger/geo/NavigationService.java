@@ -128,12 +128,12 @@ public class NavigationService extends Service implements LocationListener {
 	public void stopNavigation() {
 		mCurrTransect = null;
 		doNavigation = false;
-	}
+	}                  
 	
 	private void initGps(long millisBetweenUpdate, float minDistanceMoved) {
 		doNavigation = true;
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		// getting GPS status
+		// getting GPS statusMockTran
 		boolean isGPSEnabled = mLocationManager
 				.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
@@ -193,16 +193,24 @@ public class NavigationService extends Service implements LocationListener {
 
 	// this is here until we put the menus back in
 	private Transect buildMockTransect() {
-		Location start = new Location("work");
-		start.setLatitude(47.688719);
-		start.setLongitude(-122.372639);
+//		Location start = new Location("work");
+//		start.setLatitude(47.688719);
+//		start.setLongitude(-122.372639);
 		
-		Location end = new Location("home");
+//		Location end = new Location("home");
+//		end.setLatitude(47.598383);
+//		end.setLongitude(-122.327537);
+		
+		Location start = new Location("start");
+		start.setLatitude(47.598383);
+		start.setLongitude(-122.327537);
+		
+		Location end = new Location("end");
 		end.setLatitude(47.598383);
 		end.setLongitude(-122.327537);
 		
 		Transect transect = new Transect();
-		transect.mName = "My Ride Home";
+		transect.mName = "My Test Transect";
 		transect.mStartWaypt = start;
 		transect.mEndWaypt = end;
 		
