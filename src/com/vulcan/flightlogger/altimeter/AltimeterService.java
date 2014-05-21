@@ -149,7 +149,14 @@ public class AltimeterService extends Service implements
 		if (isValid) {
 			byte[] stripMeters = Arrays.copyOfRange(data, 0, data.length - 2);
 			float meters = Float.parseFloat(new String(stripMeters));
-			mCurrentAltitudeInMeters = meters;
+			
+			// validate
+			if (meters > 99999) {
+				// out of range data (99999.99)
+				isValid = false;
+			} else {
+				mCurrentAltitudeInMeters = meters;
+			}
 		}
 
 		return isValid;

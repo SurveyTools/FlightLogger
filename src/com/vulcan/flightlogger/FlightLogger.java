@@ -35,14 +35,21 @@ import android.graphics.drawable.Drawable;
 public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
 
 	// used for identifying Activities that return results
-	static final int LOAD_GPX_FILE = 10001;
-	static final int SELECT_GPX_TRANSECT = 10002;
+	static final int LOAD_FLIGHT_PATH = 10011;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
+	static final boolean DEMO_MODE = false;
 	public static final int UPDATE_IMAGE = 666;
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
 	private LoggingService mLogger;
 	private TransectILSView mNavigationDisplay;
+
+	// file info
+	private Button mFileIconButton;
+	private TextView mFileAndRouteDisplay;
+	private TextView mTransectDisplay;
+	private TextView mFileMessageDisplay;
+	
 	private TextView mAltitudeDisplay;
 	private TextView mGroundSpeedDisplay;
 
@@ -57,6 +64,9 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private Drawable mStatusButtonBackgroundGrey;
 	private Drawable mStatusButtonBackgroundIgnore;
 
+	private Drawable mFileIconBackgroundNormal;
+	private Drawable mFileIconBackgroundRed;
+
 	private int mStatusButtonTextColorOnRed;
 	private int mStatusButtonTextColorOnYellow;
 	private int mStatusButtonTextColorOnGreen;
@@ -64,6 +74,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private int mStatusButtonTextColorOnIgnore;
 
 	// data
+	protected CourseInfoIntent mFlightData;
 	protected AltitudeDatum mAltitudeData;
 	protected GPSDatum mGPSData;
 	protected BatteryDatum mBatteryData;
@@ -155,6 +166,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mBatteryData = new BatteryDatum(false, demoMode);
 		mBoxData = new BoxDatum(false, demoMode);
 		
+		mFileIconButton = (Button) findViewById(R.id.nav_header_file_button);
+		mFileAndRouteDisplay = (TextView) findViewById(R.id.nav_header_route_text);
+		mTransectDisplay = (TextView) findViewById(R.id.nav_header_transect_text);
+		mFileMessageDisplay = (TextView) findViewById(R.id.nav_header_message);
+
 		mAltitudeDisplay = (TextView) findViewById(R.id.nav_altitude_value);
 		mGroundSpeedDisplay = (TextView) findViewById(R.id.nav_speed_value);
 		mNavigationDisplay = tv;
@@ -171,11 +187,21 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mStatusButtonBackgroundGrey = getResources().getDrawable(R.drawable.nav_status_grey);
 		mStatusButtonBackgroundIgnore = getResources().getDrawable(R.drawable.nav_status_ignore);
 
+		// file button
+		mFileIconBackgroundNormal = getResources().getDrawable(R.drawable.filefolder);
+		mFileIconBackgroundRed = getResources().getDrawable(R.drawable.filefolder_red);
+
 		tv.setLayoutParams(lp);
 		layout.addView(tv);
 
 		setupSquishyFontView(R.id.nav_altitude_value, 190, 20);
 		setupSquishyFontView(R.id.nav_speed_value, 130, 20);
+
+	     if (DEMO_MODE) {
+			mFlightData = new CourseInfoIntent("Example_survey_route.gpx", "Session 1", "Transect 3", "T03_S ~ T03_N", 0);
+		} else {
+			mFlightData = new CourseInfoIntent(null, null, null, null, 0);
+		}
 
 		mUpdateUIHandler = new Handler();
 
@@ -299,8 +325,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	public boolean browseGpxFiles(View v)
 	{
 		// load gpx
-		Intent intent = new Intent(this, FileBrowser.class);
-		this.startActivityForResult(intent, LOAD_GPX_FILE);
+		Intent intent = new Intent(this, CourseSettingsActivity.class);
+		intent.putExtra(CourseInfoIntent.INTENT_KEY, mFlightData);
+		
+		this.startActivityForResult(intent, LOAD_FLIGHT_PATH);
+		
 		return true;
 	}
 
@@ -326,14 +355,15 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// Check which request we're responding to
-		if (requestCode == LOAD_GPX_FILE) {
+		if (requestCode == LOAD_FLIGHT_PATH) {
 			// Make sure the load activity was successful
 			if (resultCode == RESULT_OK) {
-				String gpxName = data.getStringExtra("gpxfile");
-				Log.d(LOGGER_TAG, "GPX filename: " + gpxName);
-				Intent it = new Intent(this, RouteListActivity.class);
-				it.putExtra("gpxfile", gpxName);
-				startActivity(it);
+				CourseInfoIntent fData = data.getParcelableExtra(CourseInfoIntent.INTENT_KEY);
+				if (fData != null) {
+					fData.debugDump();
+					mFlightData = fData;
+					updateRouteUI();
+				}
 			}
 		}
 	}
@@ -344,15 +374,19 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+
+		if (hasFocus) {
+			// note: requires Android 4.4 / api level 16 & 19
+			View decorView = getWindow().getDecorView();
+			decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+		}
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
-
-		// note: requires Android 4.4 / api level 16 & 19
-		View decorView = getWindow().getDecorView();
-		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-		// TESTING mAltitudeData.setRawAltitude(299, true, curDataTimestamp());
-
 		updateUI();
 
 		mUpdateUIHandler.postDelayed(mUpdateUIRunnable, UI_UPDATE_TIMER_MILLIS);
@@ -418,10 +452,32 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	protected void updateRouteUI() {
-		// todo
-		// icon color
-		// route
-		// transect
+		
+		// TODO mFileIconButton and color
+		// TODO route
+		
+		if (mFlightData.isEmpty()) {
+			// just show the message
+			mFileIconButton.setBackground(mFileIconBackgroundRed);
+
+			mFileMessageDisplay.setVisibility(View.VISIBLE);
+			mFileAndRouteDisplay.setVisibility(View.INVISIBLE);
+			mTransectDisplay.setVisibility(View.INVISIBLE);
+			
+			mFileMessageDisplay.setText(R.string.nav_select_transect_text);
+			mFileAndRouteDisplay.setText(null);
+			mTransectDisplay.setText(null);
+		} else {
+			mFileIconButton.setBackground(mFileIconBackgroundNormal);
+
+			mFileMessageDisplay.setVisibility(View.INVISIBLE);
+			mFileAndRouteDisplay.setVisibility(View.VISIBLE);
+			mTransectDisplay.setVisibility(View.VISIBLE);
+
+			mFileMessageDisplay.setText(null);
+			mFileAndRouteDisplay.setText(mFlightData.getShortFilename());
+			mTransectDisplay.setText(mFlightData.getShortTransectName());
+		}
 	}
 
 	protected void updateNavigationUI() {
@@ -469,19 +525,17 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	public void onAltitudeUpdate(float altitudeInMeters) {
 		// rough validation
-		if (altitudeInMeters < 32000) {
-			final float currAltitudeInMeters = altitudeInMeters;
-			final long timestamp = curDataTimestamp();
-			runOnUiThread(new Runnable() {
-				public void run() {
-					// update the altitude data (and ui if something changed)
-					if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, timestamp)) {
-						updateAltitudeUI();
-						updateNavigationUI();
-					}
+		final float currAltitudeInMeters = altitudeInMeters;
+		final long timestamp = curDataTimestamp();
+		runOnUiThread(new Runnable() {
+			public void run() {
+				// update the altitude data (and ui if something changed)
+				if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, timestamp)) {
+					updateAltitudeUI();
+					updateNavigationUI();
 				}
-			});
-		}
+			}
+		});
 	}
 
 	@Override

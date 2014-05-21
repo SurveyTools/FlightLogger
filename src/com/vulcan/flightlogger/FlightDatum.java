@@ -23,6 +23,15 @@ public class FlightDatum {
 		mDemoMode = demoMode;
 	}
 
+	// copy constructor
+	public FlightDatum(FlightDatum srcDatum) {
+		mIgnore = srcDatum.mIgnore;
+		mDemoMode = srcDatum.mDemoMode;
+		mValueToDisplay = srcDatum.mValueToDisplay;
+		mDataIsValid = srcDatum.mDataIsValid;
+		mDataTimestamp = srcDatum.mDataTimestamp;
+	}
+
 	protected long curDataTimestamp() {
 		return System.currentTimeMillis();
 	}

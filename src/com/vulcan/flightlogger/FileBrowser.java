@@ -41,6 +41,8 @@ public class FileBrowser extends Activity {
 	private String chosenFile;
 	private static final int DIALOG_LOAD_FILE = 1000;
 
+	public static final String FILE_NAME_STRING_KEY = "gpxfile";
+
 	ListAdapter adapter;
 
 	@SuppressWarnings("deprecation")
@@ -134,7 +136,7 @@ public class FileBrowser extends Activity {
 	private void finishWithFilename(String filename)
 	{
 		Intent intent = getIntent();
-		intent.putExtra("gpxfile", filename);
+		intent.putExtra(FILE_NAME_STRING_KEY, filename);
 		this.setResult(RESULT_OK, intent);
 		finish();
 	}
@@ -167,7 +169,7 @@ public class FileBrowser extends Activity {
 
 		switch (id) {
 		case DIALOG_LOAD_FILE:
-			builder.setTitle("Choose your file");
+			builder.setTitle("Choose a GPX file");
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 				@SuppressWarnings("deprecation")
 				@Override

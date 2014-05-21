@@ -26,5 +26,11 @@ public class Route {
 	public String toString() {
 		return mName;
 	}
+	
+	public boolean matchesByName(String targetName) {
+		if (mName != null)
+			return mName.matches(targetName);
+		return false;
+	}
 
 }

@@ -72,9 +72,17 @@
         </activity>
         <activity
             android:name="com.vulcan.flightlogger.geo.RouteListActivity"
-            android:label="Route List" >
+            android:label="Choose a Route" >
         </activity>
-
+        <activity
+            android:name="com.vulcan.flightlogger.geo.TransectListActivity"
+            android:label="Choose a Transect" >
+        </activity>
+        <activity
+            android:name="com.vulcan.flightlogger.CourseSettingsActivity"
+            android:label="GPX Settings" >
+        </activity>
+        
         <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />
         
         <service android:name="com.vulcan.flightlogger.geo.NavigationService" />
