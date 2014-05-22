@@ -112,7 +112,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		mCurrLogEntry = new LogEntry();
 		mCurrLogfileName = createLogFile(transectName);
 		mLogData = true;
-		logData((long) logFrequency);
+		//logData((long) logFrequency);
 	}
 
 	public void closeCurrentLog() {
@@ -181,6 +181,10 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 				Locale.US);
 		String logName = String.format("%s-%s", sdf.format(cal.getTime()),
 				osFriendlyName);
+		if (mLogDir == null)
+		{
+			createFlightLogDirectory();
+		}
 		if (mLogDir.isDirectory() && mLogDir.canWrite()) {
 			logFile = new File(mLogDir, logName);
 			if (!logFile.exists()) {
@@ -204,6 +208,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		if (!flightLogDir.exists()) {
 			flightLogDir.mkdirs();
 		}
+		mLogDir = flightLogDir;
 		return flightLogDir.exists();
 	}
 

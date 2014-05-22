@@ -35,7 +35,7 @@ public class NavigationService extends Service implements LocationListener {
 	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
 	
 	// how many track mock samples to create from a transect path
-	private final int NUM_MOCK_TRACKS = 100;
+	private final int NUM_MOCK_TRACKS = 1000;
 	
 	// TODO - put these into a constants file
 	public static final String USE_MOCK_DATA = "useMockData";
@@ -74,8 +74,6 @@ public class NavigationService extends Service implements LocationListener {
 		}
 		else
 		{
-			// XXX JAYL Remove me. This is a testing hack
-			mCurrTransect = buildMockTransect();
 			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		}
 		Log.d(LOGGER_TAG, "starting navigation service");
@@ -120,9 +118,9 @@ public class NavigationService extends Service implements LocationListener {
     // TODO - Get a 'demo' state in place, and depending on that state, 
     // either init 'real' GPS or mock GPS
 	public void startNavigation(Transect transect) {
-		initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		mCurrTransect = transect;
 		doNavigation = true;
+		initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 	}
 	
 	public void stopNavigation() {
@@ -193,19 +191,11 @@ public class NavigationService extends Service implements LocationListener {
 
 	// this is here until we put the menus back in
 	private Transect buildMockTransect() {
-//		Location start = new Location("work");
-//		start.setLatitude(47.688719);
-//		start.setLongitude(-122.372639);
-		
-//		Location end = new Location("home");
-//		end.setLatitude(47.598383);
-//		end.setLongitude(-122.327537);
-		
-		Location start = new Location("start");
+		Location start = new Location("Front of 505");
 		start.setLatitude(47.598383);
 		start.setLongitude(-122.327537);
 		
-		Location end = new Location("end");
+		Location end = new Location("NW 83rd & 14th NW");
 		end.setLatitude(47.598383);
 		end.setLongitude(-122.327537);
 		
