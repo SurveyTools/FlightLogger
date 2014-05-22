@@ -613,6 +613,21 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		return (mNavigationService == null) ? false : mNavigationService.isNavigating();
 	}
 
+	protected void updateStatusRight(boolean toStart) {
+		// right status
+		if (mGPSData.mDataIsValid && !mGPSData.mIgnore && !mGPSData.dataIsExpired()) {
+			double metersToNext = toStart ? mNavigationService.calcMetersToStart() : mNavigationService.calcMetersToEnd();
+	        String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
+			mStatusDisplayRight.setText((toStart ? "Start" : "Stop") + " in " + kmString + " km");
+		} else {
+			// right status
+			if (mGPSData.mIgnore) 
+				mStatusDisplayRight.setText("GPS Disabled");
+			else
+				mStatusDisplayRight.setText("GPS N/A");
+		}
+	}
+	
 	protected void updateFooterUI() {
 
 		if (isLogging()) {
@@ -627,9 +642,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStartStopButton.setEnabled(true);
 
 			// right status
-			double metersToNext = mNavigationService.calcMetersToEnd();
-	        String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
-			mStatusDisplayRight.setText("Stop in " + kmString + " km");
+			updateStatusRight(false);
 		} else if (isNavigating()) {
 			// left status
 			mStatusDisplayLeft.setText("Waiting to Start");
@@ -642,9 +655,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStartStopButton.setEnabled(true);
 			
 			// right status
-			double metersToNext = mNavigationService.calcMetersToStart();
-	        String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
-			mStatusDisplayRight.setText("Start in " + kmString + " km");
+			updateStatusRight(true);
 		} else if (!isTransectReady()) {
 			// left status
 			mStatusDisplayLeft.setText("Not Ready");
@@ -660,7 +671,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStatusDisplayRight.setText("No Transect Found");
 		} else {
 			// left status
-			mStatusDisplayLeft.setText("Do Something");
+			mStatusDisplayLeft.setText("");
 			mStatusDisplayLeft.setTextColor(mStatusTextColorGrey);
 			
 			// mode button
@@ -670,7 +681,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStartStopButton.setEnabled(false);
 			
 			// right status
-			mStatusDisplayRight.setText("--");
+			mStatusDisplayRight.setText("");
 		}
 	}
 
