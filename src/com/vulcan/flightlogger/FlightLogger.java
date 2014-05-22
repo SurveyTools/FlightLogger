@@ -6,6 +6,7 @@ import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
+import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
 import com.vulcan.flightlogger.util.SquishyTextView;
@@ -66,6 +67,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private Drawable mFileIconBackgroundNormal;
 	private Drawable mFileIconBackgroundRed;
 
+	private Button mStartStopButton;
+
 	private int mStatusButtonTextColorOnRed;
 	private int mStatusButtonTextColorOnYellow;
 	private int mStatusButtonTextColorOnGreen;
@@ -78,6 +81,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected GPSDatum mGPSData;
 	protected BatteryDatum mBatteryData;
 	protected BoxDatum mBoxData;
+	
+	// todo STATE
+	protected boolean mLogging;
+	protected Transect mCurTransect;
 
 	private Handler mUpdateUIHandler;
 
@@ -178,6 +185,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mStatusButtonALT = (Button) findViewById(R.id.nav_header_status_alt);
 		mStatusButtonBAT = (Button) findViewById(R.id.nav_header_status_bat);
 		mStatusButtonBOX = (Button) findViewById(R.id.nav_header_status_box);
+		
+		mStartStopButton = (Button) findViewById(R.id.fs_file_change);
 
 		// backgrounds for status lights
 		mStatusButtonBackgroundRed = getResources().getDrawable(R.drawable.nav_status_red);
@@ -305,6 +314,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	protected void resetData() {
+		
+		setLogging(false);
+		mCurTransect = null;
+		
 		mAltitudeData.reset();
 		mGPSData.reset();
 		mBatteryData.reset();
@@ -321,17 +334,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		return true;
 	}
 	
-	public boolean browseGpxFiles(View v)
-	{
-		// load gpx
-		Intent intent = new Intent(this, CourseSettingsActivity.class);
-		intent.putExtra(CourseInfoIntent.INTENT_KEY, mFlightData);
-		
-		this.startActivityForResult(intent, LOAD_FLIGHT_PATH);
-		
-		return true;
-	}
-
 	public boolean onMenuItemClick(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
@@ -347,7 +349,36 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		}
 		return true;
 	}
+	
+	protected void setLogging(boolean on) {
+		mLogging = on;
+		if (mLogger != null) {
+			mLogger.stopLog();
+			if (mLogging)
+				mLogger.startLog(mCurTransect);
+			
+			// TODO not so lazy
+			updateUI();
+		}
+	}
 
+	protected void setFlightData(CourseInfoIntent data) {
+		mFlightData = data;
+		
+		mCurTransect = Transect.newTransect(data);
+
+		if (mCurTransect != null) {
+			
+			if (mNavigationService != null) {
+				mNavigationService.startNavigation(mCurTransect);
+			}
+			
+			setLogging(false);
+
+			updateRouteUI();
+		}
+	}
+	
 	/**
 	 * Callbacks from activities that return results
 	 */
@@ -359,9 +390,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			if (resultCode == RESULT_OK) {
 				CourseInfoIntent fData = data.getParcelableExtra(CourseInfoIntent.INTENT_KEY);
 				if (fData != null) {
-					fData.debugDump();
-					mFlightData = fData;
-					updateRouteUI();
+					setFlightData(fData);
 				}
 			}
 		}
@@ -506,6 +535,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// status
 		// start/stop button
 		// remaining
+		if (mLogging)
+			mStartStopButton.setText("STOP");
+		else
+			mStartStopButton.setText("START");
 	}
 
 	protected void updateUI() {
@@ -583,5 +616,23 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				}
 			});
 		}
+	}
+	
+	public boolean browseGpxFiles(View v)
+	{
+		// load gpx
+		Intent intent = new Intent(this, CourseSettingsActivity.class);
+		intent.putExtra(CourseInfoIntent.INTENT_KEY, mFlightData);
+		
+		this.startActivityForResult(intent, LOAD_FLIGHT_PATH);
+		
+		return true;
+	}
+
+	
+	public void onToggleStartStop(View v) {
+		Log.d("f-me", "do something");
+		
+		setLogging(!mLogging);
 	}
 }

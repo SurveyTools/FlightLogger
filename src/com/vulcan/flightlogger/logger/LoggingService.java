@@ -12,6 +12,7 @@ import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
+import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.app.Service;
@@ -94,13 +95,21 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 
+	public void startLog(Transect transect) {
+		startLog(transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
+	}
+
 	public void startLog(String transectName) {
 		startLog(transectName, LOGGING_FREQUENCY_SECS);
 	}
 
-	public void startLog(String transectName, float logFrequency) {
-		mCurrLogEntry = new LogEntry();
+	public void stopLog() {
 		closeCurrentLog();
+	}
+
+	public void startLog(String transectName, float logFrequency) {
+		stopLog();
+		mCurrLogEntry = new LogEntry();
 		mCurrLogfileName = createLogFile(transectName);
 		mLogData = true;
 		logData((long) logFrequency);

@@ -10,10 +10,10 @@ import com.vulcan.flightlogger.geo.data.Transect;
 
 public class CourseInfoIntent implements Parcelable {
 
-	String mGpxName;
-	String mRouteName;
-	String mTransectName;
-	String mTransectDetails;
+	public String mGpxName;
+	public String mRouteName;
+	public String mTransectName;
+	public String mTransectDetails;
 	int mAction;
 
 	private static final String LOGGER_TAG = "CourseInfoIntent";

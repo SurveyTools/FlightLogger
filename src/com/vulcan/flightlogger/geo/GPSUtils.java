@@ -196,6 +196,24 @@ public class GPSUtils {
 		return null;
 	}
 
+	public static Transect findTransectInRoute(String targetTransectName, Route route) {
+		if (route != null) {
+		    List<Transect> transects = GPSUtils.parseTransects(route);
+
+			Iterator<Transect> iterator = transects.iterator();
+			while (iterator.hasNext()) {
+				Transect transItem = iterator.next();
+				if (transItem.matchesByName(targetTransectName)) {
+					// winner!
+					return transItem;
+				}
+			}
+		}
+		
+		// no dice
+		return null;
+	}
+
 	public static Route getDefaultRouteFromFilename(String gpxFilename) {
 		if (gpxFilename != null) {
 			return getDefaultRouteFromFile(new File(gpxFilename));

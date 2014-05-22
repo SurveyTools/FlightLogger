@@ -449,6 +449,7 @@
             android:text="STOP"
             android:textColor="@color/nav_footer_stop"
             android:textSize="32sp"
+            android:onClick="onToggleStartStop"
             android:textStyle="bold" />
 
         <TextView
