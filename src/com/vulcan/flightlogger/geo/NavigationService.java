@@ -77,7 +77,6 @@ public class NavigationService extends Service implements LocationListener {
 		}
 		else
 		{
-			mCurrTransect = null;
 			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		}
 		Log.d(LOGGER_TAG, "starting navigation service");

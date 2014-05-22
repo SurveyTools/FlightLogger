@@ -44,6 +44,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	static final boolean DEMO_MODE = false;
 	public static final int UPDATE_IMAGE = 666;
 	public static final String LOG_CLASSNAME = "FlightLogger";
+	private static final String SAVED_FLIGHT_DATA_KEY = "FlightData";
 
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
@@ -115,6 +116,14 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	 * and remove listeners, since we have inprocess access to the class
 	 * interface
 	 */
+	private void navServiceChanged() {
+		if (mNavigationService != null)
+		{
+			mCurTransect = mNavigationService.mCurrTransect;
+			updateUI();
+		}
+	}
+	
 	private ServiceConnection mNavigationConnection = new ServiceConnection() {
 
 		@Override
@@ -122,6 +131,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			com.vulcan.flightlogger.geo.NavigationService.LocalBinder binder = (com.vulcan.flightlogger.geo.NavigationService.LocalBinder) service;
 			mNavigationService = (NavigationService) binder.getService();
 			mNavigationService.registerListener(FlightLogger.this);
+			
+			// update nav service stuff
+			navServiceChanged();
+			
 		}
 
 		@Override
@@ -164,7 +177,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void onStart() {
 		super.onStart();
 		startServices();
-		bindServices();
 	}
 
 	private void bindServices() {
@@ -181,6 +193,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		bindServices();
+
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
@@ -237,7 +251,15 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		setupSquishyFontView(R.id.nav_altitude_value, 190, 20);
 		setupSquishyFontView(R.id.nav_speed_value, 130, 20);
 
-	     if (DEMO_MODE) {
+		resetData();
+
+		if (savedInstanceState != null) {
+			mFlightData = savedInstanceState.getParcelable(SAVED_FLIGHT_DATA_KEY);
+			
+			if (mNavigationService != null)
+				mCurTransect = mNavigationService.mCurrTransect;
+		}
+		else if (DEMO_MODE) {
 			mFlightData = new CourseInfoIntent("Example_survey_route.gpx", "Session 1", "Transect 3", "T03_S ~ T03_N", 0);
 		} else {
 			mFlightData = new CourseInfoIntent(null, null, null, null, 0);
@@ -246,8 +268,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mUpdateUIHandler = new Handler();
 
 		setupColors();
-
-		resetData();
 	}
 
 	private void startServices() {
@@ -355,7 +375,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	protected void resetData() {
 		
-		setLogging(false);
 		mCurTransect = null;
 		
 		mAltitudeData.reset();
@@ -447,6 +466,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		// TODO eval for teardown?
 	}
 
 	@Override
@@ -747,4 +767,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	public void onToggleStartStop(View v) {
 		setLogging(!isLogging());
 	}
+	
+	protected void onSaveInstanceState (Bundle outState) {
+		   super.onSaveInstanceState(outState);
+		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);
+	}
+
+
 }
