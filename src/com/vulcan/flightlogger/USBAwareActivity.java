@@ -82,5 +82,13 @@ public class USBAwareActivity extends Activity {
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
 	}
+	
+	@Override
+    protected void onDestroy()
+    {
+        unregisterReceiver(mUsbReceiver);
+        unregisterReceiver(mBatteryStatusReceiver);
+        super.onDestroy();
+    }
 
 }
