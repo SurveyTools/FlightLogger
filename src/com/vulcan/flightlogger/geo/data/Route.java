@@ -11,6 +11,7 @@ import android.location.Location;
  * @author jayl
  */
 public class Route {
+	public String gpxFile;
 	public String mName;
 	public List<Location> mWayPoints;
 

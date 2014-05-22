@@ -70,6 +70,7 @@ public class GPSUtils {
 				Node routeNode = nodelist_routes.item(i);
 				Element routeEl = (Element) routeNode;
 				Route r = new Route();
+				r.gpxFile = gpxFile.getName();
 				r.mName = routeEl.getElementsByTagName("name").item(0)
 						.getTextContent();
 				// see if there are waypoints marked by the element 'rtept'
@@ -134,6 +135,7 @@ public class GPSUtils {
 				tp.mName = "transect " + transectIndex;
 				tp.mStartWaypt = wp.get(i);
 				tp.mEndWaypt = wp.get(i + 1);
+				tp.mId = String.format("%s.%s.%s-%s", route.gpxFile, route.mName, tp.mStartWaypt.getProvider(), tp.mEndWaypt.getProvider());
 
 				transects.add(tp);
 			}
