@@ -264,19 +264,19 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 	// FileChooserListener
     public void onFileItemSelected(String filename) {
-        Toast.makeText(this, "file selected " + filename, Toast.LENGTH_SHORT).show();
+        // optional Toast.makeText(this, "file selected " + filename, Toast.LENGTH_SHORT).show();
 		setFile(filename);
     }
 
 	// RouteChooserListener
     public void onRouteItemSelected(Route route) {
-        Toast.makeText(this, "route selected " + route.mName, Toast.LENGTH_SHORT).show();
+        // optional Toast.makeText(this, "route selected " + route.mName, Toast.LENGTH_SHORT).show();
 		setRoute(route.mName);
     }
 
 	// TransectChooserListener
     public void onTransectItemSelected(Transect transect) {
-        Toast.makeText(this, "transect selected " + transect.mName, Toast.LENGTH_SHORT).show();
+        // optional Toast.makeText(this, "transect selected " + transect.mName, Toast.LENGTH_SHORT).show();
 		setTransect(transect.mName, transect.getDetailsName());
    }
 }
