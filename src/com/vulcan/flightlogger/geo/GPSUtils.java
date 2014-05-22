@@ -56,6 +56,9 @@ public class GPSUtils {
 	public static List<Route> parseRoute(File gpxFile) {
 		List<Route> routeMap = new ArrayList<Route>();
 
+		if (gpxFile == null)
+			return routeMap;
+		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 				.newInstance();
 		try {
@@ -126,6 +129,10 @@ public class GPSUtils {
 
 	public static List<Transect> parseTransects(Route route) {
 		List<Transect> transects = new ArrayList<Transect>();
+		
+		if (route == null)
+			return transects;
+		
 		int transectIndex = 1;
 		List<Location> wp = route.mWayPoints;
 		// Naively assume that transects are ordered pairs of waypoints for now

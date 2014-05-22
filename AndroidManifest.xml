@@ -71,11 +71,11 @@
             android:label="@string/action_show_serial_console" >
         </activity>
         <activity
-            android:name="com.vulcan.flightlogger.geo.RouteListActivity"
+            android:name="com.vulcan.flightlogger.geo.RouteChooserDialog"
             android:label="Choose a Route" >
         </activity>
         <activity
-            android:name="com.vulcan.flightlogger.geo.TransectListActivity"
+            android:name="com.vulcan.flightlogger.geo.TransectChooserDialog"
             android:label="Choose a Transect" >
         </activity>
         <activity

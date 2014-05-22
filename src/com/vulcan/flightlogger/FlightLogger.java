@@ -5,7 +5,6 @@ import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.NavigationService;
-import com.vulcan.flightlogger.geo.RouteListActivity;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;

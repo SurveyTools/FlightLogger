@@ -1,35 +1,35 @@
 package com.vulcan.flightlogger;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+
+import com.vulcan.flightlogger.FileChooserDialog.FileChooserListener;
+import com.vulcan.flightlogger.geo.RouteChooserDialog.RouteChooserListener;
+import com.vulcan.flightlogger.geo.TransectChooserDialog.TransectChooserListener;
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.RouteListActivity;
-import com.vulcan.flightlogger.geo.TransectListActivity;
+import com.vulcan.flightlogger.geo.RouteChooserDialog;
+import com.vulcan.flightlogger.geo.TransectChooserDialog;
 import com.vulcan.flightlogger.geo.data.Route;
 import com.vulcan.flightlogger.geo.data.Transect;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Environment;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.util.Log;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.widget.ImageButton;
 import android.view.View.OnClickListener;
 
-import org.apache.commons.io.FilenameUtils;
-
-public class CourseSettingsActivity extends Activity implements OnClickListener {
+public class CourseSettingsActivity extends FragmentActivity implements OnClickListener, FileChooserListener, RouteChooserListener, TransectChooserListener {
 
 	private ImageButton mFileButton;
 	private ImageButton mRouteButton;
@@ -44,10 +44,6 @@ public class CourseSettingsActivity extends Activity implements OnClickListener 
 
 	private CourseInfoIntent mOriginalData;
 	private CourseInfoIntent mWorkingData;
-
-	static final int SELECT_GPX_FILE = 10001;
-	static final int SELECT_GPX_ROUTE = 10002;
-	static final int SELECT_GPX_TRANSECT = 10003;
 
 	private static final String LOGGER_TAG = "CourseSettingsActivity";
 
@@ -105,22 +101,13 @@ public class CourseSettingsActivity extends Activity implements OnClickListener 
 	public void onClick(View v) {
 		if (v == mFileButton) {
 			// FILE
-			Intent intent = new Intent(this, FileBrowser.class);
-			intent.putExtra(TransectListActivity.GPX_FILE_NAME_STRING_KEY, mWorkingData.mGpxName);
-			this.startActivityForResult(intent, SELECT_GPX_FILE);
+			showChooseFileDialog();
 		} else if (v == mRouteButton) {
 			// ROUTE
-			Intent intent = new Intent(this, RouteListActivity.class);
-			intent.putExtra(TransectListActivity.GPX_FILE_NAME_STRING_KEY, mWorkingData.mGpxName);
-			this.startActivityForResult(intent, SELECT_GPX_ROUTE);
+			showChooseRouteDialog();
 		} else if (v == mTransectButton) {
 			// TRANSECT
-			Intent intent = new Intent(this, TransectListActivity.class);
-			intent.putExtra(TransectListActivity.GPX_FILE_NAME_STRING_KEY, mWorkingData.mGpxName);
-			intent.putExtra(TransectListActivity.ROUTE_NAME_STRING_KEY, mWorkingData.mRouteName);
-			intent.putExtra(TransectListActivity.TRANSECT_NAME_STRING_KEY, mWorkingData.mTransectName);
-			intent.putExtra(TransectListActivity.TRANSECT_DETAILS_STRING_KEY, mWorkingData.mTransectDetails);
-			this.startActivityForResult(intent, SELECT_GPX_TRANSECT);
+			showChooseTransectDialog();
 		}
 	}
 
@@ -211,9 +198,9 @@ public class CourseSettingsActivity extends Activity implements OnClickListener 
 	    Transect defaultTransect = GPSUtils.getDefaultTransectFromRoute(defaultRoute);
 
 	    // set the subordinates
-	    mWorkingData.mRouteName = defaultRoute.mName;
-		mWorkingData.mTransectName = defaultTransect.mName;
-		mWorkingData.mTransectDetails = defaultTransect.getDetailsName();
+	    mWorkingData.mRouteName = (defaultRoute == null) ? null : defaultRoute.mName;
+		mWorkingData.mTransectName =  (defaultTransect == null) ? null : defaultTransect.mName;
+		mWorkingData.mTransectDetails =  (defaultTransect == null) ? null : defaultTransect.getDetailsName();
 		
 		updateDataUI();
 	}
@@ -228,8 +215,8 @@ public class CourseSettingsActivity extends Activity implements OnClickListener 
 	    Transect defaultTransect = GPSUtils.getDefaultTransectFromRoute(routeObj);
 
 	    // set the subordinates
-		mWorkingData.mTransectName = defaultTransect.mName;
-		mWorkingData.mTransectDetails = defaultTransect.getDetailsName();
+		mWorkingData.mTransectName =  (defaultTransect == null) ? null : defaultTransect.mName;
+		mWorkingData.mTransectDetails =  (defaultTransect == null) ? null : defaultTransect.getDetailsName();
 		
 		updateDataUI();
 	}
@@ -245,18 +232,51 @@ public class CourseSettingsActivity extends Activity implements OnClickListener 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
-			case SELECT_GPX_FILE:
-				setFile(data.getStringExtra(FileBrowser.FILE_NAME_STRING_KEY));
-				break;
-
-			case SELECT_GPX_ROUTE:
-				setRoute(data.getStringExtra(RouteListActivity.ROUTE_NAME_STRING_KEY));
-				break;
-
-			case SELECT_GPX_TRANSECT:
-				setTransect(data.getStringExtra(TransectListActivity.TRANSECT_NAME_STRING_KEY), data.getStringExtra(TransectListActivity.TRANSECT_DETAILS_STRING_KEY));
-				break;
 			}
 		}
 	}
+
+	protected String calcDownloadsDirectoryPath() {
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        return dir.toString();
+	}
+	
+	void showChooseFileDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        String startingDir = calcDownloadsDirectoryPath();
+        FileChooserDialog dlog = FileChooserDialog.newInstance("Choose a GPX File", DialogFragment.STYLE_NORMAL, 0, startingDir, 0);
+	    dlog.show(fm, FileChooserDialog.FILE_CHOOSER_DIALOG_KEY);
+	}
+
+	void showChooseRouteDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+		RouteChooserDialog dlog = RouteChooserDialog.newInstance("Choose a Route", 2, DialogFragment.STYLE_NORMAL, 
+				mWorkingData.mGpxName, mWorkingData.mRouteName);
+        dlog.show(fm, "choose_route");
+	}
+
+	void showChooseTransectDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        TransectChooserDialog dlog = TransectChooserDialog.newInstance("Choose a Transect", 2, DialogFragment.STYLE_NORMAL, 
+        		mWorkingData.mGpxName, mWorkingData.mRouteName, mWorkingData.mTransectName, mWorkingData.mTransectDetails);
+        dlog.show(fm, "choose_transect");
+	}
+
+	// FileChooserListener
+    public void onFileItemSelected(String filename) {
+        Toast.makeText(this, "file selected " + filename, Toast.LENGTH_SHORT).show();
+		setFile(filename);
+    }
+
+	// RouteChooserListener
+    public void onRouteItemSelected(Route route) {
+        Toast.makeText(this, "route selected " + route.mName, Toast.LENGTH_SHORT).show();
+		setRoute(route.mName);
+    }
+
+	// TransectChooserListener
+    public void onTransectItemSelected(Transect transect) {
+        Toast.makeText(this, "transect selected " + transect.mName, Toast.LENGTH_SHORT).show();
+		setTransect(transect.mName, transect.getDetailsName());
+   }
 }
