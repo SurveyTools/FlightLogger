@@ -1,5 +1,10 @@
 package com.vulcan.flightlogger.geo.data;
 
+import java.io.File;
+
+import com.vulcan.flightlogger.CourseInfoIntent;
+import com.vulcan.flightlogger.geo.GPSUtils;
+
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -28,6 +33,26 @@ public class Transect implements Parcelable{
          mEndWaypt = Location.CREATOR.createFromParcel(source);
          status = (FlightStatus)source.readSerializable();
    }
+	
+	static public Transect newTransect(CourseInfoIntent data) {
+		
+		File gpxFile = new File(data.mGpxName);
+		
+		if (gpxFile != null) {
+			// find the route
+			Route theRoute = GPSUtils.findRouteInFile(data.mRouteName, gpxFile);
+			
+			if (theRoute != null) {
+				// find the transect
+				Transect trans = GPSUtils.findTransectInRoute(data.mTransectName, theRoute);
+				
+				return trans;
+			}
+		}
+		
+		// something went wrong!
+		return null;
+	}
 	
 	@Override
 	public int describeContents() {
@@ -122,4 +147,7 @@ public class Transect implements Parcelable{
 		return calcFullName(baseName, calcDetailsName(waypointName1, waypointName2));
 	}
 	
+	public String calcBaseFilename() {
+		return mId;
+	}
 }
