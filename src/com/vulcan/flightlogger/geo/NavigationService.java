@@ -75,6 +75,11 @@ public class NavigationService extends Service implements LocationListener {
 			mCurrTransect = buildMockTransect();
 			initMockGps();
 		}
+		else
+		{
+			mCurrTransect = null;
+			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
+		}
 		Log.d(LOGGER_TAG, "starting navigation service");
 		return START_STICKY;
 	}
@@ -89,10 +94,18 @@ public class NavigationService extends Service implements LocationListener {
 
 	private TransectStatus calcTransectStatus(Location currLoc) {
 		// TODO validate before constructing TransectStatus
-		double distance = currLoc.distanceTo(mCurrTransect.mEndWaypt);
-		double crossTrackErr = calcCrossTrackError(currLoc, mCurrTransect.mStartWaypt, mCurrTransect.mEndWaypt);
-		float currBearing = currLoc.bearingTo(mCurrTransect.mEndWaypt);
-		float speed = currLoc.getSpeed();
+		double distance = 0;
+		double crossTrackErr = 0;
+		float currBearing = 0;
+		float speed = 0;
+		
+		if (mCurrTransect != null)
+		{
+			distance = currLoc.distanceTo(mCurrTransect.mEndWaypt);
+			crossTrackErr = calcCrossTrackError(currLoc, mCurrTransect.mStartWaypt, mCurrTransect.mEndWaypt);
+			currBearing = currLoc.bearingTo(mCurrTransect.mEndWaypt);
+			speed = currLoc.getSpeed();
+		}
 		TransectStatus ts = new TransectStatus(mCurrTransect, distance, crossTrackErr,  currBearing, speed);
 		ts.mCurrGpsLat = currLoc.getLatitude();
 		ts.mCurrGpsLon = currLoc.getLongitude();
