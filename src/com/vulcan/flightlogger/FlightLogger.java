@@ -716,18 +716,19 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 		// ground speed update
 		if (status != null) {
-			final float groundSpeed = status.mGroundSpeed;
-			final double crossTrackErrorMeters = status.mCrossTrackError;
-			final long timestamp = curDataTimestamp();
-			runOnUiThread(new Runnable() {
-				public void run() {
-					// update the altitude data (and ui if something changed)
-					if (mGPSData.setRawGroundSpeed(groundSpeed, crossTrackErrorMeters, true, timestamp)) {
-						updateGPSUI();
-						updateNavigationUI();
+				final float groundSpeed = status.mGroundSpeed;
+				final double crossTrackErrorMeters = status.mCrossTrackError;
+				final long timestamp = curDataTimestamp();
+				final boolean crosstrackValid = status.isTransectValid();
+				runOnUiThread(new Runnable() {
+					public void run() {
+						// update the altitude data (and ui if something changed)
+						if (mGPSData.setRawGroundSpeed(groundSpeed, true, crossTrackErrorMeters, crosstrackValid, timestamp)) {
+							updateGPSUI();
+							updateNavigationUI();
+						}
 					}
-				}
-			});
+				});
 		}
 	}
 	

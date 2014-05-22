@@ -372,7 +372,7 @@ public class TransectILSView extends View {
 
 		if (gpsData != null) {
 
-			if (gpsData.mDataIsValid) {
+			if (gpsData.mDataIsValid && gpsData.mCrossTrackDataIsValid) {
 
 				// physical delta
 				float pathDeviationInFeet = gpsData.getTransectDeltaInFeet();

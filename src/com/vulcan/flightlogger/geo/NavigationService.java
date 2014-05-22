@@ -124,11 +124,10 @@ public class NavigationService extends Service implements LocationListener {
 	
 	public void stopNavigation() {
 		mCurrTransect = null;
-		doNavigation = false;
 	}                  
 	
 	public boolean isNavigating() {
-		return doNavigation && (mCurrTransect != null);
+		return (mCurrTransect != null);
 	}
 
 	public double calcMetersToLocation(Location targetLoc) {

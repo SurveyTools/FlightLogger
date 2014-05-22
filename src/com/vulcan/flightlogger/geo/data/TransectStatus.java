@@ -25,5 +25,9 @@ public class TransectStatus {
 	public double mCurrGpsLat;
 	public double mCurrGpsLon;
 	public double mCurrGpsAlt;
+	
+	public boolean isTransectValid() {
+		return mTransect != null;
+	}
 
 }

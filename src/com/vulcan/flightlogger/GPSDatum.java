@@ -7,6 +7,7 @@ public class GPSDatum extends FlightDatum {
 	// TODO change to TransectStatus
 	protected float mRawGroundSpeed; // raw float value
 	protected double mRawCrossTrackErrorMeters;
+	protected boolean mCrossTrackDataIsValid;
 	
 	static final String INVALID_GPS_STRING = "--";
 	static final String IGNORE_GPS_STRING = "";
@@ -37,7 +38,7 @@ public class GPSDatum extends FlightDatum {
 	@Override
 	public void reset() {
 		super.reset();
-		setRawGroundSpeed(0, 0, false, curDataTimestamp());
+		setRawGroundSpeed(0, false, 0, false, curDataTimestamp());
 	}
 
 	public String getGroundSpeedDisplayText() {
@@ -56,7 +57,7 @@ public class GPSDatum extends FlightDatum {
 		return metersToFeet((float)mRawCrossTrackErrorMeters);
 	}
 
-	public boolean setRawGroundSpeed(float rawGroundSpeedValue, double crossTrackErrorMeters, boolean validData, long timestamp) {
+	public boolean setRawGroundSpeed(float rawGroundSpeedValue, boolean validSpeed, double crossTrackErrorMeters, boolean validCrosstrack, long timestamp) {
 		// snapshot cur data
 		final String oldGroundSpeedDisplayValue = mValueToDisplay;
 		final boolean oldGroundSpeedDataValid = mDataIsValid;
@@ -64,9 +65,10 @@ public class GPSDatum extends FlightDatum {
 		// update our data
 		mRawGroundSpeed = rawGroundSpeedValue;
 		mRawCrossTrackErrorMeters = crossTrackErrorMeters;
-		mDataIsValid = validData;
+		mDataIsValid = validSpeed;
+		mCrossTrackDataIsValid = validCrosstrack;
 		mDataTimestamp = timestamp;
-		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedValue, validData);
+		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedValue, validSpeed);
 
 		// TESTING Log.d("crosstrack", mRawCrossTrackErrorMeters + "meters");
 		
