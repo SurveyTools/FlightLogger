@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="blank"></string>
     <string name="app_name">FlightLogger</string>
     <string name="enable_laser_alt_button">Enable Laser Altimeter</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -18,7 +19,7 @@
     <string name="action_show_gps_debug">GPS Debug</string>
     <string name="altitude_placeholder">312</string>
     <string name="nav_status_gps_text">GPS</string>
-    <string name="nav_status_alt_text">LZR</string>
+    <string name="nav_status_alt_text">ALT</string>
     <string name="nav_status_bat_text">BAT</string>
     <string name="nav_status_box_text">PWR</string>
     <string name="image_button_no_desc"></string>
@@ -26,4 +27,12 @@
     <string name="nav_speed_units">KNOTS</string>
     <string name="nav_altitude_title">AGL</string>
     <string name="nav_altitude_units">FEET</string>
+    <string name="nav_select_transect_text">Load a GPX file...</string>
+    
+     <string name="fs_label_file">File:</string>
+     <string name="fs_label_route">Route:</string>
+     <string name="fs_label_transect">Transect:</string>
+     <string name="modal_ok">OK</string>
+     <string name="modal_cancel">Cancel</string>
+     
 </resources>

@@ -34,9 +34,17 @@
     <color name="nav_header_status_text_over_yellow">#cc000000</color>
     <color name="nav_header_status_text_over_grey">#cc000000</color>
     <color name="nav_header_status_text_over_ignore">#ccaaaaaa</color>
-        
+    <color name="nav_header_file_message_text_color">#ffFC0017</color>
+    
     <color name="nav_footer_status_recording">#ff44dd44</color>
     <color name="nav_footer_status">#ff888888</color>
     <color name="nav_footer_stop">#ffcccccc</color>
+   
+   <!--  flight settings -->
+    <color name="fs_background_color">#ff999999</color>
+    <color name="fs_footer_color">#ff777777</color>
+    <color name="fs_item_label_text_color">#ff555555</color>
+    <color name="fs_item_value_text_color">#ff111111</color>
+    <color name="fs_footer_button_text_color">#ff000000</color>
     
 </resources>

@@ -3,7 +3,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vulcan.flightlogger.geo.RouteChooserDialog" >
+    tools:context="com.vulcan.flightlogger.CourseSettingsActivity" >
 
     <ExpandableListView
         android:id="@+id/listView"

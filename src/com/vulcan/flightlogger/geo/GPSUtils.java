@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -55,6 +56,9 @@ public class GPSUtils {
 	public static List<Route> parseRoute(File gpxFile) {
 		List<Route> routeMap = new ArrayList<Route>();
 
+		if (gpxFile == null)
+			return routeMap;
+		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 				.newInstance();
 		try {
@@ -126,21 +130,94 @@ public class GPSUtils {
 
 	public static List<Transect> parseTransects(Route route) {
 		List<Transect> transects = new ArrayList<Transect>();
+		
+		if (route == null)
+			return transects;
+		
 		int transectIndex = 1;
 		List<Location> wp = route.mWayPoints;
 		// Naively assume that transects are ordered pairs of waypoints for now
 		if (wp.size() > 0 && wp.size() % 2 == 0) {
 			for (int i = 0; i < wp.size(); i += 2) {
 				Transect tp = new Transect();
-				tp.mName = "transect " + transectIndex;
 				tp.mStartWaypt = wp.get(i);
 				tp.mEndWaypt = wp.get(i + 1);
 				tp.mId = String.format("%s.%s.%s-%s", route.gpxFile, route.mName, tp.mStartWaypt.getProvider(), tp.mEndWaypt.getProvider());
-
+				tp.mName = "Transect " + transectIndex;
 				transects.add(tp);
+				transectIndex++;
 			}
 		}
 		return transects;
+	}
+
+	public static Route getDefaultRouteFromFile(File gpxFileObj) {
+		if (gpxFileObj != null) {
+		    List<Route> routes = GPSUtils.parseRoute(gpxFileObj);
+		    
+		    if (routes != null) {
+			   if (!routes.isEmpty())
+					   return routes.get(0);
+		    }
+		}
+		
+		// no dice
+		return null;
+	}
+
+	public static Route findRouteByName(String targetRouteName, List<Route>routesList) {
+		if ((targetRouteName != null) && (routesList != null)) {
+		    
+			Iterator<Route> iterator = routesList.iterator();
+			while (iterator.hasNext()) {
+				Route routeItem = iterator.next();
+				if (routeItem.matchesByName(targetRouteName)) {
+					// winner!
+					return routeItem;
+				}
+			}
+		}
+		
+		// no dice
+		return null;
+	}
+
+	public static Route findRouteInFile(String targetRouteName, File gpxFileObj) {
+		if (gpxFileObj != null) {
+		    List<Route> routes = GPSUtils.parseRoute(gpxFileObj);
+		    
+		    if (routes != null) {
+			   if (!routes.isEmpty())
+					   return routes.get(0);
+		    }
+		}
+		
+		// no dice
+		return null;
+	}
+
+	public static Route getDefaultRouteFromFilename(String gpxFilename) {
+		if (gpxFilename != null) {
+			return getDefaultRouteFromFile(new File(gpxFilename));
+		}
+		
+		// no dice
+		return null;
+	}
+
+	public static Transect getDefaultTransectFromRoute(Route route) {
+		if (route != null) {
+
+		    List<Transect> transects = GPSUtils.parseTransects(route);
+
+		    if (transects != null) {
+			   if (!transects.isEmpty())
+					   return transects.get(0);
+		    }
+		}
+		
+		// no dice
+		return null;
 	}
 
 }

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fs_background_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/fs_file_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:background="@color/debug2"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/fs_file_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="8dp"
+                android:contentDescription="@string/blank"
+                android:src="@drawable/filefolder" />
+
+            <TextView
+                android:id="@+id/fs_file_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:text="@string/fs_label_file"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/fs_item_label_text_color"
+                android:textSize="@dimen/fs_label_text_size" />
+
+            <TextView
+                android:id="@+id/fs_file_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:background="@color/debug1"
+                android:text="Example Survey.GPX"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/fs_item_value_text_color"
+                android:textSize="@dimen/fs_value_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fs_route_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:background="@color/debug2"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/fs_route_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="8dp"
+                android:contentDescription="@string/blank"
+                android:src="@drawable/filefolder" />
+
+            <TextView
+                android:id="@+id/fs_route_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:text="@string/fs_label_route"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/fs_item_label_text_color"
+                android:textSize="@dimen/fs_label_text_size" />
+
+            <TextView
+                android:id="@+id/fs_route_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:background="@color/debug1"
+                android:text="My Route "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/fs_item_value_text_color"
+                android:textSize="@dimen/fs_value_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fs_transect_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:background="@color/debug2"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/fs_transect_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="8dp"
+                android:contentDescription="@string/blank"
+                android:src="@drawable/filefolder" />
+
+            <TextView
+                android:id="@+id/fs_transect_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:text="@string/fs_label_transect"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/fs_item_label_text_color"
+                android:textSize="@dimen/fs_label_text_size" />
+
+            <TextView
+                android:id="@+id/fs_transect_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:background="@color/debug1"
+                android:text="T03 (T03_S ~ T03_N)"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/fs_item_value_text_color"
+                android:textSize="@dimen/fs_value_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fs_footer"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@color/debug3"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/fs_cancel_button"
+                style="@style/ButtonBarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="false"
+                android:background="@drawable/stopbutton"
+                android:includeFontPadding="false"
+                android:minHeight="28dp"
+                android:minWidth="40dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/stopbutton"
+                android:text="@string/modal_cancel"
+                android:textColor="@color/fs_footer_button_text_color"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/fs_ok_button"
+                style="@style/ButtonBarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="false"
+                android:background="@drawable/stopbutton"
+                android:includeFontPadding="false"
+                android:minHeight="28dp"
+                android:minWidth="40dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/stopbutton"
+                android:text="@string/modal_ok"
+                android:textColor="@color/fs_footer_button_text_color"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+</LinearLayout>

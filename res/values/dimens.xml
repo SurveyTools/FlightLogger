@@ -2,4 +2,6 @@
 <resources>
     <dimen name="nav_altitude">190dp</dimen>
     <dimen name="nav_absalt_value">190sp</dimen>
+    <dimen name="fs_label_text_size">28sp</dimen>
+    <dimen name="fs_value_text_size">28sp</dimen>
 </resources>

@@ -12,6 +12,12 @@ public class AltitudeDatum extends FlightDatum {
 		super(ignore, demoMode);
 	}
 
+	// copy constructor
+	public AltitudeDatum(AltitudeDatum srcDatum) {
+		super(srcDatum);
+		mRawAltitudeInMeters = srcDatum.mRawAltitudeInMeters;
+	}
+
 	protected String calcDisplayAltitudeFromRaw(float rawAltitudeInMeters, boolean validData) {
 		// convert. do units here too
 		if (mIgnore) {
@@ -67,7 +73,7 @@ public class AltitudeDatum extends FlightDatum {
 		final boolean oldDataOld = dataIsOld();
 		final boolean oldDataExpired = dataIsExpired();
 		final int oldStatusColor = getStatusColor();
-
+		
 		// update our data
 		mRawAltitudeInMeters = rawAltitudeInMeters;
 		mDataTimestamp = timestamp;
