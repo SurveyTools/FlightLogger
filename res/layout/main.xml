@@ -421,7 +421,7 @@
         <!-- /LinearLayout -->
 
         <TextView
-            android:id="@+id/fs_file_label"
+            android:id="@+id/nav_footer_status_left"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
@@ -434,18 +434,17 @@
             android:textSize="30sp" />
 
         <Button
-            android:id="@+id/fs_file_change"
+            android:id="@+id/nav_footer_mode_button"
             style="@style/ButtonBarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:adjustViewBounds="false"
-            android:background="@drawable/stopbutton"
+            android:background="@drawable/roundedbutton_red"
             android:includeFontPadding="false"
             android:minHeight="28dp"
             android:minWidth="40dp"
             android:scaleType="fitXY"
-            android:src="@drawable/stopbutton"
             android:text="STOP"
             android:textColor="@color/nav_footer_stop"
             android:textSize="32sp"
@@ -453,7 +452,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/fs_file_value"
+            android:id="@+id/nav_footer_status_right"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginLeft="12dp"

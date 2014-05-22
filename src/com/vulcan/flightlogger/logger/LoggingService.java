@@ -106,6 +106,10 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public void stopLog() {
 		closeCurrentLog();
 	}
+	
+	public boolean isLogging() {
+		return mLogData && (mCurrLogfileName != null);
+	}
 
 	public void startLog(String transectName, float logFrequency) {
 		stopLog();

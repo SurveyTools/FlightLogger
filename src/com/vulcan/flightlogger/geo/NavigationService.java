@@ -39,6 +39,7 @@ public class NavigationService extends Service implements LocationListener {
 	
 	// TODO - put these into a constants file
 	public static final String USE_MOCK_DATA = "useMockData";
+	public static final double METERS_NOT_AVAILABLE = -1f;
 	
 	private final String LOGGER_TAG = NavigationService.class.getSimpleName();
 
@@ -47,6 +48,8 @@ public class NavigationService extends Service implements LocationListener {
 	public boolean doNavigation = false;
 	
 	public Transect mCurrTransect;
+	private Location mCurrLoc; // last location received
+	
 	private final IBinder mBinder = new LocalBinder();
 	private final ArrayList<TransectUpdateListener> mListeners
 			= new ArrayList<TransectUpdateListener>();
@@ -75,8 +78,8 @@ public class NavigationService extends Service implements LocationListener {
 		else
 		{
 			// XXX JAYL Remove me. This is a testing hack
-			mCurrTransect = buildMockTransect();
-			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
+			// TESTING mCurrTransect = buildMockTransect();
+			// TESTING initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 		}
 		Log.d(LOGGER_TAG, "starting navigation service");
 		return START_STICKY;
@@ -130,6 +133,27 @@ public class NavigationService extends Service implements LocationListener {
 		doNavigation = false;
 	}                  
 	
+	public boolean isNavigating() {
+		return doNavigation && (mCurrTransect != null);
+	}
+
+	public double calcMetersToLocation(Location targetLoc) {
+		if (isNavigating() && (mCurrLoc != null) && (targetLoc != null)) {
+			return mCurrLoc.distanceTo(targetLoc);
+		}
+		
+		// no dice
+		return METERS_NOT_AVAILABLE;
+	}
+
+	public double calcMetersToStart() {
+		return calcMetersToLocation(mCurrTransect.mStartWaypt);
+	}
+
+	public double calcMetersToEnd() {
+		return calcMetersToLocation(mCurrTransect.mEndWaypt);
+	}
+
 	private void initGps(long millisBetweenUpdate, float minDistanceMoved) {
 		doNavigation = true;
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -224,6 +248,7 @@ public class NavigationService extends Service implements LocationListener {
 	public void onLocationChanged(Location currLoc) {
 		if (doNavigation)
 		{
+			mCurrLoc = currLoc;
 			TransectStatus stat = calcTransectStatus(currLoc);
 			sendTransectUpdate(stat);
 		}

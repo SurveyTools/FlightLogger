@@ -54,6 +54,10 @@ public class Transect implements Parcelable{
 		return null;
 	}
 	
+	public boolean isValid() {
+		return (mStartWaypt != null) && (mEndWaypt != null);
+	}
+	
 	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub

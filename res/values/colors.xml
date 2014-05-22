@@ -46,5 +46,16 @@
     <color name="fs_item_label_text_color">#ff555555</color>
     <color name="fs_item_value_text_color">#ff111111</color>
     <color name="fs_footer_button_text_color">#ff000000</color>
+  
+    <!--  footer status left -->
+    <color name="nav_footer_status_text_red">#ffFC0017</color>
+    <color name="nav_footer_status_text_green">#ff44dd44</color>
+    <color name="nav_footer_status_text_grey">#ff888888</color>
+    
+    <!--  footer mode button -->
+    <color name="nav_footer_mode_text_over_red">#ffcccccc</color>
+    <color name="nav_footer_mode_text_over_grey">#ff555555</color>
+    <color name="nav_footer_mode_text_over_green">#ffcccccc</color>
+
     
 </resources>
