@@ -1,8 +1,11 @@
 package com.vulcan.flightlogger.logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +33,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	private static final long LOGGING_FREQUENCY_SECS = 30;
 	private final String mLoggingDirName = "flightlogs";
+	private LogFormatter mLogFormatter;
 	private File mLogDir = null;
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mCurrLogfileName;
@@ -116,7 +120,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		mCurrLogEntry = new LogEntry();
 		mCurrLogfileName = createLogFile(transectName);
 		mLogData = true;
-		//logData((long) logFrequency);
+		logData((long) logFrequency);
 	}
 
 	public void closeCurrentLog() {
@@ -124,6 +128,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (mLogFormatter == null)
+			mLogFormatter = new LogFormatter();
 		Log.d(TAG, "starting logging service");
 		createFlightLogDirectory();
 		bindServices();
@@ -133,18 +139,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public boolean stopService(Intent intent) {
 		closeCurrentLog();
 		return super.stopService(intent);
-	}
-
-	private void writeEntry(LogEntry entry, String timestamp) {
-		try {
-			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-					openFileOutput(mCurrLogfileName.getAbsolutePath(),
-							Context.MODE_PRIVATE));
-			outputStreamWriter.write(entry.toLogEntry(timestamp));
-			outputStreamWriter.close();
-		} catch (IOException e) {
-			Log.e(TAG, "Log write failed: " + e.toString());
-		}
 	}
 
 	// TODO - If needed, consider write into a buffer, and flush it every 20 entries or so.
@@ -158,11 +152,12 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			public void run() {
 				while (mLogData) {
 					try {
+						LogEntry entry;
 						synchronized (mCurrLogEntry) {
 							// synchronized copy constructor to keep it atomic
-							LogEntry entry = new LogEntry(mCurrLogEntry);
-							writeEntry(entry, df.format(startTime));
+							entry = new LogEntry(mCurrLogEntry);
 						}
+						writeEntry(entry, df.format(startTime));
 						Thread.sleep(logFrequencyMillis);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -171,6 +166,26 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 				}
 			}
 		}.start();
+	}
+	
+	private void writeEntry(LogEntry entry, String timestamp) {
+		try {
+			String csvEntry = mLogFormatter.writeCSVRecord(
+					timestamp,
+					Double.toString(entry.mLat),
+					Double.toString(entry.mLon), 
+					Float.toString(entry.mAlt),
+					Float.toString(entry.mSpeed));
+		        FileOutputStream fos = new FileOutputStream(this.mCurrLogfileName, true);
+		        PrintStream writer = new PrintStream(fos);
+		        writer.print(csvEntry);
+		        writer.flush();
+		        writer.close();
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+			Log.e(TAG, "Log write failed: " + e.toString());
+		}
 	}
 
 	/*
@@ -185,7 +200,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 				Locale.US);
 		String logName = String.format("%s-%s", sdf.format(cal.getTime()),
 				osFriendlyName);
-		if (mLogDir == null)
+		if (mLogDir == null || (mLogDir.exists() == false))
 		{
 			createFlightLogDirectory();
 		}
@@ -205,12 +220,11 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	private boolean createFlightLogDirectory() {
 		// Kinda crazy, will only create a directory if you use a
 		// string constructor, as opposed to (File, String)
-		String dirPath = Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()
+		String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()
 				+ File.separator + mLoggingDirName;
 		File flightLogDir = new File(dirPath);
 		if (!flightLogDir.exists()) {
-			flightLogDir.mkdirs();
+			boolean created = flightLogDir.mkdirs();
 		}
 		mLogDir = flightLogDir;
 		return flightLogDir.exists();
@@ -218,14 +232,18 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	@Override
 	public void onRouteUpdate(TransectStatus status) {
-		// TODO Auto-generated method stub
+		if (status != null && mLogData)
+		{
+			this.mCurrLogEntry.mLat =  status.mCurrGpsLat;
+			this.mCurrLogEntry.mLon = status.mCurrGpsLon;
+			this.mCurrLogEntry.mSpeed = status.mGroundSpeed;
+		}
 
 	}
 
 	@Override
 	public void onAltitudeUpdate(float altValueInMeters) {
-		// TODO Auto-generated method stub
-
+		this.mCurrLogEntry.mAlt = altValueInMeters;	
 	}
 
 	@Override
