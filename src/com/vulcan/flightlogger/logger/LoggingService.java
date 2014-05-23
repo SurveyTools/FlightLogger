@@ -11,6 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.geo.NavigationService;
@@ -100,7 +102,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public void startLog(Transect transect) {
-		startLog(transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
+		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
 	}
 
 	public void startLog(String transectName) {
@@ -195,11 +197,14 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	private File createLogFile(String transectName) {
 		File logFile = null;
 		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.US);
-		String osFriendlyName = transectName.replaceAll(" ", "_").toLowerCase(
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
+		String osFriendlyName = (transectName == null) ? "no-transect" : transectName.replaceAll(" ", "_").toLowerCase(
 				Locale.US);
-		String logName = String.format("%s-%s", sdf.format(cal.getTime()),
-				osFriendlyName);
+		String logName = String.format("%s-%s", sdf.format(cal.getTime()),osFriendlyName);
+		
+		// fix any illegal chars
+		logName = FilenameUtils.normalize(logName);
+
 		if (mLogDir == null || (mLogDir.exists() == false))
 		{
 			createFlightLogDirectory();
