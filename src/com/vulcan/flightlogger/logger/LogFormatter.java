@@ -18,6 +18,7 @@ public class LogFormatter {
 			builder.append('"');
 		}
 		// XXX for now, assuming Windows (CRLF) as terminator
+		builder.append("\r\n");
 		return builder.toString();
 	}
 }
