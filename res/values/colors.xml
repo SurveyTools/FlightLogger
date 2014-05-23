@@ -28,7 +28,7 @@
     <color name="nav_speed_units">#ff888888</color>
 
     <color name="nav_header_route_text">#ff888888</color>
-    <color name="nav_header_transect_text">#ff888888</color>
+    <color name="nav_header_transect_text">#ffcccccc</color>
     <color name="nav_header_status_text_over_green">#cc000000</color>
     <color name="nav_header_status_text_over_red">#eeffffff</color>
     <color name="nav_header_status_text_over_yellow">#cc000000</color>

@@ -1,0 +1,167 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww23060\viewh24760\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 version 0.5 (not listed on screen anywhere).\
+\
+
+\b Prep:\
+
+\b0 Move your .gpx file onto the Downloads folder of the device (via transfer from a computer or email).  Note that the program will currently only recognize transects that are next to each other in pairs (i.e. no other waypoints should be in the route).\
+\
+
+\b App:\
+1. Pre-flight check . \
+
+\b0 	a.  Launch the app (Flightlogger)\
+	b. make sure the cable is connected between \'93the box\'94 and the tablet\
+	c. check the transect status (should be clear)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 		* top left state is \'93Load a Transect\'85\'94 (red)\
+		* bottom left state is 
+\b Not Ready
+\b0  (red)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 	d. Check the status lights (
+\b You want them all to be green).
+\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 		* 
+\b GPS
+\b0  should be green (i.e. it\'92s getting live gps data).  If this is red you may be indoors or the signal is blocked, or if the data is old.  \
+		* 
+\b ALT
+\b0  altitude should be green.  This turns green when it receives elevation data from the laser (and then goes yellow, then red if if stops receiving data for a period of time).  AGL is \'93\'97\'93 when there\'92s no data as well.  The PWR needs to be connected to receive laser data. \
+		* 
+\b BAT
+\b0  is green when it\'92s got 25% charge or better.  Below that and it goes yellow and red.\
+		* 
+\b PWR
+\b0  indicates that the tablet is connected to the external battery in the box via the little charging cable.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 3.
+\b0  
+\b Select a gpx file / route / transect
+\b0  \
+	a. Tap on the file icon in the top left of the screen (next to \'93Load a Transect\'94)\
+	b. \'93Choose a GPX File\'94 window comes up.  If you don\'92t see any files then there are no GPX files in your Downloads folder on the device.\
+	c. Tap on the GPX file you want to open.  Little window goes away and you should be on \'93GPX Settings\'94.  This currently shows you:\
+		* File: (the name of the gpx file you chose).  Tap on the file icon to change the file.\
+		* Route:  The first Route in the file.  Tap on the route icon to pick a different route.\
+		* Transect: The first Transect pair in the file.  Tap on the transect icon to pick a different transect. See \'93No Transects\'94 note below.\
+	d. Tap OK to choose this file+route+transect.\
+		You should return to the main screen.  \
+			> top left state is \'93<the transect filename>\'94 and the transect, shown as a pair of waypoints (e.g. T01S ~ T01_N).  (light grey)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 			> bottom left state is 
+\b Waiting to Start
+\b0  (green) \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+
+\b 4. Status check: 
+\b0 If everything is working and set up you should see:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 	> top left state is \'93<your transect filename>\'94 and the transect which shown as a pair of waypoints (e.g. T01S ~ T01_N).  (light grey)\
+	> All four status lights should be green (
+\b GPS, ALT, BAT, PWR
+\b0 )\
+	> 
+\b Round ILS-style
+\b0  display should have both horizontal and vertical bars on it (assuming you are getting laser and gps data, and have a transect selected).\
+	> 
+\b AGL
+\b0  should show Above Ground Level data from the laser\
+	> 
+\b GROUND SPEED
+\b0  comes from the GPS\
+	> bottom left state is 
+\b Waiting to Start
+\b0  (green) \
+	> bottom center button should say 
+\b START
+\b0 .\
+	> bottom right should show distance to first waypoint.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 5. START recording 
+\b0 when you get to the start of the transect (i.e. the first waypoint).  This starts the 
+\i\b logging
+\i0\b0  of the data (or it will in future versions \'97 logging is currently being worked on and disabled in this build).  When you are recording you should see:\
+	* bottom left state is 
+\b Recording
+\b0  (red)\
+	* bottom center button should say 
+\b STOP
+\b0 .\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+
+\b 6. STOP recording
+\b0  at the end of the Transect. This stops the logging. \
+\
+
+\b 7. NEXT Transect: 
+\b0  To choose the next transect, go back to #3 and choose a different transect\'85 repeat for each transect.  Note that you don\'92t need to pick the file or route\'85 you can just tap on the Transect icon and pick the next transect.  Future versions will have  NEXT button and a \'93Are you sure you want to stop?\'94 verification.\
+\
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Notes:  \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 No Transects?:
+\b0  If the transects are out of order (or missing), then check your gpx file to make sure there is a route in it and that there are consecutive pairs of waypoints that form transects.  \
+\
+
+\b No Logs!: 
+\b0  This version doesn\'92t write log files.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+\
+
+\b Appendix:  \
+
+\b0 \
+
+\b Typical example with transects 
+\b0 (as seen in a gpx file)
+\b :\
+\
+
+\b0 <rte><name>
+\b Session 1
+\b0 </name>\
+<rtept lat="-3.4985590" lon="38.9554692"><ele>-32768.000</ele><name>
+\b T01_S
+\b0 </name><sym>Waypoint</sym></rtept>\
+<rtept lat="-3.0642325" lon="39.2115345"><ele>-32768.000</ele><name>
+\b T01_N
+\b0 </name><sym>Waypoint</sym></rtept>\
+\
+<rtept lat="-3.0546140" lon="39.1860712"><ele>-32768.000</ele><name>
+\b T02_N
+\b0 </name><sym>Waypoint</sym></rtept>\
+<rtept lat="-3.5290935" lon="38.9157593"><ele>-32768.000</ele><name>
+\b T02_S
+\b0 </name><sym>Waypoint</sym></rtept>\
+\
+<rtept lat="-3.5115202" lon="38.8969005"><ele>-32768.000</ele><name>
+\b T03_S
+\b0 </name><sym>Waypoint</sym></rtept>\
+<rtept lat="-3.0044045" lon="39.1936147"><ele>-32768.000</ele><name>
+\b T03_N
+\b0 </name><sym>Waypoint</sym></rtept>\
+</rte>\
+}

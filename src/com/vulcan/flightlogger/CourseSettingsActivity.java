@@ -75,7 +75,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		updateDataUI();
 		
 		// auto-open if we have nothing
-		if (mWorkingData.isEmpty())
+		if (!mWorkingData.hasFile())
 			onClick(mFileButton);
 	}
 
