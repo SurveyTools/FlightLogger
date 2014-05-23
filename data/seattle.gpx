@@ -8,8 +8,14 @@
   xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
   xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
   xmlns:ctx="http://www.garmin.com/xmlschemas/CreationTimeExtension/v1">
-<rte><name>Session 1</name>
-<rtept lat="47.59759" lon="-122.32785"><ele>-32768.000</ele><name>505</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59670" lon="-122.32778"><ele>-32768.000</ele><name>Taco truck</name><sym>Waypoint</sym></rtept>
+<rte><name>West Side of Street</name>
+<rtept lat="47.59728741016754" lon="-122.327338603779"><ele>-32768.000</ele><name>505.ftn</name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59728741027556" lon="-122.3273386057293"><ele>-32768.000</ele><name>SW.XWALK</name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59728741027556" lon="-122.3273386057293"><ele>-32768.000</ele><name>SW.XWALK</name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59674551153609" lon="-122.3273050213338"><ele>-32768.000</ele><name>SE.XWALK</name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59674551153609" lon="-122.3273050213338"><ele>-32768.000</ele><name>SE.XWALK</name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59660202861247" lon="-122.327365825451"><ele>-32768.000</ele><name>NW.Owaj</name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59660202861247" lon="-122.327365825451"><ele>-32768.000</ele><name>NW.Owaj </name><sym>Waypoint</sym></rtept>
+<rtept lat="47.59728741016754" lon="-122.327338603779"><ele>-32768.000</ele><name>505.ftn</name><sym>Waypoint</sym></rtept>
 </rte>
 </gpx>

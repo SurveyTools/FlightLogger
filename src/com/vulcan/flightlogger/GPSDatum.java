@@ -29,7 +29,7 @@ public class GPSDatum extends FlightDatum {
 			// knots for now.
 			float knotsPerHour = metersPerSecondToKnotsPerHour(rawGroundSpeedMetersPerSecond);
 			
-			int intValue = (int) rawGroundSpeedMetersPerSecond;
+			int intValue = (int) knotsPerHour;
 
 			// int to string
 			return Integer.toString(intValue);
