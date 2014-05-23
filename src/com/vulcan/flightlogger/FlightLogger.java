@@ -650,6 +650,9 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			// not recording a transect
 			mStatusDisplayRight.setText("No Transect");
 		}
+		
+		// CROSSTRACK_TESTING_POI - show actual crosstrack
+		// mStatusDisplayRight.setText("xTrackErr: " + mGPSData.mRawCrossTrackErrorMeters);
 	}
 	
 	protected void updateFooterUI() {
@@ -683,7 +686,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			// right status
 			updateStatusRight(true);
 		}
-
+		
 /*		
  		work in progres...
  		

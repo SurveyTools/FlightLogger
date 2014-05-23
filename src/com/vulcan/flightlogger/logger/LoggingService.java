@@ -33,7 +33,8 @@ import android.util.Log;
 
 public class LoggingService extends Service implements AltitudeUpdateListener,
 		TransectUpdateListener {
-	private static final long LOGGING_FREQUENCY_SECS = 30;
+	// superdevo
+	private static final long LOGGING_FREQUENCY_SECS = 1;
 	private final String mLoggingDirName = "flightlogs";
 	private LogFormatter mLogFormatter;
 	private File mLogDir = null;
