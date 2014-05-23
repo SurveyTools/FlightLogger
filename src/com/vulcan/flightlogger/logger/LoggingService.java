@@ -203,7 +203,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
 		String osFriendlyName = (transectName == null) ? "no-transect" : transectName.replaceAll(" ", "_").toLowerCase(
 				Locale.US);
-		String logName = String.format("%s-%s", sdf.format(cal.getTime()),osFriendlyName);
+		String logName = String.format("%s-%s.txt", sdf.format(cal.getTime()),osFriendlyName);
 		
 		// fix any illegal chars
 		logName = FilenameUtils.normalize(logName);
@@ -229,8 +229,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	private boolean createFlightLogDirectory() {
 		// Kinda crazy, will only create a directory if you use a
 		// string constructor, as opposed to (File, String)
-		String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()
-				+ File.separator + mLoggingDirName;
+		// broken String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + mLoggingDirName;
+		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + mLoggingDirName;
 		File flightLogDir = new File(dirPath);
 		flightLogDir.mkdirs();
 		mLogDir = flightLogDir;
