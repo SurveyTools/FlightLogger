@@ -83,8 +83,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private int mStatusTextColorGreen;
 	private int mStatusTextColorGrey;
 
-	private Drawable mFileIconBackgroundNormal;
+	private Drawable mFileIconBackgroundWhite;
 	private Drawable mFileIconBackgroundRed;
+	private Drawable mFileIconBackgroundYellow;
+	private Drawable mFileIconBackgroundGreen;
 
 	private TextView mStatusDisplayLeft;
 	private Button mStartStopButton;
@@ -239,8 +241,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mModeButtonBorderGreen = getResources().getDrawable(R.drawable.roundedbutton_green);
 
 		// file button
-		mFileIconBackgroundNormal = getResources().getDrawable(R.drawable.filefolder);
+		mFileIconBackgroundWhite = getResources().getDrawable(R.drawable.filefolder);
 		mFileIconBackgroundRed = getResources().getDrawable(R.drawable.filefolder_red);
+		mFileIconBackgroundYellow = getResources().getDrawable(R.drawable.fileicon_yellow);
+		mFileIconBackgroundGreen = getResources().getDrawable(R.drawable.fileicon_green);
 
 		// formatters
 		mDistanceStatusFormatter = new DecimalFormat("#0.00");
@@ -549,22 +553,31 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	protected void updateRouteUI() {
 		
-		// TODO mFileIconButton and color
-		// TODO route
-		
-		if (mFlightData.isEmpty()) {
-			// just show the message
+		if ((mFlightData == null) || !mFlightData.hasFile()) {
+			// RED - just show the message
 			mFileIconButton.setBackground(mFileIconBackgroundRed);
 
 			mFileMessageDisplay.setVisibility(View.VISIBLE);
 			mFileAndRouteDisplay.setVisibility(View.INVISIBLE);
 			mTransectDisplay.setVisibility(View.INVISIBLE);
-			
-			mFileMessageDisplay.setText(R.string.nav_select_transect_text);
+		
+			mFileMessageDisplay.setText(R.string.nav_no_gpx_error_text);
 			mFileAndRouteDisplay.setText(null);
 			mTransectDisplay.setText(null);
-		} else {
-			mFileIconButton.setBackground(mFileIconBackgroundNormal);
+		} else if (mFlightData.hasFileButNotEverythingElse()) {
+			// YELLOW
+			mFileIconButton.setBackground(mFileIconBackgroundYellow);
+
+			mFileMessageDisplay.setVisibility(View.INVISIBLE);
+			mFileAndRouteDisplay.setVisibility(View.VISIBLE);
+			mTransectDisplay.setVisibility(View.VISIBLE);
+
+			mFileMessageDisplay.setText(null);
+			mFileAndRouteDisplay.setText(mFlightData.getShortFilename());
+			mTransectDisplay.setText(mFlightData.getShortTransectName());
+		} else if (mFlightData.isFullyReady()) {
+			// GREEN
+			mFileIconButton.setBackground(mFileIconBackgroundWhite); // optional green (kinda distracting)
 
 			mFileMessageDisplay.setVisibility(View.INVISIBLE);
 			mFileAndRouteDisplay.setVisibility(View.VISIBLE);
@@ -615,35 +628,61 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	protected void updateStatusRight(boolean toStart) {
 		// right status
-		if (mGPSData.mDataIsValid && !mGPSData.mIgnore && !mGPSData.dataIsExpired()) {
-			double metersToNext = toStart ? mNavigationService.calcMetersToStart() : mNavigationService.calcMetersToEnd();
-	        String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
-			mStatusDisplayRight.setText((toStart ? "Start" : "Stop") + " in " + kmString + " km");
+		if (mFlightData.isFullyReady()) {
+			// we expect to be recording the transect
+			if (mGPSData.mDataIsValid && !mGPSData.mIgnore && !mGPSData.dataIsExpired()) {
+				double metersToNext = toStart ? mNavigationService.calcMetersToStart() : mNavigationService.calcMetersToEnd();
+		        String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
+				mStatusDisplayRight.setText((toStart ? "Start" : "Stop") + " in " + kmString + " km");
+			} else {
+				// right status
+				if (mGPSData.mIgnore) 
+					mStatusDisplayRight.setText("(Ignore GPS)");
+				else
+					mStatusDisplayRight.setText("GPS N/A");
+			}
 		} else {
-			// right status
-			if (mGPSData.mIgnore) 
-				mStatusDisplayRight.setText("GPS Disabled");
-			else
-				mStatusDisplayRight.setText("GPS N/A");
+			// not recording a transect
+			mStatusDisplayRight.setText("No Transect");
 		}
 	}
 	
 	protected void updateFooterUI() {
 
+		// START/STOP button only reflects the logging state
+		
 		if (isLogging()) {
 			// left status
-			mStatusDisplayLeft.setText("Recording");
+			mStatusDisplayLeft.setText("** RECORDING **");
 			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
 			
 			// mode button
-			mStartStopButton.setText("STOP");
-			mStartStopButton.setBackground(mModeButtonBorderRed);
-			mStartStopButton.setTextColor(mModeButtonTextColorOnRed);
+			mStartStopButton.setText("STOP LOGGING");
+			mStartStopButton.setBackground(mModeButtonBorderGreen);
+			mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
 			mStartStopButton.setEnabled(true);
 
 			// right status
 			updateStatusRight(false);
-		} else if (isNavigating()) {
+		} else {
+			// left status
+			mStatusDisplayLeft.setText("Waiting to Start");
+			mStatusDisplayLeft.setTextColor(mStatusTextColorRed);
+
+			// mode button
+			mStartStopButton.setText("START LOGGING");
+			mStartStopButton.setBackground(mModeButtonBorderRed);
+			mStartStopButton.setTextColor(mModeButtonTextColorOnRed);
+			mStartStopButton.setEnabled(true);
+			
+			// right status
+			updateStatusRight(true);
+		}
+
+/*		
+ 		work in progres...
+ 		
+		if (isNavigating()) {
 			// left status
 			mStatusDisplayLeft.setText("Waiting to Start");
 			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
@@ -683,6 +722,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			// right status
 			mStatusDisplayRight.setText("");
 		}
+		*/
 	}
 
 	protected void updateUI() {
