@@ -23,6 +23,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaScannerConnection;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
@@ -116,11 +117,14 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public void startLog(String transectName, float logFrequency) {
-		stopLog();
-		mCurrLogEntry = new LogEntry();
-		mCurrLogfileName = createLogFile(transectName);
-		mLogData = true;
-		logData((long) logFrequency);
+		if (mLogData == false)
+		{
+			stopLog();
+			mCurrLogEntry = new LogEntry();
+			mCurrLogfileName = createLogFile(transectName);
+			mLogData = true;
+			logData((long) logFrequency);
+		}
 	}
 
 	public void closeCurrentLog() {
@@ -144,7 +148,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	// TODO - If needed, consider write into a buffer, and flush it every 20 entries or so.
 	private void logData(long logFrequencySecs) {
 		final long logFrequencyMillis = logFrequencySecs * 1000;
-		final Date startTime = new Date();
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
 				Locale.US);
 
@@ -157,7 +160,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 							// synchronized copy constructor to keep it atomic
 							entry = new LogEntry(mCurrLogEntry);
 						}
-						writeEntry(entry, df.format(startTime));
+						writeEntry(entry, df.format(new Date()));
 						Thread.sleep(logFrequencyMillis);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -178,7 +181,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 					Float.toString(entry.mSpeed));
 		        FileOutputStream fos = new FileOutputStream(this.mCurrLogfileName, true);
 		        PrintStream writer = new PrintStream(fos);
-		        writer.print(csvEntry);
+		        writer.append(csvEntry);
 		        writer.flush();
 		        writer.close();
 		    } catch (FileNotFoundException e) {
@@ -213,6 +216,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 					Log.e(TAG, e.getLocalizedMessage());
 				}
 			}
+			MediaScannerConnection.scanFile(this, new String[] {logFile.toString()}, null, null);
 		}
 		return logFile;
 	}
@@ -223,10 +227,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()
 				+ File.separator + mLoggingDirName;
 		File flightLogDir = new File(dirPath);
-		if (!flightLogDir.exists()) {
-			boolean created = flightLogDir.mkdirs();
-		}
+		flightLogDir.mkdirs();
 		mLogDir = flightLogDir;
+		// hack to make directory visible
 		return flightLogDir.exists();
 	}
 

@@ -469,6 +469,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	@Override
 	protected void onDestroy() {
+		if(mAltimeterConnection != null)
+			unbindService(mAltimeterConnection);
+		if(mNavigationConnection != null)
+			unbindService(mNavigationConnection);
+		
 		super.onDestroy();
 		// TODO eval for teardown?
 	}
