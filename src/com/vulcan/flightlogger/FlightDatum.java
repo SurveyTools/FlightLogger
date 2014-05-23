@@ -90,4 +90,12 @@ public class FlightDatum {
 	protected float metersToFeet(float meters) {
 		return meters * 3.2808399f;
 	}
+	
+	// TODO - move to a util
+	protected float metersPerSecondToKnotsPerHour(float metersPerSecond) {
+		// 1 meter/sec = 11811.024 ft/hour = 2.24 mph.
+		// 1 meter/sec = 1.94384 knots
+		return metersPerSecond * 1.94384f;
+	}
+	
 }
