@@ -63,13 +63,13 @@ public class TransectILSView extends View {
 
 		// TODO - externalize
 		mAltitudeTargetFeet = 300;
-		mAltitudeDialRadiusFeet = 75;
+		mAltitudeDialRadiusFeet = 100;
 
 		// DEMO_MODE option
 		// TESTING mAltitudeTargetFeet = 3; mAltitudeDialRadiusFeet = 2;
 
 		// TODO - externalize
-		mTransectDialRadiusFeet = 100;
+		mTransectDialRadiusFeet = 200;
 
 		mCircleClipRadius = 0;
 		mCircleClipX = 0;
