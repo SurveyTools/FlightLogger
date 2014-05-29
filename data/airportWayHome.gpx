@@ -9,13 +9,11 @@
   xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
   xmlns:ctx="http://www.garmin.com/xmlschemas/CreationTimeExtension/v1">
 <rte><name>Taco Loop</name>
-<rtept lat="47.59771311644758" lon="-122.3280447066874"><ele>-32768.000</ele><name>Fountain</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59667889541369" lon="-122.327805365758"><ele>-32768.000</ele><name>XWALK</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59667889541369" lon="-122.327805365758"><ele>-32768.000</ele><name>XWALK</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59666892180527" lon="-122.3275662915579"><ele>-32768.000</ele><name>Tacos</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59666892180527" lon="-122.3275662915579"><ele>-32768.000</ele><name>Tacos</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59740628460666" lon="-122.3275297151316"><ele>-32768.000</ele><name>Owaj</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59740628460666" lon="-122.3275297151316"><ele>-32768.000</ele><name>Owaj</name><sym>Waypoint</sym></rtept>
-<rtept lat="47.59771311644758" lon="-122.3280447066874"><ele>-32768.000</ele><name>Fountain</name><sym>Waypoint</sym></rtept>
+	<rtept lat="47.59741985476915" lon="-122.3219882434313"><ele>-32768.000</ele><name>CITY</name><sym>Waypoint</sym></rtept>
+	<rtept lat="47.54675456114886" lon="-122.3162227160127"><ele>-32768.000</ele><name>air_N</name><sym>Waypoint</sym></rtept>
+	<rtept lat="47.54675456114886" lon="-122.3162227160127"><ele>-32768.000</ele><name>air_N</name><sym>Waypoint</sym></rtept>
+	<rtept lat="47.48637183126415" lon="-122.264464893471"><ele>-32768.000</ele><name>air_S</name><sym>Waypoint</sym></rtept>
+	<rtept lat="47.48637183126415" lon="-122.264464893471"><ele>-32768.000</ele><name>air_S</name><sym>Waypoint</sym></rtept>
+	<rtept lat="47.5041025816873" lon="-122.2252394464856"><ele>-32768.000</ele><name>home</name><sym>Waypoint</sym></rtept>
 </rte>
 </gpx>

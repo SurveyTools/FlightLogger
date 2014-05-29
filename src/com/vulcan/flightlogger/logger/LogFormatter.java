@@ -2,7 +2,7 @@ package com.vulcan.flightlogger.logger;
 
 public class LogFormatter {
 
-	public String writeCommaSeparatedLine(String... values) {
+	public String writeCSVRecord(String... values) {
 		StringBuilder builder = new StringBuilder();
 		boolean isFirst = true;
 		for (String value : values) {
@@ -17,6 +17,8 @@ public class LogFormatter {
 			}
 			builder.append('"');
 		}
+		// XXX for now, assuming Windows (CRLF) as terminator
+		builder.append("\r\n");
 		return builder.toString();
 	}
 }

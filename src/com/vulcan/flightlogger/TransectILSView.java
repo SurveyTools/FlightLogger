@@ -30,7 +30,6 @@ public class TransectILSView extends View {
 
 	// path
 	private GPSDatum mCurGpsData;
-	private float mTransectTargetFeet; // e.g. 300 feet
 	private float mTransectDialRadiusFeet; // e.g. +/- 20 feet
 	private float mTransectDeltaNormalized;
 
@@ -64,14 +63,13 @@ public class TransectILSView extends View {
 
 		// TODO - externalize
 		mAltitudeTargetFeet = 300;
-		mAltitudeDialRadiusFeet = 75;
+		mAltitudeDialRadiusFeet = 100;
 
 		// DEMO_MODE option
 		// TESTING mAltitudeTargetFeet = 3; mAltitudeDialRadiusFeet = 2;
 
 		// TODO - externalize
-		mTransectTargetFeet = 0;
-		mTransectDialRadiusFeet = 100;
+		mTransectDialRadiusFeet = 200;
 
 		mCircleClipRadius = 0;
 		mCircleClipX = 0;
@@ -375,11 +373,11 @@ public class TransectILSView extends View {
 			if (gpsData.mDataIsValid && gpsData.mCrossTrackDataIsValid) {
 
 				// physical delta
-				float pathDeviationInFeet = gpsData.getTransectDeltaInFeet();
-				float physicalDeltaFeet = pathDeviationInFeet - mTransectTargetFeet;
+				// BUG FIX note: the minus is so we show the direction TO instead of AT
+				float pathDeviationInFeet = -gpsData.getTransectDeltaInFeet();
 
 				// normalized delta
-				mTransectDeltaNormalized = physicalDeltaFeet / mTransectDialRadiusFeet;
+				mTransectDeltaNormalized = pathDeviationInFeet / mTransectDialRadiusFeet;
 
 				// DEMO_MODE
 				if (gpsData.mDemoMode)

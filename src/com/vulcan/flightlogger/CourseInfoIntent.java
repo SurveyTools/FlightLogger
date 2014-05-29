@@ -47,22 +47,30 @@ public class CourseInfoIntent implements Parcelable {
 		}
 	}
 
-	public boolean isEmpty() {
+	public boolean hasFile() {
+		return (mGpxName != null) && !mGpxName.isEmpty();
+	}
+
+	public boolean hasFileButNotEverythingElse() {
+		// YELLOW
+		boolean hasFile = (mGpxName != null) && !mGpxName.isEmpty();
+		boolean hasRoute = (mRouteName != null) && !mRouteName.isEmpty();
+		boolean hasTransect = (mTransectName != null) && !mTransectName.isEmpty();
+		boolean hasTransectDetails = (mTransectDetails != null) && !mTransectDetails.isEmpty();
 		
-		if ((mGpxName != null) && !mGpxName.isEmpty())
-			return false;
+		// something's in there, possibly all
+		return hasFile && !(hasRoute && hasTransect && hasTransectDetails);
+	}
+
+	public boolean isFullyReady() {
+		// GREEN
+		boolean hasFile = (mGpxName != null) && !mGpxName.isEmpty();
+		boolean hasRoute = (mRouteName != null) && !mRouteName.isEmpty();
+		boolean hasTransect = (mTransectName != null) && !mTransectName.isEmpty();
+		boolean hasTransectDetails = (mTransectDetails != null) && !mTransectDetails.isEmpty();
 		
-		if ((mRouteName != null) && !mRouteName.isEmpty())
-			return false;
-		
-		if ((mTransectName != null) && !mTransectName.isEmpty())
-			return false;
-		
-		if ((mTransectDetails != null) && !mTransectDetails.isEmpty())
-			return false;
-		
-		// something's in there
-		return true;
+		// something's in there, possibly all
+		return hasFile && hasRoute && hasTransect && hasTransectDetails;
 	}
 
 	public String getShortFilename() {

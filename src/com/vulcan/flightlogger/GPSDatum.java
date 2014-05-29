@@ -5,7 +5,7 @@ import android.util.Log;
 public class GPSDatum extends FlightDatum {
 
 	// TODO change to TransectStatus
-	protected float mRawGroundSpeed; // raw float value
+	protected float mRawGroundSpeedMetersPerSecond; // raw float value
 	protected double mRawCrossTrackErrorMeters;
 	protected boolean mCrossTrackDataIsValid;
 	
@@ -17,7 +17,7 @@ public class GPSDatum extends FlightDatum {
 		super(ignore, demoMode);
 	}
 
-	protected String calcDisplayGroundSpeedFromRaw(float rawGroundSpeed, boolean validData) {
+	protected String calcDisplayGroundSpeedFromRaw(float rawGroundSpeedMetersPerSecond, boolean validData) {
 		// convert. do units here too
 		if (mIgnore) {
 			// ignore data
@@ -25,7 +25,11 @@ public class GPSDatum extends FlightDatum {
 		} else if (validData) {
 			// good data -- eval
 			// float to int
-			int intValue = (int) rawGroundSpeed;
+			
+			// knots for now.
+			float knotsPerHour = metersPerSecondToKnotsPerHour(rawGroundSpeedMetersPerSecond);
+			
+			int intValue = (int) knotsPerHour;
 
 			// int to string
 			return Integer.toString(intValue);
@@ -57,18 +61,18 @@ public class GPSDatum extends FlightDatum {
 		return metersToFeet((float)mRawCrossTrackErrorMeters);
 	}
 
-	public boolean setRawGroundSpeed(float rawGroundSpeedValue, boolean validSpeed, double crossTrackErrorMeters, boolean validCrosstrack, long timestamp) {
+	public boolean setRawGroundSpeed(float rawGroundSpeedMetersPerSecond, boolean validSpeed, double crossTrackErrorMeters, boolean validCrosstrack, long timestamp) {
 		// snapshot cur data
 		final String oldGroundSpeedDisplayValue = mValueToDisplay;
 		final boolean oldGroundSpeedDataValid = mDataIsValid;
 
 		// update our data
-		mRawGroundSpeed = rawGroundSpeedValue;
+		mRawGroundSpeedMetersPerSecond = rawGroundSpeedMetersPerSecond;
 		mRawCrossTrackErrorMeters = crossTrackErrorMeters;
 		mDataIsValid = validSpeed;
 		mCrossTrackDataIsValid = validCrosstrack;
 		mDataTimestamp = timestamp;
-		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedValue, validSpeed);
+		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedMetersPerSecond, validSpeed);
 
 		// TESTING Log.d("crosstrack", mRawCrossTrackErrorMeters + "meters");
 		
