@@ -8,7 +8,7 @@ public class GPSDatum extends FlightDatum {
 	protected float mRawGroundSpeedMetersPerSecond; // raw float value
 	protected double mRawCrossTrackErrorMeters;
 	protected boolean mCrossTrackDataIsValid;
-	
+
 	static final String INVALID_GPS_STRING = "--";
 	static final String IGNORE_GPS_STRING = "";
 	static final String DEMO_GROUND_SPEED_STRING = "84"; // DEMO_MODE
@@ -25,10 +25,10 @@ public class GPSDatum extends FlightDatum {
 		} else if (validData) {
 			// good data -- eval
 			// float to int
-			
+
 			// knots for now.
 			float knotsPerHour = metersPerSecondToKnotsPerHour(rawGroundSpeedMetersPerSecond);
-			
+
 			int intValue = (int) knotsPerHour;
 
 			// int to string
@@ -55,10 +55,10 @@ public class GPSDatum extends FlightDatum {
 		else
 			return mValueToDisplay;
 	}
-	
+
 	public float getTransectDeltaInFeet() {
 		// TODO fix units
-		return metersToFeet((float)mRawCrossTrackErrorMeters);
+		return metersToFeet((float) mRawCrossTrackErrorMeters);
 	}
 
 	public boolean setRawGroundSpeed(float rawGroundSpeedMetersPerSecond, boolean validSpeed, double crossTrackErrorMeters, boolean validCrosstrack, long timestamp) {
@@ -75,7 +75,7 @@ public class GPSDatum extends FlightDatum {
 		mValueToDisplay = calcDisplayGroundSpeedFromRaw(rawGroundSpeedMetersPerSecond, validSpeed);
 
 		// TESTING Log.d("crosstrack", mRawCrossTrackErrorMeters + "meters");
-		
+
 		// see if anything changed
 		boolean somethingChanged = false;
 		somethingChanged |= mValueToDisplay.equals(oldGroundSpeedDisplayValue); // value

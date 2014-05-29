@@ -42,7 +42,9 @@
    
    <!--  flight settings -->
     <color name="fs_background_color">#ff999999</color>
-    <color name="fs_footer_color">#ff777777</color>
+    <color name="fs_header_color">#ff222222</color>
+    <color name="fs_footer_color">#ff555555</color>
+    <color name="fs_title_text_color">#ffeeeeee</color>
     <color name="fs_item_label_text_color">#ff555555</color>
     <color name="fs_item_value_text_color">#ff111111</color>
     <color name="fs_footer_button_text_color">#ff000000</color>

@@ -29,6 +29,7 @@
     <string name="nav_altitude_units">FEET</string>
     <string name="nav_no_gpx_error_text">Load a GPX File...</string>
     
+     <string name="fs_label_title">GPX Settings</string>
      <string name="fs_label_file">File:</string>
      <string name="fs_label_route">Route:</string>
      <string name="fs_label_transect">Transect:</string>

@@ -62,8 +62,7 @@ public class SquishyTextView extends TextView {
 	}
 
 	/*
-	 * Re size the font so the specified text fits in the text box assuming the
-	 * text box is the specified width.
+	 * Re size the font so the specified text fits in the text box assuming the text box is the specified width.
 	 */
 	private void refitText(String text, int textWidth, int textHeight) {
 		if (textWidth <= 0)
@@ -97,13 +96,8 @@ public class SquishyTextView extends TextView {
 
 			float trueTextHeight = -mTestPaint.ascent() + mTestPaint.descent();
 
-			// TESTING Log.d("  refit test", "test-size = " + size +
-			// " -->  text w = " + bounds.width() + ", h = " + bounds.height() +
-			// ", ascent = " + mTestPaint.ascent() + ", descent = " +
-			// mTestPaint.descent());
-			// TESTINGLog.d("  refit test", "test-size = " + size +
-			// " -->  text w = " + bounds.width() + ", h = " + bounds.height() +
-			// ", trueTextHeight = " + trueTextHeight);
+			// TESTING Log.d("  refit test", "test-size = " + size + " -->  text w = " + bounds.width() + ", h = " + bounds.height() + ", ascent = " + mTestPaint.ascent() + ", descent = " + mTestPaint.descent());
+			// TESTING Log.d("  refit test", "test-size = " + size + " -->  text w = " + bounds.width() + ", h = " + bounds.height() + ", trueTextHeight = " + trueTextHeight);
 
 			if ((bounds.width() >= targetWidth) || (trueTextHeight >= targetHeight))
 				hi = size; // too big

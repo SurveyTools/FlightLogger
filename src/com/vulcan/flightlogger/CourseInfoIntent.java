@@ -19,9 +19,8 @@ public class CourseInfoIntent implements Parcelable {
 	private static final String LOGGER_TAG = "CourseInfoIntent";
 	public static final String INTENT_KEY = "CourseInfoKey";
 
-
 	public CourseInfoIntent(String gpxName, String routeName, String transectName, String transectDetails, int action) {
-		
+
 		mGpxName = gpxName;
 		mRouteName = routeName;
 		mTransectName = transectName;
@@ -31,7 +30,7 @@ public class CourseInfoIntent implements Parcelable {
 
 	// copy constructor
 	public CourseInfoIntent(CourseInfoIntent srcData) {
-		
+
 		if (srcData != null) {
 			mGpxName = srcData.mGpxName;
 			mRouteName = srcData.mRouteName;
@@ -57,7 +56,7 @@ public class CourseInfoIntent implements Parcelable {
 		boolean hasRoute = (mRouteName != null) && !mRouteName.isEmpty();
 		boolean hasTransect = (mTransectName != null) && !mTransectName.isEmpty();
 		boolean hasTransectDetails = (mTransectDetails != null) && !mTransectDetails.isEmpty();
-		
+
 		// something's in there, possibly all
 		return hasFile && !(hasRoute && hasTransect && hasTransectDetails);
 	}
@@ -68,7 +67,7 @@ public class CourseInfoIntent implements Parcelable {
 		boolean hasRoute = (mRouteName != null) && !mRouteName.isEmpty();
 		boolean hasTransect = (mTransectName != null) && !mTransectName.isEmpty();
 		boolean hasTransectDetails = (mTransectDetails != null) && !mTransectDetails.isEmpty();
-		
+
 		// something's in there, possibly all
 		return hasFile && hasRoute && hasTransect && hasTransectDetails;
 	}
@@ -100,7 +99,7 @@ public class CourseInfoIntent implements Parcelable {
 		this.mTransectDetails = data[3];
 		this.mAction = Integer.parseInt(data[4]);
 	}
-	
+
 	public void debugDump() {
 		Log.d(LOGGER_TAG, "GPX: " + mGpxName);
 		Log.d(LOGGER_TAG, "Route: " + mRouteName);

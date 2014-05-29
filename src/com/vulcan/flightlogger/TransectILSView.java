@@ -37,7 +37,7 @@ public class TransectILSView extends View {
 	private int mMarkerColorNormal;
 	private int mMarkerColorWarning;
 	private int mMarkerColorError;
-	
+
 	// drawing
 	private Paint mPaint;
 	private RectF mOvalH;
@@ -226,9 +226,9 @@ public class TransectILSView extends View {
 		if ((mCurGpsData != null) && mCurGpsData.mDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired()) {
 
 			float pixelHDelta = pixelRadius * mTransectDeltaNormalized;
-	
+
 			markerColor = mMarkerColorNormal;
-			
+
 			// validate
 			if (pixelHDelta < -errorPixelRadius) {
 				// pegged
@@ -245,40 +245,40 @@ public class TransectILSView extends View {
 				// warning
 				markerColor = mMarkerColorWarning;
 			}
-	
+
 			// change it to yellow if the data is old
 			if ((markerColor == mMarkerColorNormal) && mCurGpsData.dataIsOld()) {
 				// optional markerColor = mMarkerColorWarning;
 			}
-			
+
 			float x = centerX + pixelHDelta;
 			float verticalMarkerY1 = centerY - (markerLen / 2);
 			float verticalMarkerY2 = centerY + (markerLen / 2);
-	
+
 			mPaint.setColor(markerColor);
 			canvas.drawLine(x, verticalMarkerY1, x, verticalMarkerY2, mPaint);
 		}
-		
+
 		// snapshot for alter diffs
 		if (mCurAltitude != null) {
 			mRenderedAtitudeDataIsValid = mCurAltitude.mDataIsValid;
 			mRenderedAtitudeDataIsOld = mCurAltitude.dataIsOld();
 			mRenderedAtitudeDataIsExpired = mCurAltitude.dataIsExpired();
 			mRenderedAltitudeDeltaNormalized = mAltitudeDeltaNormalized;
-			
+
 		} else {
 			mRenderedAtitudeDataIsValid = false;
 			mRenderedAtitudeDataIsOld = false;
 			mRenderedAtitudeDataIsExpired = false;
 			mRenderedAltitudeDeltaNormalized = 0;
-			
+
 		}
 		if ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired()) {
-			
+
 			float pixelVDelta = pixelRadius * mAltitudeDeltaNormalized;
-			
+
 			markerColor = mMarkerColorNormal;
-			
+
 			// validate
 			if (pixelVDelta < -errorPixelRadius) {
 				// pegged
@@ -286,7 +286,7 @@ public class TransectILSView extends View {
 				markerColor = mMarkerColorError;
 			} else if (pixelVDelta < -warningPixelRadius) {
 				// warning
-				 markerColor = mMarkerColorWarning;
+				markerColor = mMarkerColorWarning;
 			} else if (pixelVDelta > errorPixelRadius) {
 				// pegged
 				pixelVDelta = errorPixelRadius;
@@ -295,24 +295,22 @@ public class TransectILSView extends View {
 				// warning
 				markerColor = mMarkerColorWarning;
 			}
-			
+
 			// change it to yellow if the data is old
 			if ((markerColor == mMarkerColorNormal) && mCurAltitude.dataIsOld()) {
 				// optional markerColor = mMarkerColorWarning;
 			}
-			
+
 			float yPos = centerY + pixelVDelta;
 			float horizMarkerX1 = centerX - (markerLen / 2);
 			float horizMarkerX2 = centerX + (markerLen / 2);
-	
+
 			mPaint.setColor(markerColor);
 			canvas.drawLine(horizMarkerX1, yPos, horizMarkerX2, yPos, mPaint);
 		}
 
 		/*
-		 * TESTING the clip: RectF bigRect = new RectF(-10, -10, w + 20, h +
-		 * 20); mPaint.setStyle(Paint.Style.FILL); canvas.drawRect(bigRect,
-		 * mPaint);
+		 * TESTING the clip: RectF bigRect = new RectF(-10, -10, w + 20, h + 20); mPaint.setStyle(Paint.Style.FILL); canvas.drawRect(bigRect, mPaint);
 		 */
 
 		// restore
@@ -322,7 +320,7 @@ public class TransectILSView extends View {
 	protected boolean updateAltitude(AltitudeDatum altitudeData) {
 
 		// snapshot
-		//float oldAtitudeDeltaNormalized = mAltitudeDeltaNormalized;
+		// float oldAtitudeDeltaNormalized = mAltitudeDeltaNormalized;
 
 		// always accept and copy the data
 		mCurAltitude = new AltitudeDatum(altitudeData);
@@ -347,24 +345,24 @@ public class TransectILSView extends View {
 		}
 
 		// see if we agree with what's on screen
-		
+
 		boolean somethingChanged = false;
-		
+
 		if (mCurAltitude != null) {
 			somethingChanged |= mRenderedAtitudeDataIsValid != mCurAltitude.mDataIsValid;
 			somethingChanged |= mRenderedAtitudeDataIsOld != mCurAltitude.dataIsOld();
 			somethingChanged |= mRenderedAtitudeDataIsExpired != mCurAltitude.dataIsExpired();
 			somethingChanged |= mRenderedAltitudeDeltaNormalized != mAltitudeDeltaNormalized;
 		}
-		
+
 		return somethingChanged;
 	}
 
 	protected boolean updateGps(GPSDatum gpsData) {
 
 		// keep a ref
-		mCurGpsData= gpsData;
-		
+		mCurGpsData = gpsData;
+
 		float oldTransectDeltaNormalized = mTransectDeltaNormalized;
 		// TODO - old visible
 
