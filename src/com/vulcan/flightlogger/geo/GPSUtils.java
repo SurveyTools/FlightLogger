@@ -134,6 +134,9 @@ public class GPSUtils {
 
 			route.addWayPoint(loc);
 		}
+		// XXX short term hack - this really needs to be in the transect
+		if(waypts.getLength() % 2 != 0)
+			route.setParseErrorMsg("Uneven number of transect waypoints");
 		
 		return route;
 	}
@@ -179,6 +182,10 @@ public class GPSUtils {
 
 				r.addWayPoint(loc);
 			}
+			// XXX Short term hack to indicate error - this really should be
+			// bound to the transect
+			if(nodelist_rtkpt.getLength() %2 != 0)
+				r.setParseErrorMsg("Uneven number of transect route points");
 			routeMap.add(r);
 		}
 		return routeMap;
@@ -193,17 +200,16 @@ public class GPSUtils {
 		int transectIndex = 1;
 		List<Location> wp = route.mWayPoints;
 		// Naively assume that transects are ordered pairs of waypoints for now
-		if (wp.size() > 0 && wp.size() % 2 == 0) {
-			for (int i = 0; i < wp.size(); i += 2) {
-				Transect tp = new Transect();
-				tp.mStartWaypt = wp.get(i);
-				tp.mEndWaypt = wp.get(i + 1);
-				tp.mId = String.format("%s.%s.%s-%s", route.gpxFile, route.mName, tp.mStartWaypt.getProvider(), tp.mEndWaypt.getProvider());
-				tp.mName = "Transect " + transectIndex;
-				transects.add(tp);
-				transectIndex++;
-			}
+		for (int i = 0; i < wp.size() - 1; i += 2) {
+			Transect tp = new Transect();
+			tp.mStartWaypt = wp.get(i);
+			tp.mEndWaypt = wp.get(i + 1);
+			tp.mId = String.format("%s.%s.%s-%s", route.gpxFile, route.mName, tp.mStartWaypt.getProvider(), tp.mEndWaypt.getProvider());
+			tp.mName = "Transect " + transectIndex;
+			transects.add(tp);
+			transectIndex++;
 		}
+	
 		return transects;
 	}
 
