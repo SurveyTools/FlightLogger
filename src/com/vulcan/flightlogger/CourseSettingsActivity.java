@@ -17,9 +17,11 @@ import com.vulcan.flightlogger.geo.data.Route;
 import com.vulcan.flightlogger.geo.data.Transect;
 
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -45,13 +47,40 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	private CourseInfoIntent mOriginalData;
 	private CourseInfoIntent mWorkingData;
 
+	// objects based on mWorkingData
+	private File mCurGpxFile;
+	private List<Route> mCurRoutes;		
+	private Route mCurRoute;
+    private List<Transect> mCurTransects;
+    private Transect mCurTransect;
+    
 	private static final String LOGGER_TAG = "CourseSettingsActivity";
+	private final int FS_DIALOG_STYLE = DialogFragment.STYLE_NORMAL;
+	private final int FS_DIALOG_THEME = android.R.style.Theme_NoTitleBar_Fullscreen;
+	
+
+	protected void immerseMe(String caller) {
+
+		// IMMERSIVE_MODE
+		// TESTING Log.i(LOGGER_TAG, "setting the window to immersive and sticky (from " + caller + ")");
+		// ref: source code for View
+		// also ref ref https://plus.google.com/+MichaelLeahy/posts/CqSCP653UrW
+
+		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // don't bump the bottom ok/cancel buttons up even when the 3 buttons are shown
+				| View.SYSTEM_UI_FLAG_LAYOUT_STABLE // keeps the content laid out correctly, but activity bar still pushes downs
+				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // View would like its window to be layed out as if it has requested SYSTEM_UI_FLAG_FULLSCREEN, even if it currently hasn't
+				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // bottom 3 buttons
+				| View.SYSTEM_UI_FLAG_FULLSCREEN // top bar (system bar)
+				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.flight_settings);
+
+		// IMMERSIVE_MODE note: setting the theme here didn't help setTheme(android.R.style.Theme_NoTitleBar);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -69,12 +98,20 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mOriginalData = getIntent().getParcelableExtra(CourseInfoIntent.INTENT_KEY);
 		mWorkingData = new CourseInfoIntent(mOriginalData); // clone
 		mWorkingData.debugDump();
+		
+		updateCurFileFromWorkingData();
 
 		setupButtons();
 		setupColors();
 		updateDataUI();
-		
+
+		// IMMERSIVE_MODE note: onSystemUiVisibilityChange hook didn't work
+		// IMMERSIVE_MODE note: delayed change didn't help: mImmersiveRunnable = new Runnable() { @Override public void run() { immerseMe("runnable delayed"); } };
+		// IMMERSIVE_MODE
+		immerseMe("dlog OnCreate");
+
 		// auto-open if we have nothing
+		// TESTING if (true) return;
 		if (!mWorkingData.hasFile())
 			onClick(mFileButton);
 	}
@@ -96,7 +133,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			}
 		});
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		if (v == mFileButton) {
@@ -110,11 +147,16 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			showChooseTransectDialog();
 		}
 	}
-
 	protected void updateDataUI() {
 		mFile.setText(mWorkingData.getShortFilename());
 		mRoute.setText(mWorkingData.getShortRouteName());
 		mTransect.setText(mWorkingData.getFullTransectName());
+		
+		int numRoutes = (mCurRoutes == null) ? 0 : mCurRoutes.size();
+		int numTransects = (mCurTransects == null) ? 0 : mCurTransects.size();
+		
+		mRouteButton.setEnabled(numRoutes > 1);
+		mTransectButton.setEnabled(numTransects > 1);
 	}
 
 	private void finishWithCancel() {
@@ -155,6 +197,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 			// whole screen
 			setColorforViewWithID(R.id.fs_background_wrapper, R.color.fs_background_color);
+			setColorforViewWithID(R.id.fs_header, R.color.fs_header_color);
 			setColorforViewWithID(R.id.fs_footer, R.color.fs_footer_color);
 
 			// file
@@ -180,51 +223,107 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-
 		if (hasFocus) {
-			// note: requires Android 4.4 / api level 16 & 19
-			View decorView = getWindow().getDecorView();
-			// alt - let the bottom bar show for the 'back' functionality
-			// (SYSTEM_UI_FLAG_HIDE_NAVIGATION)
-			decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+			immerseMe("onWindowFocusChanged");
 		}
 	}
-	
+
+    protected void clearCurTransect() {
+    	mCurTransect = null;
+    }
+    
+    protected void clearCurRouteAndDependencies() {
+    	mCurRoute = null;
+    	mCurTransects = null;
+    	clearCurTransect();
+    }
+    
+    protected void clearCurFileAndDependencies() {
+    	mCurGpxFile = null;
+    	mCurRoutes = null;
+    	clearCurRouteAndDependencies();
+    }
+    
+	protected void updateCurTransectFromWorkingData() {
+		clearCurTransect();
+    	if (mCurTransects != null) {
+			// get the cur transect
+    		if (mWorkingData.hasTransect()) {
+    			// get the specified one
+    			mCurTransect = GPSUtils.findTransectInList(mWorkingData.mTransectName, mCurTransects);
+    		} else {
+    			// get the default
+    			mCurTransect = GPSUtils.getDefaultTransectFromList(mCurTransects);
+    			
+    			// update our working data
+    			mWorkingData.mTransectName = (mCurTransect == null) ? null : mCurTransect.mName;
+    			mWorkingData.mTransectDetails =  (mCurTransect == null) ? null : mCurTransect.getDetailsName();
+    		}
+		}
+	}
+
+	protected void updateCurRouteFromWorkingData() {
+		clearCurRouteAndDependencies();
+    	if (mCurRoutes != null) {
+			// get the route
+    		if (mWorkingData.hasRoute()) {
+    			// get the specified one
+    			mCurRoute = GPSUtils.findRouteByName(mWorkingData.mRouteName, mCurRoutes);
+    		} else {
+    			// get the default
+    			mCurRoute = GPSUtils.getDefaultRouteFromList(mCurRoutes);
+ 
+    			// update our working data
+    			mWorkingData.mRouteName = (mCurRoute == null) ? null : mCurRoute.mName;
+    		}
+
+			// get the transects
+		    mCurTransects = GPSUtils.parseTransects(mCurRoute);
+		    
+		    // cascade
+		    updateCurTransectFromWorkingData();
+		}
+	}
+
+	protected void updateCurFileFromWorkingData() {
+		clearCurFileAndDependencies();
+		if (mWorkingData.hasFile()) {
+			// get the file
+			mCurGpxFile = new File(mWorkingData.mGpxName);
+
+			// get the routes
+			mCurRoutes = GPSUtils.parseRoute(mCurGpxFile);			
+			
+			// cascade
+			updateCurRouteFromWorkingData();
+		}
+	}
+
+	// from a chooser...
 	protected void setFile(String gpxFilename) {
+		mWorkingData.clearFileDataAndDependencies();
 		mWorkingData.mGpxName = gpxFilename;
-		
-	    // defaults
-	    Route defaultRoute = GPSUtils.getDefaultRouteFromFilename(gpxFilename);
-	    Transect defaultTransect = GPSUtils.getDefaultTransectFromRoute(defaultRoute);
 
-	    // set the subordinates
-	    mWorkingData.mRouteName = (defaultRoute == null) ? null : defaultRoute.mName;
-		mWorkingData.mTransectName =  (defaultTransect == null) ? null : defaultTransect.mName;
-		mWorkingData.mTransectDetails =  (defaultTransect == null) ? null : defaultTransect.getDetailsName();
-		
+		updateCurFileFromWorkingData();
 		updateDataUI();
 	}
 
+	// from a chooser...
 	protected void setRoute(String routeName) {
+		// file and route list are ok... route and transects need to be updated
+		mWorkingData.clearRouteDataAndDependencies();
 		mWorkingData.mRouteName = routeName;
-		
-	    // defaults (matching the target route above)
-	    File gpxFileObj = new File(mWorkingData.mGpxName);
-	    List<Route> routes = GPSUtils.parseRoute(gpxFileObj);
-	    Route routeObj = GPSUtils.findRouteByName(routeName, routes);
-	    Transect defaultTransect = GPSUtils.getDefaultTransectFromRoute(routeObj);
 
-	    // set the subordinates
-		mWorkingData.mTransectName =  (defaultTransect == null) ? null : defaultTransect.mName;
-		mWorkingData.mTransectDetails =  (defaultTransect == null) ? null : defaultTransect.getDetailsName();
-		
+		updateCurRouteFromWorkingData();
 		updateDataUI();
 	}
 
+	// from a chooser...
 	protected void setTransect(String transectName, String transectDetails) {
 		mWorkingData.mTransectName = transectName;
 		mWorkingData.mTransectDetails = transectDetails;
-		
+
+		updateCurTransectFromWorkingData();
 		updateDataUI();
 	}
 
@@ -237,46 +336,45 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	}
 
 	protected String calcDownloadsDirectoryPath() {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        return dir.toString();
+		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+		return dir.toString();
 	}
-	
+
 	void showChooseFileDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        String startingDir = calcDownloadsDirectoryPath();
-        FileChooserDialog dlog = FileChooserDialog.newInstance("Choose a GPX File", DialogFragment.STYLE_NORMAL, 0, startingDir, 0);
-	    dlog.show(fm, FileChooserDialog.FILE_CHOOSER_DIALOG_KEY);
+		FragmentManager fm = getSupportFragmentManager();
+		String startingDir = calcDownloadsDirectoryPath();
+		FileChooserDialog dlog = FileChooserDialog.newInstance("Choose a GPX File", FS_DIALOG_STYLE, FS_DIALOG_THEME, startingDir, 0);
+		dlog.show(fm, FileChooserDialog.FILE_CHOOSER_DIALOG_KEY);
+		// IMMERSIVE_MODE NOTE: getWindow().getDecorView().postDelayed(mImmersiveRunnable, 500);
 	}
 
 	void showChooseRouteDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-		RouteChooserDialog dlog = RouteChooserDialog.newInstance("Choose a Route", 2, DialogFragment.STYLE_NORMAL, 
-				mWorkingData.mGpxName, mWorkingData.mRouteName);
-        dlog.show(fm, "choose_route");
+		FragmentManager fm = getSupportFragmentManager();
+		RouteChooserDialog dlog = RouteChooserDialog.newInstance("Choose a Route", FS_DIALOG_STYLE,FS_DIALOG_THEME, mWorkingData.mGpxName, mWorkingData.mRouteName);
+		dlog.show(fm, "choose_route");
 	}
 
 	void showChooseTransectDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        TransectChooserDialog dlog = TransectChooserDialog.newInstance("Choose a Transect", 2, DialogFragment.STYLE_NORMAL, 
-        		mWorkingData.mGpxName, mWorkingData.mRouteName, mWorkingData.mTransectName, mWorkingData.mTransectDetails);
-        dlog.show(fm, "choose_transect");
+		FragmentManager fm = getSupportFragmentManager();
+		TransectChooserDialog dlog = TransectChooserDialog.newInstance("Choose a Transect", FS_DIALOG_STYLE, FS_DIALOG_THEME, mWorkingData.mGpxName, mWorkingData.mRouteName, mWorkingData.mTransectName, mWorkingData.mTransectDetails);
+		dlog.show(fm, "choose_transect");
 	}
 
 	// FileChooserListener
-    public void onFileItemSelected(String filename) {
-        // optional Toast.makeText(this, "file selected " + filename, Toast.LENGTH_SHORT).show();
+	public void onFileItemSelected(String filename) {
+		// optional Toast.makeText(this, "file selected " + filename, Toast.LENGTH_SHORT).show();
 		setFile(filename);
-    }
+	}
 
 	// RouteChooserListener
-    public void onRouteItemSelected(Route route) {
-        // optional Toast.makeText(this, "route selected " + route.mName, Toast.LENGTH_SHORT).show();
+	public void onRouteItemSelected(Route route) {
+		// optional Toast.makeText(this, "route selected " + route.mName, Toast.LENGTH_SHORT).show();
 		setRoute(route.mName);
-    }
+	}
 
 	// TransectChooserListener
-    public void onTransectItemSelected(Transect transect) {
-        // optional Toast.makeText(this, "transect selected " + transect.mName, Toast.LENGTH_SHORT).show();
+	public void onTransectItemSelected(Transect transect) {
+		// optional Toast.makeText(this, "transect selected " + transect.mName, Toast.LENGTH_SHORT).show();
 		setTransect(transect.mName, transect.getDetailsName());
-   }
+	}
 }

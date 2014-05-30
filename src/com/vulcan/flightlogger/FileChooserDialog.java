@@ -8,8 +8,12 @@ import org.apache.commons.io.FilenameUtils;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -32,7 +36,7 @@ public class FileChooserDialog extends DialogFragment {
 	public interface FileChooserListener {
 		void onFileItemSelected(String filename);
 	}
-		
+
 	private static final String TAG = "F_PATH";
 
 	private Item[] fileList;
@@ -52,7 +56,7 @@ public class FileChooserDialog extends DialogFragment {
 		bundle.putInt(STYLE_PARAM_KEY, style); // e.g. DialogFragment.STYLE_NORMAL
 		bundle.putInt(THEME_PARAM_KEY, theme); // e.g. 0
 		bundle.putString(BASE_PATH, basePath);
-		bundle.putInt(PATH_LEVEL, level); 
+		bundle.putInt(PATH_LEVEL, level);
 
 		dialog.setArguments(bundle);
 		return dialog;
@@ -74,7 +78,9 @@ public class FileChooserDialog extends DialogFragment {
 		mLevel = getArguments().getInt(PATH_LEVEL);
 		setStyle(style, theme);
 		setBasePath(basePath);
-		// TESTING Log.d(TAG, path.getAbsolutePath());
+
+		// IMMERSIVE_MODE note: setting the style here doesn't help
+		// setStyle(STYLE_NORMAL, android.R.style.Theme_NoTitleBar_Fullscreen);
 	}
 
 	@Override
@@ -84,6 +90,8 @@ public class FileChooserDialog extends DialogFragment {
 
 		builder.setCancelable(true);
 		builder.setTitle(getArguments().getString(TITLE_PARAM_KEY));
+		// IMMERSIVE_MODE note: setting style here doesn't hlep
+		// IMMERSIVE_MODE note: setting window visibility here doesn't help
 
 		// list
 		final ArrayAdapter<Item> freddy = new ArrayAdapter<Item>(getActivity(), android.R.layout.select_dialog_item, android.R.id.text1, fileList) {
@@ -108,22 +116,17 @@ public class FileChooserDialog extends DialogFragment {
 		builder.setAdapter(freddy, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-
 				Item chosenItem = freddy.getItem(which);
-				
+
 				String selectedItemPath = mBasePath + "/" + chosenItem.file;
-				
+
 				File sel = new File(selectedItemPath);
 				if (sel.isDirectory()) {
 					// GO DOWN A LEVEL
 					// showChooseRouteDialog()
 					FragmentManager fm = getActivity().getSupportFragmentManager();
-					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), 
-							getArguments().getInt(STYLE_PARAM_KEY), 
-							getArguments().getInt(THEME_PARAM_KEY),
-							selectedItemPath,
-							mLevel + 1);
-					
+					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), getArguments().getInt(STYLE_PARAM_KEY), getArguments().getInt(THEME_PARAM_KEY), selectedItemPath, mLevel + 1);
+
 					dlog.show(fm, FILE_CHOOSER_DIALOG_KEY);
 
 				} else if (chosenItem.file.equalsIgnoreCase("up") && !sel.exists() && (mLevel > 0)) {
@@ -133,11 +136,7 @@ public class FileChooserDialog extends DialogFragment {
 
 					// showChooseRouteDialog()
 					FragmentManager fm = getActivity().getSupportFragmentManager();
-					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), 
-							getArguments().getInt(STYLE_PARAM_KEY), 
-							getArguments().getInt(THEME_PARAM_KEY), 
-							upPath, 
-							mLevel - 1);
+					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), getArguments().getInt(STYLE_PARAM_KEY), getArguments().getInt(THEME_PARAM_KEY), upPath, mLevel - 1);
 
 					dlog.show(fm, FILE_CHOOSER_DIALOG_KEY);
 				} else {
@@ -170,8 +169,7 @@ public class FileChooserDialog extends DialogFragment {
 				public boolean accept(File dir, String filename) {
 					File sel = new File(dir, filename);
 					// Filters based on whether the file is hidden or not
-					return (sel.isFile() || sel.isDirectory())
-							&& !sel.isHidden();
+					return (sel.isFile() || sel.isDirectory()) && !sel.isHidden();
 
 				}
 			};
@@ -220,5 +218,4 @@ public class FileChooserDialog extends DialogFragment {
 			return file;
 		}
 	}
-
 }

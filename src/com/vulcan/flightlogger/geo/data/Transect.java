@@ -27,12 +27,19 @@ public class Transect implements Parcelable{
   }
 	
 	public Transect(Parcel source){
-         mId = source.readString();
-         mName = source.readString();
-         mStartWaypt = Location.CREATOR.createFromParcel(source);
-         mEndWaypt = Location.CREATOR.createFromParcel(source);
-         status = (FlightStatus)source.readSerializable();
-   }
+        mId = source.readString();
+        mName = source.readString();
+        mStartWaypt = Location.CREATOR.createFromParcel(source);
+        mEndWaypt = Location.CREATOR.createFromParcel(source);
+        status = (FlightStatus)source.readSerializable();
+  }
+	
+	public Transect(Location start, Location end, String gpxFilename, String routeName, int index) {
+		mStartWaypt = start;
+		mEndWaypt = end;
+		mId = String.format("%s.%s.%s-%s", gpxFilename, routeName, start.getProvider(), end.getProvider());
+		mName = "Transect " + index;
+	}
 	
 	static public Transect newTransect(CourseInfoIntent data) {
 		

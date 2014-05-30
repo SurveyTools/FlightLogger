@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private TextView mFileAndRouteDisplay;
 	private TextView mTransectDisplay;
 	private TextView mFileMessageDisplay;
-	
+
 	private TextView mAltitudeDisplay;
 	private TextView mGroundSpeedDisplay;
 
@@ -70,7 +71,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private Drawable mStatusButtonBackgroundGreen;
 	private Drawable mStatusButtonBackgroundGrey;
 	private Drawable mStatusButtonBackgroundIgnore;
-	
+
 	private Drawable mModeButtonBorderRed;
 	private Drawable mModeButtonBorderGrey;
 	private Drawable mModeButtonBorderGreen;
@@ -104,28 +105,23 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected GPSDatum mGPSData;
 	protected BatteryDatum mBatteryData;
 	protected BoxDatum mBoxData;
-	
+
 	// STATE
 	protected Transect mCurTransect;
 
 	private Handler mUpdateUIHandler;
 	private NumberFormat mDistanceStatusFormatter;
 
-
 	/**
-	 * Defines callbacks for local service binding, ie bindService() For local
-	 * binds, this is where we will attach assign instance references, and add
-	 * and remove listeners, since we have inprocess access to the class
-	 * interface
+	 * Defines callbacks for local service binding, ie bindService() For local binds, this is where we will attach assign instance references, and add and remove listeners, since we have inprocess access to the class interface
 	 */
 	private void navServiceChanged() {
-		if (mNavigationService != null)
-		{
+		if (mNavigationService != null) {
 			mCurTransect = mNavigationService.mCurrTransect;
 			updateUI();
 		}
 	}
-	
+
 	private ServiceConnection mNavigationConnection = new ServiceConnection() {
 
 		@Override
@@ -133,10 +129,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			com.vulcan.flightlogger.geo.NavigationService.LocalBinder binder = (com.vulcan.flightlogger.geo.NavigationService.LocalBinder) service;
 			mNavigationService = (NavigationService) binder.getService();
 			mNavigationService.registerListener(FlightLogger.this);
-			
+
 			// update nav service stuff
 			navServiceChanged();
-			
+
 		}
 
 		@Override
@@ -160,19 +156,19 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mAltimeterService.unregisterListener(FlightLogger.this);
 		}
 	};
-	
+
 	private ServiceConnection mLoggerConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			com.vulcan.flightlogger.logger.LoggingService.LocalBinder binder = (com.vulcan.flightlogger.logger.LoggingService.LocalBinder) service;
 			mLogger = (LoggingService) binder.getService();
-	//		mLogger.registerListener(FlightLogger.this);
+			// mLogger.registerListener(FlightLogger.this);
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			//mLogger.unregisterListener(FlightLogger.this);
+			// mLogger.unregisterListener(FlightLogger.this);
 		}
 	};
 
@@ -194,7 +190,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		bindServices();
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -208,7 +204,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mGPSData = new GPSDatum(false, demoMode);
 		mBatteryData = new BatteryDatum(false, demoMode);
 		mBoxData = new BoxDatum(false, demoMode);
-		
+
 		mFileIconButton = (Button) findViewById(R.id.nav_header_file_button);
 		mFileAndRouteDisplay = (TextView) findViewById(R.id.nav_header_route_text);
 		mTransectDisplay = (TextView) findViewById(R.id.nav_header_transect_text);
@@ -259,11 +255,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 		if (savedInstanceState != null) {
 			mFlightData = savedInstanceState.getParcelable(SAVED_FLIGHT_DATA_KEY);
-			
+
 			if (mNavigationService != null)
 				mCurTransect = mNavigationService.mCurrTransect;
-		}
-		else if (DEMO_MODE) {
+		} else if (DEMO_MODE) {
 			mFlightData = new CourseInfoIntent("Example_survey_route.gpx", "Session 1", "Transect 3", "T03_S ~ T03_N", 0);
 		} else {
 			mFlightData = new CourseInfoIntent(null, null, null, null, 0);
@@ -278,10 +273,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// TODO - this becomes a RouteManagerService, or
 		// whatever we call it. For now, spin up the AltimeterService
 		Intent altIntent = new Intent(this, AltimeterService.class);
-		//altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
+		// altIntent.putExtra(AltimeterService.USE_MOCK_DATA, true);
 		startService(altIntent);
 		Intent navIntent = new Intent(this, NavigationService.class);
-		//navIntent.putExtra(NavigationService.USE_MOCK_DATA, true);
+		// navIntent.putExtra(NavigationService.USE_MOCK_DATA, true);
 		startService(navIntent);
 		Intent loggerIntent = new Intent(this, LoggingService.class);
 		startService(loggerIntent);
@@ -290,7 +285,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void updateBatteryStatus(Intent batteryStatus) {
 		if (mBatteryData.updateBatteryStatus(batteryStatus))
 			updateBatteryUI();
-		
+
 		// the box status cues off of the usb fast/slow charing
 		if (mBoxData.updateBoxWithBatteryStatus(batteryStatus))
 			updateBoxUI();
@@ -371,16 +366,16 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mStatusTextColorRed = getResources().getColor(R.color.nav_footer_status_text_red);
 		mStatusTextColorGreen = getResources().getColor(R.color.nav_footer_status_text_green);
 		mStatusTextColorGrey = getResources().getColor(R.color.nav_footer_status_text_grey);
-	    
+
 		mModeButtonTextColorOnRed = getResources().getColor(R.color.nav_footer_mode_text_over_red);
 		mModeButtonTextColorOnGrey = getResources().getColor(R.color.nav_footer_mode_text_over_grey);
 		mModeButtonTextColorOnGreen = getResources().getColor(R.color.nav_footer_mode_text_over_green);
 	}
 
 	protected void resetData() {
-		
+
 		mCurTransect = null;
-		
+
 		mAltitudeData.reset();
 		mGPSData.reset();
 		mBatteryData.reset();
@@ -396,7 +391,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		popup.show();
 		return true;
 	}
-	
+
 	public boolean onMenuItemClick(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
@@ -408,48 +403,48 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		case R.id.action_show_serial_console:
 			intent = new Intent(this, SerialConsole.class);
 			startActivity(intent);
-			break;		
+			break;
 		}
 		return true;
 	}
-	
+
 	protected void showError(String message) {
-		Log.e(LOG_CLASSNAME,"Error: " + message);
-        Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
+		Log.e(LOG_CLASSNAME, "Error: " + message);
+		Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
 	}
-	
+
 	protected void setLogging(boolean on) {
 		if (mLogger != null) {
 			mLogger.stopLog();
 			if (on) {
 				try {
 					mLogger.startLog(mCurTransect);
-				} catch(Exception e) {
+				} catch (Exception e) {
 					showError(e.getLocalizedMessage());
 				}
 			}
 		}
-		
+
 		updateUI();
 	}
 
 	protected void setFlightData(CourseInfoIntent data) {
 		mFlightData = data;
-		
+
 		mCurTransect = Transect.newTransect(data);
 
 		if (mCurTransect != null) {
-			
+
 			if (mNavigationService != null) {
 				mNavigationService.startNavigation(mCurTransect);
 			}
-			
+
 			setLogging(false);
 
 			updateRouteUI();
 		}
 	}
-	
+
 	/**
 	 * Callbacks from activities that return results
 	 */
@@ -469,11 +464,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	@Override
 	protected void onDestroy() {
-		if(mAltimeterConnection != null)
+		if (mAltimeterConnection != null)
 			unbindService(mAltimeterConnection);
-		if(mNavigationConnection != null)
+		if (mNavigationConnection != null)
 			unbindService(mNavigationConnection);
-		
+
 		super.onDestroy();
 		// TODO eval for teardown?
 	}
@@ -557,7 +552,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	protected void updateRouteUI() {
-		
+
 		if ((mFlightData == null) || !mFlightData.hasFile()) {
 			// RED - just show the message
 			mFileIconButton.setBackground(mFileIconBackgroundRed);
@@ -565,7 +560,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mFileMessageDisplay.setVisibility(View.VISIBLE);
 			mFileAndRouteDisplay.setVisibility(View.INVISIBLE);
 			mTransectDisplay.setVisibility(View.INVISIBLE);
-		
+
 			mFileMessageDisplay.setText(R.string.nav_no_gpx_error_text);
 			mFileAndRouteDisplay.setText(null);
 			mTransectDisplay.setText(null);
@@ -615,7 +610,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void updateBoxUI() {
 		updateStatusButton(mStatusButtonBOX, mBoxData);
 	}
-	
+
 	// STATE
 	protected boolean isTransectReady() {
 		return (mCurTransect == null) ? false : mCurTransect.isValid();
@@ -637,11 +632,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			// we expect to be recording the transect
 			if (mGPSData.mDataIsValid && !mGPSData.mIgnore && !mGPSData.dataIsExpired()) {
 				double metersToNext = toStart ? mNavigationService.calcMetersToStart() : mNavigationService.calcMetersToEnd();
-		        String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
+				String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
 				mStatusDisplayRight.setText((toStart ? "Start" : "Stop") + " in " + kmString + " km");
 			} else {
 				// right status
-				if (mGPSData.mIgnore) 
+				if (mGPSData.mIgnore)
 					mStatusDisplayRight.setText("(Ignore GPS)");
 				else
 					mStatusDisplayRight.setText("GPS N/A");
@@ -650,20 +645,20 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			// not recording a transect
 			mStatusDisplayRight.setText("No Transect");
 		}
-		
+
 		// CROSSTRACK_TESTING_POI - show actual crosstrack
 		// mStatusDisplayRight.setText("xTrackErr: " + mGPSData.mRawCrossTrackErrorMeters);
 	}
-	
+
 	protected void updateFooterUI() {
 
 		// START/STOP button only reflects the logging state
-		
+
 		if (isLogging()) {
 			// left status
 			mStatusDisplayLeft.setText("** RECORDING **");
 			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
-			
+
 			// mode button
 			mStartStopButton.setText("STOP LOGGING");
 			mStartStopButton.setBackground(mModeButtonBorderGreen);
@@ -682,55 +677,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStartStopButton.setBackground(mModeButtonBorderRed);
 			mStartStopButton.setTextColor(mModeButtonTextColorOnRed);
 			mStartStopButton.setEnabled(true);
-			
+
 			// right status
 			updateStatusRight(true);
 		}
-		
-/*		
- 		work in progres...
- 		
-		if (isNavigating()) {
-			// left status
-			mStatusDisplayLeft.setText("Waiting to Start");
-			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
-
-			// mode button
-			mStartStopButton.setText("START");
-			mStartStopButton.setBackground(mModeButtonBorderGreen);
-			mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
-			mStartStopButton.setEnabled(true);
-			
-			// right status
-			updateStatusRight(true);
-		} else if (!isTransectReady()) {
-			// left status
-			mStatusDisplayLeft.setText("Not Ready");
-			mStatusDisplayLeft.setTextColor(mStatusTextColorRed);
-
-			// mode button
-			mStartStopButton.setText("START");
-			mStartStopButton.setBackground(mModeButtonBorderGrey);
-			mStartStopButton.setTextColor(mModeButtonTextColorOnGrey);
-			mStartStopButton.setEnabled(false);
-			
-			// right status
-			mStatusDisplayRight.setText("No Transect Found");
-		} else {
-			// left status
-			mStatusDisplayLeft.setText("");
-			mStatusDisplayLeft.setTextColor(mStatusTextColorGrey);
-			
-			// mode button
-			mStartStopButton.setText("START");
-			mStartStopButton.setBackground(mModeButtonBorderGrey);
-			mStartStopButton.setTextColor(mModeButtonTextColorOnGrey);
-			mStartStopButton.setEnabled(false);
-			
-			// right status
-			mStatusDisplayRight.setText("");
-		}
-		*/
 	}
 
 	protected void updateUI() {
@@ -795,42 +745,39 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 		// ground speed update
 		if (status != null) {
-				final float groundSpeed = status.mGroundSpeed;
-				final double crossTrackErrorMeters = status.mCrossTrackError;
-				final long timestamp = curDataTimestamp();
-				final boolean crosstrackValid = status.isTransectValid();
-				runOnUiThread(new Runnable() {
-					public void run() {
-						// update the altitude data (and ui if something changed)
-						if (mGPSData.setRawGroundSpeed(groundSpeed, true, crossTrackErrorMeters, crosstrackValid, timestamp)) {
-							updateGPSUI();
-							updateNavigationUI();
-						}
+			final float groundSpeed = status.mGroundSpeed;
+			final double crossTrackErrorMeters = status.mCrossTrackError;
+			final long timestamp = curDataTimestamp();
+			final boolean crosstrackValid = status.isTransectValid();
+			runOnUiThread(new Runnable() {
+				public void run() {
+					// update the altitude data (and ui if something changed)
+					if (mGPSData.setRawGroundSpeed(groundSpeed, true, crossTrackErrorMeters, crosstrackValid, timestamp)) {
+						updateGPSUI();
+						updateNavigationUI();
 					}
-				});
+				}
+			});
 		}
 	}
-	
-	public boolean browseGpxFiles(View v)
-	{
+
+	public boolean browseGpxFiles(View v) {
 		// load gpx
 		Intent intent = new Intent(this, CourseSettingsActivity.class);
 		intent.putExtra(CourseInfoIntent.INTENT_KEY, mFlightData);
-		
+
 		this.startActivityForResult(intent, LOAD_FLIGHT_PATH);
-		
+
 		return true;
 	}
 
-	
 	public void onToggleStartStop(View v) {
 		setLogging(!isLogging());
 	}
-	
-	protected void onSaveInstanceState (Bundle outState) {
-		   super.onSaveInstanceState(outState);
+
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);
 	}
-
 
 }

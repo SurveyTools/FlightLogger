@@ -65,12 +65,7 @@ public class BatteryDatum extends FlightDatum {
 			else if (mRawBatteryLevel < .25f)
 				color = FLIGHT_STATUS_YELLOW;
 
-			/*
-			 * alt -- also use this for charging status. for now this is in the
-			 * Box status item. override for plugged-in if (!mChargingOrFull) {
-			 * // not charging.. drop us down to yellow if need be if (color ==
-			 * FLIGHT_STATUS_GREEN) color = FLIGHT_STATUS_YELLOW; }
-			 */
+			// alt -- also use this for charging status. for now this is in the Box status item. override for plugged-in
 		}
 
 		return color;

@@ -5,8 +5,8 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="17"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="19" />
 
     <uses-feature
         android:name="android.hardware.location.gps"
@@ -80,7 +80,8 @@
         </activity>
         <activity
             android:name="com.vulcan.flightlogger.CourseSettingsActivity"
-            android:label="GPX Settings" >
+            android:label="GPX Settings"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
         </activity>
         
         <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />

@@ -19,9 +19,8 @@ public class CourseInfoIntent implements Parcelable {
 	private static final String LOGGER_TAG = "CourseInfoIntent";
 	public static final String INTENT_KEY = "CourseInfoKey";
 
-
 	public CourseInfoIntent(String gpxName, String routeName, String transectName, String transectDetails, int action) {
-		
+
 		mGpxName = gpxName;
 		mRouteName = routeName;
 		mTransectName = transectName;
@@ -31,7 +30,7 @@ public class CourseInfoIntent implements Parcelable {
 
 	// copy constructor
 	public CourseInfoIntent(CourseInfoIntent srcData) {
-		
+
 		if (srcData != null) {
 			mGpxName = srcData.mGpxName;
 			mRouteName = srcData.mRouteName;
@@ -47,30 +46,52 @@ public class CourseInfoIntent implements Parcelable {
 		}
 	}
 
+	public void clearTransectData() {
+		mTransectName = null;
+		mTransectDetails = null;
+	}
+
+	public void clearRouteDataAndDependencies() {
+		mRouteName = null;
+		clearTransectData();
+	}
+
+	public void clearFileDataAndDependencies() {
+		mGpxName = null;
+		clearRouteDataAndDependencies();
+	}
+
+	public void clearAll() {
+		clearFileDataAndDependencies();
+		mAction = 0;
+	}
+
 	public boolean hasFile() {
 		return (mGpxName != null) && !mGpxName.isEmpty();
 	}
 
+	public boolean hasRoute() {
+		return (mRouteName != null) && !mRouteName.isEmpty();
+	}
+
+	public boolean hasTransect() {
+		return (mTransectName != null) && !mTransectName.isEmpty();
+	}
+
+	public boolean hasTransectDetails() {
+		return (mTransectDetails != null) && !mTransectDetails.isEmpty();
+	}
+
 	public boolean hasFileButNotEverythingElse() {
 		// YELLOW
-		boolean hasFile = (mGpxName != null) && !mGpxName.isEmpty();
-		boolean hasRoute = (mRouteName != null) && !mRouteName.isEmpty();
-		boolean hasTransect = (mTransectName != null) && !mTransectName.isEmpty();
-		boolean hasTransectDetails = (mTransectDetails != null) && !mTransectDetails.isEmpty();
-		
 		// something's in there, possibly all
-		return hasFile && !(hasRoute && hasTransect && hasTransectDetails);
+		return hasFile() && !(hasRoute() && hasTransect() && hasTransectDetails());
 	}
 
 	public boolean isFullyReady() {
 		// GREEN
-		boolean hasFile = (mGpxName != null) && !mGpxName.isEmpty();
-		boolean hasRoute = (mRouteName != null) && !mRouteName.isEmpty();
-		boolean hasTransect = (mTransectName != null) && !mTransectName.isEmpty();
-		boolean hasTransectDetails = (mTransectDetails != null) && !mTransectDetails.isEmpty();
-		
 		// something's in there, possibly all
-		return hasFile && hasRoute && hasTransect && hasTransectDetails;
+		return hasFile() && hasRoute() && hasTransect() && hasTransectDetails();
 	}
 
 	public String getShortFilename() {
@@ -100,7 +121,7 @@ public class CourseInfoIntent implements Parcelable {
 		this.mTransectDetails = data[3];
 		this.mAction = Integer.parseInt(data[4]);
 	}
-	
+
 	public void debugDump() {
 		Log.d(LOGGER_TAG, "GPX: " + mGpxName);
 		Log.d(LOGGER_TAG, "Route: " + mRouteName);

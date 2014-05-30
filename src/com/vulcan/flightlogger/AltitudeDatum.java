@@ -46,10 +46,11 @@ public class AltitudeDatum extends FlightDatum {
 	public short getStatusColor() {
 		if (mDemoMode)
 			return FLIGHT_STATUS_GREEN; // DEMO_MODE
-		
+
 		// normal
 		return super.getStatusColor();
 	}
+
 	public String getAltitudeDisplayText() {
 		if (mIgnore)
 			return IGNORE_ALTITUDE_STRING;
@@ -60,7 +61,7 @@ public class AltitudeDatum extends FlightDatum {
 		else
 			return mValueToDisplay;
 	}
-	
+
 	public float getAltitudeInFeet() {
 		return metersToFeet(mRawAltitudeInMeters);
 	}
@@ -73,7 +74,7 @@ public class AltitudeDatum extends FlightDatum {
 		final boolean oldDataOld = dataIsOld();
 		final boolean oldDataExpired = dataIsExpired();
 		final int oldStatusColor = getStatusColor();
-		
+
 		// update our data
 		mRawAltitudeInMeters = rawAltitudeInMeters;
 		mDataTimestamp = timestamp;

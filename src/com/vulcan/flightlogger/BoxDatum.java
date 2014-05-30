@@ -44,9 +44,9 @@ public class BoxDatum extends FlightDatum {
 	@Override
 	public short getStatusColor() {
 		short color = FLIGHT_STATUS_UNKNOWN;
-		
+
 		// note: no old/expire here
-		
+
 		if (mIgnore)
 			color = FLIGHT_STATUS_IGNORE;
 		else if (mDemoMode)
@@ -81,7 +81,7 @@ public class BoxDatum extends FlightDatum {
 			somethingChanged |= (mSlowCharging != oldSlowCharging);
 			somethingChanged |= (mFastCharging != oldFastCharging);
 		}
-		
+
 		// update the ui if anything change
 		return somethingChanged;
 	}
@@ -93,7 +93,7 @@ public class BoxDatum extends FlightDatum {
 		// charging info
 		boolean slowCharging = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
 		boolean fastCharging = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
-		
+
 		setChargingState(slowCharging, fastCharging, true, curDataTimestamp());
 
 		return true;
