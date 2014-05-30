@@ -150,14 +150,20 @@ public class GPSUtils {
 		return transects;
 	}
 
+	public static Route getDefaultRouteFromList(List<Route> routes) {
+		if (routes != null) {
+			if (!routes.isEmpty()) {
+				return routes.get(0);
+			}
+		}
+
+		// no dice
+		return null;
+	}
+
 	public static Route getDefaultRouteFromFile(File gpxFileObj) {
 		if (gpxFileObj != null) {
-		    List<Route> routes = GPSUtils.parseRoute(gpxFileObj);
-		    
-		    if (routes != null) {
-			   if (!routes.isEmpty())
-					   return routes.get(0);
-		    }
+		   return getDefaultRouteFromList(GPSUtils.parseRoute(gpxFileObj));
 		}
 		
 		// no dice
@@ -195,10 +201,8 @@ public class GPSUtils {
 		return null;
 	}
 
-	public static Transect findTransectInRoute(String targetTransectName, Route route) {
-		if (route != null) {
-		    List<Transect> transects = GPSUtils.parseTransects(route);
-
+	public static Transect findTransectInList(String targetTransectName, List<Transect> transects) {
+		if (transects != null) {
 			Iterator<Transect> iterator = transects.iterator();
 			while (iterator.hasNext()) {
 				Transect transItem = iterator.next();
@@ -207,6 +211,15 @@ public class GPSUtils {
 					return transItem;
 				}
 			}
+		}
+		
+		// no dice
+		return null;
+	}
+
+	public static Transect findTransectInRoute(String targetTransectName, Route route) {
+		if (route != null) {
+			return findTransectInList(targetTransectName, GPSUtils.parseTransects(route));
 		}
 		
 		// no dice
@@ -222,15 +235,19 @@ public class GPSUtils {
 		return null;
 	}
 
+	public static Transect getDefaultTransectFromList(List<Transect> transects) {
+		if (transects != null) {
+			if (!transects.isEmpty())
+				return transects.get(0);
+		}
+
+		// no dice
+		return null;
+	}
+
 	public static Transect getDefaultTransectFromRoute(Route route) {
 		if (route != null) {
-
-		    List<Transect> transects = GPSUtils.parseTransects(route);
-
-		    if (transects != null) {
-			   if (!transects.isEmpty())
-					   return transects.get(0);
-		    }
+		    return getDefaultTransectFromList(GPSUtils.parseTransects(route));
 		}
 		
 		// no dice

@@ -81,7 +81,7 @@
         <activity
             android:name="com.vulcan.flightlogger.CourseSettingsActivity"
             android:label="GPX Settings"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
         </activity>
         
         <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />

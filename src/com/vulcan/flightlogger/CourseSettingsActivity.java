@@ -47,6 +47,13 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	private CourseInfoIntent mOriginalData;
 	private CourseInfoIntent mWorkingData;
 
+	// objects based on mWorkingData
+	private File mCurGpxFile;
+	private List<Route> mCurRoutes;		
+	private Route mCurRoute;
+    private List<Transect> mCurTransects;
+    private Transect mCurTransect;
+    
 	private static final String LOGGER_TAG = "CourseSettingsActivity";
 	private final int FS_DIALOG_STYLE = DialogFragment.STYLE_NORMAL;
 	private final int FS_DIALOG_THEME = android.R.style.Theme_NoTitleBar_Fullscreen;
@@ -91,6 +98,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mOriginalData = getIntent().getParcelableExtra(CourseInfoIntent.INTENT_KEY);
 		mWorkingData = new CourseInfoIntent(mOriginalData); // clone
 		mWorkingData.debugDump();
+		
+		updateCurFileFromWorkingData();
 
 		setupButtons();
 		setupColors();
@@ -138,11 +147,16 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			showChooseTransectDialog();
 		}
 	}
-
 	protected void updateDataUI() {
 		mFile.setText(mWorkingData.getShortFilename());
 		mRoute.setText(mWorkingData.getShortRouteName());
 		mTransect.setText(mWorkingData.getFullTransectName());
+		
+		int numRoutes = (mCurRoutes == null) ? 0 : mCurRoutes.size();
+		int numTransects = (mCurTransects == null) ? 0 : mCurTransects.size();
+		
+		mRouteButton.setEnabled(numRoutes > 1);
+		mTransectButton.setEnabled(numTransects > 1);
 	}
 
 	private void finishWithCancel() {
@@ -214,41 +228,102 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		}
 	}
 
+    protected void clearCurTransect() {
+    	mCurTransect = null;
+    }
+    
+    protected void clearCurRouteAndDependencies() {
+    	mCurRoute = null;
+    	mCurTransects = null;
+    	clearCurTransect();
+    }
+    
+    protected void clearCurFileAndDependencies() {
+    	mCurGpxFile = null;
+    	mCurRoutes = null;
+    	clearCurRouteAndDependencies();
+    }
+    
+	protected void updateCurTransectFromWorkingData() {
+		clearCurTransect();
+    	if (mCurTransects != null) {
+			// get the cur transect
+    		if (mWorkingData.hasTransect()) {
+    			// get the specified one
+    			mCurTransect = GPSUtils.findTransectInList(mWorkingData.mTransectName, mCurTransects);
+    		} else {
+    			// get the default
+    			mCurTransect = GPSUtils.getDefaultTransectFromList(mCurTransects);
+    			
+    			// update our working data
+    			mWorkingData.mTransectName = (mCurTransect == null) ? null : mCurTransect.mName;
+    			mWorkingData.mTransectDetails =  (mCurTransect == null) ? null : mCurTransect.getDetailsName();
+    		}
+		}
+	}
+
+	protected void updateCurRouteFromWorkingData() {
+		clearCurRouteAndDependencies();
+    	if (mCurRoutes != null) {
+			// get the route
+    		if (mWorkingData.hasRoute()) {
+    			// get the specified one
+    			mCurRoute = GPSUtils.findRouteByName(mWorkingData.mRouteName, mCurRoutes);
+    		} else {
+    			// get the default
+    			mCurRoute = GPSUtils.getDefaultRouteFromList(mCurRoutes);
+ 
+    			// update our working data
+    			mWorkingData.mRouteName = (mCurRoute == null) ? null : mCurRoute.mName;
+    		}
+
+			// get the transects
+		    mCurTransects = GPSUtils.parseTransects(mCurRoute);
+		    
+		    // cascade
+		    updateCurTransectFromWorkingData();
+		}
+	}
+
+	protected void updateCurFileFromWorkingData() {
+		clearCurFileAndDependencies();
+		if (mWorkingData.hasFile()) {
+			// get the file
+			mCurGpxFile = new File(mWorkingData.mGpxName);
+
+			// get the routes
+			mCurRoutes = GPSUtils.parseRoute(mCurGpxFile);			
+			
+			// cascade
+			updateCurRouteFromWorkingData();
+		}
+	}
+
+	// from a chooser...
 	protected void setFile(String gpxFilename) {
+		mWorkingData.clearFileDataAndDependencies();
 		mWorkingData.mGpxName = gpxFilename;
 
-		// defaults
-		Route defaultRoute = GPSUtils.getDefaultRouteFromFilename(gpxFilename);
-		Transect defaultTransect = GPSUtils.getDefaultTransectFromRoute(defaultRoute);
-
-		// set the subordinates
-		mWorkingData.mRouteName = (defaultRoute == null) ? null : defaultRoute.mName;
-		mWorkingData.mTransectName = (defaultTransect == null) ? null : defaultTransect.mName;
-		mWorkingData.mTransectDetails = (defaultTransect == null) ? null : defaultTransect.getDetailsName();
-
+		updateCurFileFromWorkingData();
 		updateDataUI();
 	}
 
+	// from a chooser...
 	protected void setRoute(String routeName) {
+		// file and route list are ok... route and transects need to be updated
+		mWorkingData.clearRouteDataAndDependencies();
 		mWorkingData.mRouteName = routeName;
 
-		// defaults (matching the target route above)
-		File gpxFileObj = new File(mWorkingData.mGpxName);
-		List<Route> routes = GPSUtils.parseRoute(gpxFileObj);
-		Route routeObj = GPSUtils.findRouteByName(routeName, routes);
-		Transect defaultTransect = GPSUtils.getDefaultTransectFromRoute(routeObj);
-
-		// set the subordinates
-		mWorkingData.mTransectName = (defaultTransect == null) ? null : defaultTransect.mName;
-		mWorkingData.mTransectDetails = (defaultTransect == null) ? null : defaultTransect.getDetailsName();
-
+		updateCurRouteFromWorkingData();
 		updateDataUI();
 	}
 
+	// from a chooser...
 	protected void setTransect(String transectName, String transectDetails) {
 		mWorkingData.mTransectName = transectName;
 		mWorkingData.mTransectDetails = transectDetails;
 
+		updateCurTransectFromWorkingData();
 		updateDataUI();
 	}
 
