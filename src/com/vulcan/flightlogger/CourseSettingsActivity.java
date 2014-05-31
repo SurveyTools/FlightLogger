@@ -1,11 +1,13 @@
 package com.vulcan.flightlogger;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.text.Layout;
 
 import com.vulcan.flightlogger.FileChooserDialog.FileChooserListener;
 import com.vulcan.flightlogger.geo.RouteChooserDialog.RouteChooserListener;
@@ -23,20 +25,30 @@ import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.ImageButton;
 import android.view.View.OnClickListener;
 
 public class CourseSettingsActivity extends FragmentActivity implements OnClickListener, FileChooserListener, RouteChooserListener, TransectChooserListener {
 
-	private ImageButton mFileButton;
-	private ImageButton mRouteButton;
-	private ImageButton mTransectButton;
+	private View mFileBigButton;
+	private View mRouteBigButton;
+	private ListView mTransectList;
 
+	private ImageView mFileIcon;
+	private ImageView mRouteIcon;
+	private ImageView mTransectIcon;
+	
 	private TextView mFile;
 	private TextView mRoute;
 	private TextView mTransect;
@@ -54,6 +66,9 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
     private List<Transect> mCurTransects;
     private Transect mCurTransect;
     
+	private ArrayList<Transect> mTransectArray;
+	private TransectAdapter mTransectAdapter;
+
 	private static final String LOGGER_TAG = "CourseSettingsActivity";
 	private final int FS_DIALOG_STYLE = DialogFragment.STYLE_NORMAL;
 	private final int FS_DIALOG_THEME = android.R.style.Theme_NoTitleBar_Fullscreen;
@@ -84,13 +99,17 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		mFileButton = (ImageButton) findViewById(R.id.fs_file_icon);
-		mRouteButton = (ImageButton) findViewById(R.id.fs_route_icon);
-		mTransectButton = (ImageButton) findViewById(R.id.fs_transect_icon);
+		mFileBigButton = findViewById(R.id.fs_file_big_button);
+		mRouteBigButton = findViewById(R.id.fs_route_big_button);
+		mTransectList = (ListView) findViewById(R.id.fs_transect_list);
+		
+		mFileIcon = (ImageView) findViewById(R.id.fs_file_icon);
+		mRouteIcon = (ImageView) findViewById(R.id.fs_route_icon);
+		// TODO_FS_WIP mTransectIcon = (ImageView) findViewById(R.id.fs_transect_icon);
 
 		mFile = (TextView) findViewById(R.id.fs_file_value);
 		mRoute = (TextView) findViewById(R.id.fs_route_value);
-		mTransect = (TextView) findViewById(R.id.fs_transect_value);
+		// TODO_FS_WIP mTransect = (TextView) findViewById(R.id.fs_transect_value);
 
 		mCancelButton = (Button) findViewById(R.id.fs_cancel_button);
 		mOkButton = (Button) findViewById(R.id.fs_ok_button);
@@ -113,13 +132,34 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		// auto-open if we have nothing
 		// TESTING if (true) return;
 		if (!mWorkingData.hasFile())
-			onClick(mFileButton);
+			doChooseFile();
 	}
 
 	protected void setupButtons() {
-		mFileButton.setOnClickListener(this);
-		mRouteButton.setOnClickListener(this);
-		mTransectButton.setOnClickListener(this);
+
+		mTransectList.setOnItemClickListener(new AdapterView.OnItemClickListener()  {
+		    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+					mTransectList.setItemChecked(position, true);
+
+					// TODO_FS_WIP (ugly)
+					Transect transect = mTransectArray.get(position);
+					mWorkingData.mTransectName = transect.mName;
+					mWorkingData.mTransectDetails = transect.getDetailsName();
+		    }
+		});
+		
+		mFileBigButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				doChooseFile();
+			}
+		});
+
+		mRouteBigButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				doChooseRoute();
+			}
+		});
 
 		mCancelButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -136,27 +176,48 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 	@Override
 	public void onClick(View v) {
-		if (v == mFileButton) {
-			// FILE
-			showChooseFileDialog();
-		} else if (v == mRouteButton) {
-			// ROUTE
-			showChooseRouteDialog();
-		} else if (v == mTransectButton) {
+		if (v == mTransectIcon) {
 			// TRANSECT
-			showChooseTransectDialog();
+			// TODO_FS_WIP doChooseTransect();
 		}
 	}
+	
+	protected void updateTransectListUI() {
+
+		if (mCurTransects != null) {
+			// TODO_FS_WIP eval
+			mTransectArray = new ArrayList<Transect>(mCurTransects);
+			mTransectAdapter = new TransectAdapter(this, mTransectArray);
+			
+			mTransectList.setAdapter(mTransectAdapter);
+	    	mTransectList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			
+    		// TODO_FS_WIP, update our actual list
+
+			if (mTransectArray.size() > 0) {
+				// find the cur transect
+				for(int i=0;i<mTransectArray.size();i++) {
+					if (mTransectArray.get(i) == mCurTransect) {
+						// match!
+						mTransectList.setItemChecked(i, true);
+					}					
+				}
+			}
+		}
+	}
+	
 	protected void updateDataUI() {
 		mFile.setText(mWorkingData.getShortFilename());
 		mRoute.setText(mWorkingData.getShortRouteName());
-		mTransect.setText(mWorkingData.getFullTransectName());
+		// TODO_FS_WIP mTransect.setText(mWorkingData.getFullTransectName());
 		
 		int numRoutes = (mCurRoutes == null) ? 0 : mCurRoutes.size();
 		int numTransects = (mCurTransects == null) ? 0 : mCurTransects.size();
 		
-		mRouteButton.setEnabled(numRoutes > 1);
-		mTransectButton.setEnabled(numTransects > 1);
+		// TODO_FS_WIP mRouteIcon.setEnabled(numRoutes > 1);
+		// TODO_FS_WIP mTransectIcon.setEnabled(numTransects > 1);
+		
+		updateTransectListUI();
 	}
 
 	private void finishWithCancel() {
@@ -198,6 +259,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			// whole screen
 			setColorforViewWithID(R.id.fs_background_wrapper, R.color.fs_background_color);
 			setColorforViewWithID(R.id.fs_header, R.color.fs_header_color);
+			setClearColorforViewWithID(R.id.fs_file_and_route_wrapper);
+			setClearColorforViewWithID(R.id.fs_transect_body_wrapper);
 			setColorforViewWithID(R.id.fs_footer, R.color.fs_footer_color);
 
 			// file
@@ -213,10 +276,10 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			setClearColorforViewWithID(R.id.fs_route_value);
 
 			// transect
-			setClearColorforViewWithID(R.id.fs_transect_wrapper);
-			setClearColorforViewWithID(R.id.fs_transect_icon);
+			// TODO_FS_WIP setClearColorforViewWithID(R.id.fs_transect_wrapper);
+			// TODO_FS_WIP setClearColorforViewWithID(R.id.fs_transect_icon);
 			setClearColorforViewWithID(R.id.fs_transect_label);
-			setClearColorforViewWithID(R.id.fs_transect_value);
+			// TODO_FS_WIP setClearColorforViewWithID(R.id.fs_transect_value);
 		}
 	}
 
@@ -259,6 +322,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
     			mWorkingData.mTransectName = (mCurTransect == null) ? null : mCurTransect.mName;
     			mWorkingData.mTransectDetails =  (mCurTransect == null) ? null : mCurTransect.getDetailsName();
     		}
+    		
+    		// TODO_FS_WIP, update mTransectList?
 		}
 	}
 
@@ -340,7 +405,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		return dir.toString();
 	}
 
-	void showChooseFileDialog() {
+	public void doChooseFile() {
 		FragmentManager fm = getSupportFragmentManager();
 		String startingDir = calcDownloadsDirectoryPath();
 		FileChooserDialog dlog = FileChooserDialog.newInstance("Choose a GPX File", FS_DIALOG_STYLE, FS_DIALOG_THEME, startingDir, 0);
@@ -348,13 +413,13 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		// IMMERSIVE_MODE NOTE: getWindow().getDecorView().postDelayed(mImmersiveRunnable, 500);
 	}
 
-	void showChooseRouteDialog() {
+	public void doChooseRoute() {
 		FragmentManager fm = getSupportFragmentManager();
 		RouteChooserDialog dlog = RouteChooserDialog.newInstance("Choose a Route", FS_DIALOG_STYLE,FS_DIALOG_THEME, mWorkingData.mGpxName, mWorkingData.mRouteName);
 		dlog.show(fm, "choose_route");
 	}
 
-	void showChooseTransectDialog() {
+	public void doChooseTransect() {
 		FragmentManager fm = getSupportFragmentManager();
 		TransectChooserDialog dlog = TransectChooserDialog.newInstance("Choose a Transect", FS_DIALOG_STYLE, FS_DIALOG_THEME, mWorkingData.mGpxName, mWorkingData.mRouteName, mWorkingData.mTransectName, mWorkingData.mTransectDetails);
 		dlog.show(fm, "choose_transect");

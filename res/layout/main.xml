@@ -444,11 +444,11 @@
             android:includeFontPadding="false"
             android:minHeight="28dp"
             android:minWidth="40dp"
+            android:onClick="onToggleStartStop"
             android:scaleType="fitXY"
             android:text="STOP"
             android:textColor="@color/nav_footer_stop"
             android:textSize="32sp"
-            android:onClick="onToggleStartStop"
             android:textStyle="bold" />
 
         <TextView
