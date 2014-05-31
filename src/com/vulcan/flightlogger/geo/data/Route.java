@@ -10,17 +10,58 @@ import android.location.Location;
  * 
  * @author jayl
  */
+
 public class Route {
+	
+	public enum ParseType {
+	    PARSE_ROUTE_POINT_PAIRS, PARSE_ROUTE_POINT_NAMES, PARSE_WAYPOINT_PAIRS, PARSE_WAYPOINT_NAMES
+	}
+	
+	private static final String[] mParseDesc = {
+		"Parsed route waypoint pairs", "Parsed named route waypoints", "Parsed waypoint pairs", "Parsed named waypoints"
+	};
+	
 	public String gpxFile;
 	public String mName;
+	private String mParseErrorMsg;
+	private ParseType mParseType;
+	private boolean mHasParseError;
 	public List<Location> mWayPoints;
 
 	public Route() {
 		mWayPoints = new ArrayList<Location>();
+		mHasParseError = false;
 	}
 
 	public void addWayPoint(Location location) {
 		mWayPoints.add(location);
+	}
+	
+	public void setParseMethod(ParseType type)
+	{
+		mParseType = type;
+	}
+	
+	public String getParseMethod()
+	{
+		int ord = mParseType.ordinal();
+		return  mParseDesc[ord];
+	}
+	
+	public boolean hasParseError()
+	{
+		return mHasParseError;
+	}
+	
+	public void setParseErrorMsg(String errMsg)
+	{
+		mHasParseError = true;
+		mParseErrorMsg = errMsg;
+	}
+	
+	public String getParseErrorMsg()
+	{
+		return mParseErrorMsg;
 	}
 
 	// convenience method for UI display when using ArrayAdapters

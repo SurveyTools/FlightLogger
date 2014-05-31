@@ -59,10 +59,10 @@ public class GPSUtils {
 	 * 
 	 */
 	public static List<Route> parseRoute(File gpxFile) {
-		List<Route> routeMap = new ArrayList<Route>();
-
+		List<Route> routeList = new ArrayList<Route>();
+		
 		if (gpxFile == null)
-			return routeMap;
+			return routeList;
 		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 				.newInstance();
@@ -74,45 +74,20 @@ public class GPSUtils {
 			Element elementRoot = document.getDocumentElement();
 
 			NodeList nodelist_routes = elementRoot.getElementsByTagName("rte");
-
-			for (int i = 0; i < nodelist_routes.getLength(); i++) {
-				Node routeNode = nodelist_routes.item(i);
-				Element routeEl = (Element) routeNode;
-				Route r = new Route();
-				r.gpxFile = gpxFile.getName();
-				r.mName = routeEl.getElementsByTagName("name").item(0)
-						.getTextContent();
-				// see if there are waypoints marked by the element 'rtept'
-				NodeList nodelist_rtkpt = elementRoot
-						.getElementsByTagName("rtept");
-
-				for (int j = 0; j < nodelist_rtkpt.getLength(); j++) {
-
-					Node node = nodelist_rtkpt.item(j);
-					NamedNodeMap attributes = node.getAttributes();
-
-					String newLatitude = attributes.getNamedItem("lat")
-							.getTextContent();
-					Double newLatitude_double = Double.parseDouble(newLatitude);
-
-					String newLongitude = attributes.getNamedItem("lon")
-							.getTextContent();
-					Double newLongitude_double = Double
-							.parseDouble(newLongitude);
-
-					// for now, use the name field of the location to store
-					// the waypt ordinal. TODO: Need to really go through the
-					// child nodes and find 'name'
-					Element e = (Element) node;
-					String wayptName = e.getElementsByTagName("name").item(0)
-							.getTextContent();
-					Location loc = new Location(wayptName);
-					loc.setLatitude(newLatitude_double);
-					loc.setLongitude(newLongitude_double);
-
-					r.addWayPoint(loc);
+			
+			// any route
+			if (nodelist_routes.getLength() > 0)
+			{
+				routeList.addAll(parseRoutes(elementRoot, nodelist_routes, gpxFile.getName()));
+			}
+			else // build a route out of waypoints
+			{
+				NodeList nodelist_waypts = elementRoot
+						.getElementsByTagName("wpt");
+				if (nodelist_waypts.getLength() > 0)
+				{
+					routeList.add(parseWaypointsAsRoute(elementRoot, nodelist_waypts, gpxFile.getName()));
 				}
-				routeMap.add(r);
 			}
 			fileInputStream.close();
 
@@ -130,6 +105,95 @@ public class GPSUtils {
 			e.printStackTrace();
 		}
 
+		return routeList;
+	}
+	
+	private static Route parseWaypointsAsRoute(Element elementRoot, NodeList waypts, String gpxFileName)
+	{
+		Route route = new Route();
+		route.gpxFile = gpxFileName;
+		route.mName = "Waypoint Route";
+		
+		for (int j = 0; j < waypts.getLength(); j++) {
+
+			Node node = waypts.item(j);
+			NamedNodeMap attributes = node.getAttributes();
+
+			String newLatitude = attributes.getNamedItem("lat")
+					.getTextContent();
+			Double newLatitude_double = Double.parseDouble(newLatitude);
+
+			String newLongitude = attributes.getNamedItem("lon")
+					.getTextContent();
+			Double newLongitude_double = Double
+					.parseDouble(newLongitude);
+
+			// for now, use the name field of the location to store
+			// the waypt ordinal. TODO: Need to really go through the
+			// child nodes and find 'name'
+			Element e = (Element) node;
+			String wayptName = e.getElementsByTagName("name").item(0)
+					.getTextContent();
+			Location loc = new Location(wayptName);
+			loc.setLatitude(newLatitude_double);
+			loc.setLongitude(newLongitude_double);
+
+			route.addWayPoint(loc);
+		}
+		// XXX short term hack - this really needs to be in the transect
+		if(waypts.getLength() % 2 != 0)
+			route.setParseErrorMsg("Uneven number of transect waypoints");
+		
+		return route;
+	}
+
+	private static List<Route> parseRoutes(Element elementRoot, NodeList routes, String gpxFileName)
+	{
+		List<Route> routeMap = new ArrayList<Route>();
+		for (int i = 0; i < routes.getLength(); i++) {
+			Route r = new Route();
+			r.gpxFile = gpxFileName;
+			
+			Node rtNode = elementRoot.getElementsByTagName("rte").item(i);
+			NamedNodeMap attribs = rtNode.getAttributes();
+			Node nameAttrib = attribs.getNamedItem("name");	
+			r.mName = (nameAttrib == null) ? "Route " + (i + 1) : nameAttrib.getTextContent();
+			// see if there are waypoints marked by the element 'rtept'
+			NodeList nodelist_rtkpt = elementRoot
+					.getElementsByTagName("rtept");
+
+			for (int j = 0; j < nodelist_rtkpt.getLength(); j++) {
+
+				Node node = nodelist_rtkpt.item(j);
+				NamedNodeMap attributes = node.getAttributes();
+
+				String newLatitude = attributes.getNamedItem("lat")
+						.getTextContent();
+				Double newLatitude_double = Double.parseDouble(newLatitude);
+
+				String newLongitude = attributes.getNamedItem("lon")
+						.getTextContent();
+				Double newLongitude_double = Double
+						.parseDouble(newLongitude);
+
+				// for now, use the name field of the location to store
+				// the waypt ordinal. TODO: Need to really go through the
+				// child nodes and find 'name'
+				Element e = (Element) node;
+				String wayptName = e.getElementsByTagName("name").item(0)
+						.getTextContent();
+				Location loc = new Location(wayptName);
+				loc.setLatitude(newLatitude_double);
+				loc.setLongitude(newLongitude_double);
+
+				r.addWayPoint(loc);
+			}
+			// XXX Short term hack to indicate error - this really should be
+			// bound to the transect
+			if(nodelist_rtkpt.getLength() %2 != 0)
+				r.setParseErrorMsg("Uneven number of transect route points");
+			routeMap.add(r);
+		}
 		return routeMap;
 	}
 
@@ -141,11 +205,8 @@ public class GPSUtils {
 		
 		int transectIndex = 1;
 		List<Location> wp = route.mWayPoints;
-		// Naively assume that transects are ordered pairs of waypoints for now
-		if (wp.size() > 0 && wp.size() % 2 == 0) {
-			for (int i = 0; i < wp.size(); i += 2) {
-				transects.add(new Transect(wp.get(i), wp.get(i+1), route.gpxFile, route.mName, transectIndex++));
-			}
+		for (int i = 0; i < wp.size() - 1; i += 2) {	
+			transects.add(new Transect(wp.get(i), wp.get(i+1), route.gpxFile, route.mName, transectIndex++));
 		}
 		return transects;
 	}
