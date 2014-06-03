@@ -46,10 +46,10 @@ public class TransectAdapter extends ArrayAdapter<Transect> {
 		state.setText(null);
 
 		// checked (kind of a hack)
-		// supedevo checkBox.setChecked(checked);
+		// TODO_FS_WIP, optional checkBox.setChecked(checked);
 
 		if (checked) {
-			state.setText("* CURRENT *");
+			// TODO_FS_WIP, optional state.setText("* CURRENT *");
 			arrow.setVisibility(View.VISIBLE);
 		}
 		else {

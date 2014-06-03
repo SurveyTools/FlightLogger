@@ -52,6 +52,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	private TextView mFile;
 	private TextView mRoute;
 	private TextView mTransect;
+	private TransectGraphView mTransectGraph;
 
 	private Button mCancelButton;
 	private Button mOkButton;
@@ -102,6 +103,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mFileBigButton = findViewById(R.id.fs_file_big_button);
 		mRouteBigButton = findViewById(R.id.fs_route_big_button);
 		mTransectList = (ListView) findViewById(R.id.fs_transect_list);
+		mTransectGraph = (TransectGraphView) findViewById(R.id.fs_transect_graph);
 		
 		mFileIcon = (ImageView) findViewById(R.id.fs_file_icon);
 		mRouteIcon = (ImageView) findViewById(R.id.fs_route_icon);
@@ -141,11 +143,16 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 					mTransectList.setItemChecked(position, true);
-
+					
 					// TODO_FS_WIP (ugly)
 					Transect transect = mTransectArray.get(position);
 					mWorkingData.mTransectName = transect.mName;
 					mWorkingData.mTransectDetails = transect.getDetailsName();
+					
+					// TODO - make this safer
+					mCurTransect = mCurTransects.get(position);
+
+					updateTransectGraphUI();
 		    }
 		});
 		
@@ -206,6 +213,14 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		}
 	}
 	
+	protected void updateTransectGraphUI() {
+
+		if (mCurTransects != null) {
+			
+			mTransectGraph.setTransectList(mTransectArray, mCurTransect);
+		}
+	}
+	
 	protected void updateDataUI() {
 		mFile.setText(mWorkingData.getShortFilename());
 		mRoute.setText(mWorkingData.getShortRouteName());
@@ -218,6 +233,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		// TODO_FS_WIP mTransectIcon.setEnabled(numTransects > 1);
 		
 		updateTransectListUI();
+		updateTransectGraphUI();
 	}
 
 	private void finishWithCancel() {
@@ -260,6 +276,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			setColorforViewWithID(R.id.fs_background_wrapper, R.color.fs_background_color);
 			setColorforViewWithID(R.id.fs_header, R.color.fs_header_color);
 			setClearColorforViewWithID(R.id.fs_file_and_route_wrapper);
+			setClearColorforViewWithID(R.id.fs_transect_stuff_wrapper);
+			setClearColorforViewWithID(R.id.fs_transect_graph_blob);
 			setClearColorforViewWithID(R.id.fs_transect_body_wrapper);
 			setColorforViewWithID(R.id.fs_footer, R.color.fs_footer_color);
 

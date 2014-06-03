@@ -32,7 +32,8 @@
      <string name="fs_label_title">GPX Settings</string>
      <string name="fs_label_file">File:</string>
      <string name="fs_label_route">Route:</string>
-     <string name="fs_label_transect">Transect:</string>
+     <string name="fs_label_transect_list">Transect:</string>
+     <string name="fs_label_transect_graph">Map:</string>
      <string name="modal_ok">OK</string>
      <string name="modal_cancel">Cancel</string>
      

@@ -174,8 +174,20 @@
 	    </LinearLayout>
 	</LinearLayout>
 
-    <!--  line 2, transect box -->
-
+    <!--  line 2, transect stuff -->
+	<LinearLayout
+	    android:id="@+id/fs_transect_stuff_wrapper"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_marginBottom="4dp"
+	    android:layout_marginLeft="16dp"
+	    android:layout_marginRight="16dp"
+	    android:layout_marginTop="16dp"
+	    android:layout_weight="1"
+	    android:background="@color/debug1"
+	    android:orientation="horizontal" >
+	    
+    <!--  line 2, transect list -->
 	<LinearLayout
 	    android:id="@+id/fs_transect_body_wrapper"
 	    android:layout_width="match_parent"
@@ -184,7 +196,7 @@
 	    android:layout_marginLeft="16dp"
 	    android:layout_marginRight="16dp"
 	    android:layout_marginTop="16dp"
-	    android:layout_weight="5"
+	    android:layout_weight="2"
 	    android:background="@color/debug1"
 	    android:orientation="vertical" >
 
@@ -196,7 +208,7 @@
 		    android:layout_marginBottom="0dp"
 		    android:layout_marginLeft="20dp"
 		    android:layout_marginTop="4dp"
-		    android:text="@string/fs_label_transect"
+		    android:text="@string/fs_label_transect_list"
 		    android:textAppearance="?android:attr/textAppearanceLarge"
 		    android:textColor="@color/fs_item_label_text_color"
 		    android:textSize="@dimen/fs_label_text_size"
@@ -219,9 +231,58 @@
 			
 		</RelativeLayout>
 
-    </LinearLayout>
+    <!--  transect list -->
+		</LinearLayout>
     
-    <!--  line 3, footer) -->
+    <!--  line 2, transect graph -->
+	<LinearLayout
+	    android:id="@+id/fs_transect_graph_blob"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_marginBottom="4dp"
+	    android:layout_marginLeft="16dp"
+	    android:layout_marginRight="16dp"
+	    android:layout_marginTop="16dp"
+	    android:layout_weight="5"
+	    android:background="@color/debug1"
+	    android:orientation="vertical" >
+
+ 		<TextView
+		    android:id="@+id/fs_transect_graph_label"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_vertical"
+		    android:layout_marginBottom="0dp"
+		    android:layout_marginLeft="20dp"
+		    android:layout_marginTop="4dp"
+		    android:text="@string/fs_label_transect_graph"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textColor="@color/fs_item_label_text_color"
+		    android:textSize="@dimen/fs_label_text_size"
+		    android:textStyle="bold" />
+	 		
+		<RelativeLayout
+		    android:id="@+id/fs_transect_graph_wrapper"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_margin="8dp"
+		    android:background="@drawable/fs_transect_bg_normal" >
+
+		    <com.vulcan.flightlogger.TransectGraphView
+		        android:id="@+id/fs_transect_graph"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:layout_margin="0dp" >
+			</com.vulcan.flightlogger.TransectGraphView>
+		</RelativeLayout>
+
+   		 <!--  transect graph -->
+		</LinearLayout>
+    
+    <!--  transect wrapper -->
+    </LinearLayout>
+	
+	<!--  line 3, footer) -->
     <LinearLayout
         android:id="@+id/fs_footer"
         android:layout_width="match_parent"
