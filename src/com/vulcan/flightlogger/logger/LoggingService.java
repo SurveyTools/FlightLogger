@@ -174,7 +174,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	private void writeEntry(LogEntry entry, String timestamp) {
 		try {
-			String csvEntry = mLogFormatter.writeCSVRecord(
+			String csvEntry = mLogFormatter.writeGenericCSVRecord(
 					timestamp,
 					Double.toString(entry.mLat),
 					Double.toString(entry.mLon), 
