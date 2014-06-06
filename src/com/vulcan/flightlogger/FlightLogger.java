@@ -427,23 +427,25 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				}
 			}
 			else {
-		        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
-		        .setIcon(android.R.drawable.ic_dialog_alert)
-		        .setTitle(R.string.fs_confirm_stop_logging_title)
-		        .setMessage(R.string.fs_confirm_stop_logging_message)
-		        .setPositiveButton(R.string.fs_confirm_stop_logging_ok, new DialogInterface.OnClickListener() {
-
-	            @Override
-	            public void onClick(DialogInterface dialog, int which) {
-
-	                //Stop the activity
-	    			mLogger.stopLog();
-	    			updateUI();
-                    dialog.cancel();
-	            }
-	        })
-	        .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
-	        .show();
+				if (mLogger.isLogging()) {
+			        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+			        .setIcon(android.R.drawable.ic_dialog_alert)
+			        .setTitle(R.string.fs_confirm_stop_logging_title)
+			        .setMessage(R.string.fs_confirm_stop_logging_message)
+			        .setPositiveButton(R.string.fs_confirm_stop_logging_ok, new DialogInterface.OnClickListener() {
+	
+		            @Override
+		            public void onClick(DialogInterface dialog, int which) {
+	
+		                //Stop the activity
+		    			mLogger.stopLog();
+		    			updateUI();
+	                    dialog.cancel();
+		            }
+		        })
+		        .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
+		        .show();
+				}
 			}
 		}
 

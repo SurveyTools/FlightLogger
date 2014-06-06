@@ -33,7 +33,7 @@
      <string name="fs_label_file">File:</string>
      <string name="fs_label_route">Route:</string>
      <string name="fs_label_transect_list">Transect:</string>
-     <string name="fs_label_transect_graph"></string>
+     <string name="fs_label_transect_graph">Map:</string>
      <string name="fs_confirm_stop_logging_title">Confirm</string>
      <string name="fs_confirm_stop_logging_message">Stop Logging Current Transect?</string>
      <string name="fs_confirm_stop_logging_ok">Stop Logging</string>
