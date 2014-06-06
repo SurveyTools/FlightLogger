@@ -4,4 +4,6 @@
     <dimen name="nav_absalt_value">190sp</dimen>
     <dimen name="fs_label_text_size">28sp</dimen>
     <dimen name="fs_value_text_size">36sp</dimen>
+    <dimen name="fs_big_button_height">140dp</dimen>
+    <dimen name="fs_vertical_button_top_spacer">5dp</dimen>
 </resources>

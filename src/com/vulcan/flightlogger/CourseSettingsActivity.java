@@ -7,7 +7,6 @@ import java.util.List;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.Layout;
 
 import com.vulcan.flightlogger.FileChooserDialog.FileChooserListener;
 import com.vulcan.flightlogger.geo.RouteChooserDialog.RouteChooserListener;
@@ -19,31 +18,22 @@ import com.vulcan.flightlogger.geo.data.Route;
 import com.vulcan.flightlogger.geo.data.Transect;
 
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.util.Log;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.widget.ImageButton;
 import android.view.View.OnClickListener;
 
 public class CourseSettingsActivity extends FragmentActivity implements OnClickListener, FileChooserListener, RouteChooserListener, TransectChooserListener {
 
 	private View mFileBigButton;
 	private View mRouteBigButton;
-	private ListView mTransectList;
+	private View mTransectBigButton;
 
 	private ImageView mFileIcon;
 	private ImageView mRouteIcon;
@@ -68,7 +58,6 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
     private Transect mCurTransect;
     
 	private ArrayList<Transect> mTransectArray;
-	private TransectAdapter mTransectAdapter;
 
 	private static final String LOGGER_TAG = "CourseSettingsActivity";
 	private final int FS_DIALOG_STYLE = DialogFragment.STYLE_NORMAL;
@@ -102,16 +91,16 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 		mFileBigButton = findViewById(R.id.fs_file_big_button);
 		mRouteBigButton = findViewById(R.id.fs_route_big_button);
-		mTransectList = (ListView) findViewById(R.id.fs_transect_list);
+		mTransectBigButton = findViewById(R.id.fs_transect_big_button);
 		mTransectGraph = (TransectGraphView) findViewById(R.id.fs_transect_graph);
 		
 		mFileIcon = (ImageView) findViewById(R.id.fs_file_icon);
 		mRouteIcon = (ImageView) findViewById(R.id.fs_route_icon);
-		// TODO_FS_WIP mTransectIcon = (ImageView) findViewById(R.id.fs_transect_icon);
+		mTransectIcon = (ImageView) findViewById(R.id.fs_transect_icon);
 
 		mFile = (TextView) findViewById(R.id.fs_file_value);
 		mRoute = (TextView) findViewById(R.id.fs_route_value);
-		// TODO_FS_WIP mTransect = (TextView) findViewById(R.id.fs_transect_value);
+		mTransect = (TextView) findViewById(R.id.fs_transect_value);
 
 		mCancelButton = (Button) findViewById(R.id.fs_cancel_button);
 		mOkButton = (Button) findViewById(R.id.fs_ok_button);
@@ -139,23 +128,6 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 	protected void setupButtons() {
 
-		mTransectList.setOnItemClickListener(new AdapterView.OnItemClickListener()  {
-		    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-					mTransectList.setItemChecked(position, true);
-					
-					// TODO_FS_WIP (ugly)
-					Transect transect = mTransectArray.get(position);
-					mWorkingData.mTransectName = transect.mName;
-					mWorkingData.mTransectDetails = transect.getDetailsName();
-					
-					// TODO - make this safer
-					mCurTransect = mCurTransects.get(position);
-
-					updateTransectGraphUI();
-		    }
-		});
-		
 		mFileBigButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				doChooseFile();
@@ -165,6 +137,12 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mRouteBigButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				doChooseRoute();
+			}
+		});
+
+		mTransectBigButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				doChooseTransect();
 			}
 		});
 
@@ -194,22 +172,6 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		if (mCurTransects != null) {
 			// TODO_FS_WIP eval
 			mTransectArray = new ArrayList<Transect>(mCurTransects);
-			mTransectAdapter = new TransectAdapter(this, mTransectArray);
-			
-			mTransectList.setAdapter(mTransectAdapter);
-	    	mTransectList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-			
-    		// TODO_FS_WIP, update our actual list
-
-			if (mTransectArray.size() > 0) {
-				// find the cur transect
-				for(int i=0;i<mTransectArray.size();i++) {
-					if (mTransectArray.get(i) == mCurTransect) {
-						// match!
-						mTransectList.setItemChecked(i, true);
-					}					
-				}
-			}
 		}
 	}
 	
@@ -224,11 +186,10 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	protected void updateDataUI() {
 		mFile.setText(mWorkingData.getShortFilename());
 		mRoute.setText(mWorkingData.getShortRouteName());
-		// TODO_FS_WIP mTransect.setText(mWorkingData.getFullTransectName());
+		mTransect.setText(mWorkingData.getFullTransectName());
 		
-		int numRoutes = (mCurRoutes == null) ? 0 : mCurRoutes.size();
-		int numTransects = (mCurTransects == null) ? 0 : mCurTransects.size();
-		
+		// TODO_FS_WIP int numRoutes = (mCurRoutes == null) ? 0 : mCurRoutes.size();
+		// TODO_FS_WIP int numTransects = (mCurTransects == null) ? 0 : mCurTransects.size();
 		// TODO_FS_WIP mRouteIcon.setEnabled(numRoutes > 1);
 		// TODO_FS_WIP mTransectIcon.setEnabled(numTransects > 1);
 		
@@ -278,7 +239,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			setClearColorforViewWithID(R.id.fs_file_and_route_wrapper);
 			setClearColorforViewWithID(R.id.fs_transect_stuff_wrapper);
 			setClearColorforViewWithID(R.id.fs_transect_graph_blob);
-			setClearColorforViewWithID(R.id.fs_transect_body_wrapper);
+			setClearColorforViewWithID(R.id.fs_transect_stuff_wrapper);
+			setClearColorforViewWithID(R.id.fs_route_and_transect_wrapper);
 			setColorforViewWithID(R.id.fs_footer, R.color.fs_footer_color);
 
 			// file
@@ -294,10 +256,10 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			setClearColorforViewWithID(R.id.fs_route_value);
 
 			// transect
-			// TODO_FS_WIP setClearColorforViewWithID(R.id.fs_transect_wrapper);
-			// TODO_FS_WIP setClearColorforViewWithID(R.id.fs_transect_icon);
+			setClearColorforViewWithID(R.id.fs_transect_wrapper);
+			setClearColorforViewWithID(R.id.fs_transect_icon);
 			setClearColorforViewWithID(R.id.fs_transect_label);
-			// TODO_FS_WIP setClearColorforViewWithID(R.id.fs_transect_value);
+			setClearColorforViewWithID(R.id.fs_transect_value);
 		}
 	}
 

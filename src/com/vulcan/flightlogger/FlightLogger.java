@@ -15,7 +15,9 @@ import com.vulcan.flightlogger.logger.LoggingService;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.FlightDatum;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.usb.UsbDevice;
@@ -412,16 +414,35 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		Log.e(LOG_CLASSNAME, "Error: " + message);
 		Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
 	}
-
+     
 	protected void setLogging(boolean on) {
 		if (mLogger != null) {
-			mLogger.stopLog();
 			if (on) {
 				try {
+					// note: this also stops the currrent log
 					mLogger.startLog(mCurTransect);
 				} catch (Exception e) {
 					showError(e.getLocalizedMessage());
 				}
+			}
+			else {
+		        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+		        .setIcon(android.R.drawable.ic_dialog_alert)
+		        .setTitle(R.string.fs_confirm_stop_logging_title)
+		        .setMessage(R.string.fs_confirm_stop_logging_message)
+		        .setPositiveButton(R.string.fs_confirm_stop_logging_ok, new DialogInterface.OnClickListener() {
+
+	            @Override
+	            public void onClick(DialogInterface dialog, int which) {
+
+	                //Stop the activity
+	    			mLogger.stopLog();
+	    			updateUI();
+                    dialog.cancel();
+	            }
+	        })
+	        .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
+	        .show();
 			}
 		}
 

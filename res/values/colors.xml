@@ -52,9 +52,10 @@
     <color name="fs_transect_list_item_state_active_color">#ffaaaaaa</color>
 
     <!--  transect graph -->
- 	<color name="transect_graph_normal">#ffDDDDDD</color>
- 	<color name="transect_graph_active">#FF0059B2</color>
- 	
+ 	<color name="xtransect_graph_normal">#bbffffff</color>
+ 	<color name="xtransect_graph_active">#ff0B66FF</color>
+ 	<color name="transect_graph_normal">#99BEC19C</color>
+ 	<color name="transect_graph_active">#ffDDDDDD</color>
     <!--  footer status left -->
     <color name="nav_footer_status_text_red">#ffFC0017</color>
     <color name="nav_footer_status_text_green">#ff44dd44</color>
