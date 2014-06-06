@@ -49,6 +49,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 	private CourseInfoIntent mOriginalData;
 	private CourseInfoIntent mWorkingData;
+	private boolean mAutoOpenShown;
 
 	// objects based on mWorkingData
 	private File mCurGpxFile;
@@ -62,6 +63,9 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	private static final String LOGGER_TAG = "CourseSettingsActivity";
 	private final int FS_DIALOG_STYLE = DialogFragment.STYLE_NORMAL;
 	private final int FS_DIALOG_THEME = android.R.style.Theme_NoTitleBar_Fullscreen;
+	public static final String FS_COURSE_DATA_KEY = "FSOriginalData";
+	private static final String FS_WORKING_DATA_KEY = "FSWorkingData";
+	private static final String FS_AUTO_OPEN_SHOWN_KEY = "FSAutoOpenShown";
 	
 
 	protected void immerseMe(String caller) {
@@ -105,8 +109,21 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mCancelButton = (Button) findViewById(R.id.fs_cancel_button);
 		mOkButton = (Button) findViewById(R.id.fs_ok_button);
 
-		mOriginalData = getIntent().getParcelableExtra(CourseInfoIntent.INTENT_KEY);
-		mWorkingData = new CourseInfoIntent(mOriginalData); // clone
+		mAutoOpenShown = false;
+		
+		// SAVE_RESTORE_STATE
+		if (savedInstanceState != null) {
+			mOriginalData = savedInstanceState.getParcelable(FS_COURSE_DATA_KEY);
+			mWorkingData = savedInstanceState.getParcelable(FS_WORKING_DATA_KEY);
+			mAutoOpenShown = savedInstanceState.getBoolean(FS_AUTO_OPEN_SHOWN_KEY);
+		} 
+		
+		if (mOriginalData == null)
+			mOriginalData = getIntent().getParcelableExtra(FS_COURSE_DATA_KEY);
+		
+		if (mWorkingData == null)
+			mWorkingData =  new CourseInfoIntent(mOriginalData); // clone;
+		
 		mWorkingData.debugDump();
 		
 		updateCurFileFromWorkingData();
@@ -122,8 +139,18 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 		// auto-open if we have nothing
 		// TESTING if (true) return;
-		if (!mWorkingData.hasFile())
+		if (!mAutoOpenShown && !mWorkingData.hasFile()) {
+			mAutoOpenShown = true;
 			doChooseFile();
+		}
+	}
+
+	// SAVE_RESTORE_STATE
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(FS_COURSE_DATA_KEY, mOriginalData);
+		outState.putParcelable(FS_WORKING_DATA_KEY, mWorkingData);
+		outState.putBoolean(FS_AUTO_OPEN_SHOWN_KEY, mAutoOpenShown);
 	}
 
 	protected void setupButtons() {
@@ -199,14 +226,14 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 	private void finishWithCancel() {
 		Intent intent = getIntent();
-		intent.putExtra(CourseInfoIntent.INTENT_KEY, mOriginalData);
+		intent.putExtra(FS_COURSE_DATA_KEY, mOriginalData);
 		this.setResult(RESULT_CANCELED, intent);
 		finish();
 	}
 
 	private void finishWithDone() {
 		Intent intent = getIntent();
-		intent.putExtra(CourseInfoIntent.INTENT_KEY, mWorkingData);
+		intent.putExtra(FS_COURSE_DATA_KEY, mWorkingData);
 		this.setResult(RESULT_OK, intent);
 		finish();
 	}

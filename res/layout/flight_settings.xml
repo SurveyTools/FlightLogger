@@ -310,8 +310,7 @@
         android:layout_height="76dp"
         android:layout_gravity="bottom"
         android:background="@color/debug4"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal" >
+        android:gravity="center_horizontal"         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/fs_cancel_button"

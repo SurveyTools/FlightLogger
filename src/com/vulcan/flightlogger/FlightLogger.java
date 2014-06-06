@@ -255,6 +255,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 		resetData();
 
+		// SAVE_RESTORE_STATE
 		if (savedInstanceState != null) {
 			mFlightData = savedInstanceState.getParcelable(SAVED_FLIGHT_DATA_KEY);
 
@@ -475,7 +476,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		if (requestCode == LOAD_FLIGHT_PATH) {
 			// Make sure the load activity was successful
 			if (resultCode == RESULT_OK) {
-				CourseInfoIntent fData = data.getParcelableExtra(CourseInfoIntent.INTENT_KEY);
+				CourseInfoIntent fData = data.getParcelableExtra(CourseSettingsActivity.FS_COURSE_DATA_KEY);
 				if (fData != null) {
 					setFlightData(fData);
 				}
@@ -785,7 +786,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	public boolean browseGpxFiles(View v) {
 		// load gpx
 		Intent intent = new Intent(this, CourseSettingsActivity.class);
-		intent.putExtra(CourseInfoIntent.INTENT_KEY, mFlightData);
+		intent.putExtra(CourseSettingsActivity.FS_COURSE_DATA_KEY, mFlightData);
 
 		this.startActivityForResult(intent, LOAD_FLIGHT_PATH);
 
@@ -796,6 +797,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		setLogging(!isLogging());
 	}
 
+	// SAVE_RESTORE_STATE
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);

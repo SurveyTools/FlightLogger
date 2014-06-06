@@ -17,7 +17,6 @@ public class CourseInfoIntent implements Parcelable {
 	int mAction;
 
 	private static final String LOGGER_TAG = "CourseInfoIntent";
-	public static final String INTENT_KEY = "CourseInfoKey";
 
 	public CourseInfoIntent(String gpxName, String routeName, String transectName, String transectDetails, int action) {
 
