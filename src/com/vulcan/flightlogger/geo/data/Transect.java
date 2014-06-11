@@ -110,7 +110,7 @@ public class Transect implements Parcelable{
 	}
 	
 	public boolean matchesByName(String targetName) {
-		if (mName != null)
+		if ((mName != null) && (targetName != null))
 			return mName.matches(targetName);
 		return false;
 	}

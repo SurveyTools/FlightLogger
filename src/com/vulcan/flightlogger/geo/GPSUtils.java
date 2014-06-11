@@ -385,6 +385,26 @@ public class GPSUtils {
 		return null;
 	}
 
+	public static Transect getNextTransectFromList(List<Transect> transects, Transect curTransect) {
+		boolean takeTheNextOne = false;
+		if (transects != null) {
+			Iterator<Transect> iterator = transects.iterator();
+			while (iterator.hasNext()) {
+				Transect transItem = iterator.next();
+				if (takeTheNextOne) {
+					// winner!
+					return transItem;
+				} else if (transItem.matchesByName(curTransect.mName)) {
+					// almost there
+					takeTheNextOne = true;
+				}
+			}
+		}
+
+		// no dice
+		return null;
+	}
+
 	public static Transect getDefaultTransectFromRoute(Route route) {
 		if (route != null) {
 		    return getDefaultTransectFromList(GPSUtils.parseTransects(route));

@@ -83,6 +83,11 @@
             android:label="GPX Settings"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
         </activity>
+        <activity
+            android:name="com.vulcan.flightlogger.NextTransectActivity"
+            android:label="Logging Stopped"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
+        </activity>
         
         <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />
         

@@ -42,7 +42,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	private TextView mFile;
 	private TextView mRoute;
 	private TextView mTransect;
-	private TransectGraphView mTransectGraph;
+	private AllTransectsView mAllTransectsGraph;
+	private MiniTransectView mCurTransectMiniGraph;
 
 	private Button mCancelButton;
 	private Button mOkButton;
@@ -96,8 +97,11 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mFileBigButton = findViewById(R.id.fs_file_big_button);
 		mRouteBigButton = findViewById(R.id.fs_route_big_button);
 		mTransectBigButton = findViewById(R.id.fs_transect_big_button);
-		mTransectGraph = (TransectGraphView) findViewById(R.id.fs_transect_graph);
+		mAllTransectsGraph = (AllTransectsView) findViewById(R.id.fs_transect_graph);
+		mCurTransectMiniGraph = (MiniTransectView) findViewById(R.id.fs_transect_mini_graph);
 		
+		mCurTransectMiniGraph.setup(getResources().getColor(R.color.transect_graph_active), getResources().getColor(R.color.transect_mini_graph_border), false);
+
 		mFileIcon = (ImageView) findViewById(R.id.fs_file_icon);
 		mRouteIcon = (ImageView) findViewById(R.id.fs_route_icon);
 		mTransectIcon = (ImageView) findViewById(R.id.fs_transect_icon);
@@ -206,7 +210,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 		if (mCurTransects != null) {
 			
-			mTransectGraph.setTransectList(mTransectArray, mCurTransect);
+			mAllTransectsGraph.setTransectList(mTransectArray, mCurTransect, null);
+			mCurTransectMiniGraph.setTransect(mCurTransect);
 		}
 	}
 	
@@ -222,7 +227,14 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		
 		updateTransectListUI();
 		updateTransectGraphUI();
-	}
+
+		// disable things as need be
+		if (mCurTransect == null) {
+			mCurTransectMiniGraph.setVisibility(ImageView.INVISIBLE);
+		} else {
+			mCurTransectMiniGraph.setVisibility(ImageView.VISIBLE);
+		}
+}
 
 	private void finishWithCancel() {
 		Intent intent = getIntent();
@@ -326,11 +338,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
     			mCurTransect = GPSUtils.getDefaultTransectFromList(mCurTransects);
     			
     			// update our working data
-    			mWorkingData.mTransectName = (mCurTransect == null) ? null : mCurTransect.mName;
-    			mWorkingData.mTransectDetails =  (mCurTransect == null) ? null : mCurTransect.getDetailsName();
+    			mWorkingData.setTransect(mCurTransect);
     		}
-    		
-    		// TODO_FS_WIP, update mTransectList?
 		}
 	}
 
@@ -392,9 +401,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 
 	// from a chooser...
 	protected void setTransect(String transectName, String transectDetails) {
-		mWorkingData.mTransectName = transectName;
-		mWorkingData.mTransectDetails = transectDetails;
-
+		mWorkingData.setTransectName(transectName, transectDetails);
 		updateCurTransectFromWorkingData();
 		updateDataUI();
 	}
