@@ -260,14 +260,14 @@
         android:orientation="horizontal" >
 
        <Button
-           android:id="@+id/nt_ok_button"
+           android:id="@+id/nt_cancel_button"
            style="@style/ButtonBarButton"
            android:layout_width="wrap_content"
            android:layout_height="match_parent"
            android:layout_margin="8dp"
            android:layout_marginRight="8dp"
            android:adjustViewBounds="false"
-           android:background="@drawable/roundedbutton_red"
+           android:background="@drawable/fs_button_red"
            android:includeFontPadding="false"
            android:minHeight="28dp"
            android:minWidth="40dp"
@@ -288,7 +288,7 @@
 		    android:layout_marginRight="48dp"
 		    android:layout_marginTop="8dp"
 		    android:adjustViewBounds="false"
-		    android:background="@drawable/fs_white_button"
+		    android:background="@drawable/fs_button_white"
 		    android:includeFontPadding="false"
 		    android:minHeight="28dp"
 		    android:minWidth="40dp"

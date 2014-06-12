@@ -235,9 +235,9 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mStatusButtonBackgroundIgnore = getResources().getDrawable(R.drawable.nav_status_ignore);
 
 		// mode button
-		mModeButtonBorderRed = getResources().getDrawable(R.drawable.roundedbutton_red);
-		mModeButtonBorderGrey = getResources().getDrawable(R.drawable.roundedbutton_grey);
-		mModeButtonBorderGreen = getResources().getDrawable(R.drawable.roundedbutton_green);
+		mModeButtonBorderRed = getResources().getDrawable(R.drawable.nav_mode_button_red);
+		mModeButtonBorderGrey = getResources().getDrawable(R.drawable.nav_mode_button_grey);
+		mModeButtonBorderGreen = getResources().getDrawable(R.drawable.nav_mode_button_green);
 
 		// file button
 		mFileIconBackgroundWhite = getResources().getDrawable(R.drawable.filefolder);
@@ -352,7 +352,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 			// header
 			setHeaderColorforViewWithID(R.id.nav_header);
-			setHeaderColorforViewWithID(R.id.nav_header_left);
 			setHeaderColorforViewWithID(R.id.nav_header_right);
 			setHeaderColorforViewWithID(R.id.nav_header_settings_button);
 
@@ -479,6 +478,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				CourseInfoIntent ntData = data.getParcelableExtra(NextTransectActivity.NT_CUR_TRANSECT_DATA_KEY);
 				if (ntData != null) {
 					setFlightData(ntData);
+				} else {
+					// NO_TRANSDATA_MEANS_DONT_CHANGE
 				}
 				break;
 			}
@@ -673,17 +674,17 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// mStatusDisplayRight.setText("xTrackErr: " + mGPSData.mRawCrossTrackErrorMeters);
 	}
 
-	protected void updateFooterUI() {
+    protected void updateFooterUI() {
 
 		// START/STOP button only reflects the logging state
 
 		if (isLogging()) {
 			// left status
-			mStatusDisplayLeft.setText("** RECORDING **");
+			mStatusDisplayLeft.setText(R.string.nav_msg_recording_text);
 			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
 
 			// mode button
-			mStartStopButton.setText(isTransectReady() ? "END TRANSECT" : "STOP LOGGING");
+			mStartStopButton.setText(isTransectReady() ? R.string.nav_action_stop_transect : R.string.nav_action_stop_logging);
 			// EVAL_RED_VS_BLACK mStartStopButton.setBackground(mModeButtonBorderGreen);
 			// EVAL_RED_VS_BLACK mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
 			mStartStopButton.setBackground(mModeButtonBorderRed);
@@ -698,7 +699,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStatusDisplayLeft.setTextColor(mStatusTextColorRed);
 
 			// mode button
-			mStartStopButton.setText(isTransectReady() ? "START TRANSECT" : "START LOGGING");
+			mStartStopButton.setText(isTransectReady() ? R.string.nav_action_start_transect : R.string.nav_action_start_logging);
 			mStartStopButton.setBackground(mModeButtonBorderGreen);
 			mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
 			// EVAL_RED_VS_BLACK mStartStopButton.setBackground(mModeButtonBorderRed);

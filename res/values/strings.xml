@@ -29,13 +29,20 @@
     <string name="nav_altitude_units">FEET</string>
     <string name="nav_no_gpx_error_text">Load a GPX File...</string>
     
-     <string name="chooser_label_transect_graph">Map:</string>
     
-    <string name="nt_label_title">End Transect?</string>
+    <string name="nav_msg_recording_text">** LOGGING **</string>
+    <string name="nav_action_start_transect">START TRANSECT</string>
+    <string name="nav_action_stop_transect">STOP TRANSECT</string>
+    <string name="nav_action_start_logging">START LOGGING</string>
+    <string name="nav_action_stop_logging">STOP LOGGING</string>
+    
+	<string name="chooser_label_transect_graph">Map:</string>
+    
+    <string name="nt_label_title">Stopping Transect...</string>
     <string name="nt_label_cur_transect">Current Transect:</string>
     <string name="nt_label_next_transect">Next Transect:</string>
     <string name="nt_stop_button_text">OK</string>
-    <string name="nt_next_button_text">LOAD NEXT TRANSECT</string>
+    <string name="nt_next_button_text">USE NEXT TRANSECT</string>
     
     <string name="fs_label_title">GPX Settings</string>
      <string name="fs_label_file">File:</string>

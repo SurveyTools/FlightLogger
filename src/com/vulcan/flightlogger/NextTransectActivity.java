@@ -40,7 +40,8 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 	private MiniTransectView mCurTransectMiniGraph;
 	private MiniTransectView mNextTransectMiniGraph;
 
-	private Button mOkButton;
+	private Button mCancelButton;
+	private Button mStopButton;
 	private Button mUseNextTransectButton;
 
 	private CourseInfoIntent mCurTransectData;
@@ -99,7 +100,8 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 		mCurTransectView = (TextView) findViewById(R.id.nt_cur_transect_value);
 		mNextTransectView = (TextView) findViewById(R.id.nt_next_transect_value);
 
-		mOkButton = (Button) findViewById(R.id.nt_ok_button);
+		mCancelButton = (Button) findViewById(R.id.nt_cancel_button);
+		mStopButton = (Button) findViewById(R.id.nt_stop_button);
 		mUseNextTransectButton =  (Button) findViewById(R.id.nt_next_button);
 
 		// SAVE_RESTORE_STATE
@@ -146,9 +148,15 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 			}
 		});
 
-		mOkButton.setOnClickListener(new View.OnClickListener() {
+		mCancelButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				finishWithCancel();
+			}
+		});
+
+		mStopButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				finishWithOk();
 			}
 		});
 
@@ -221,6 +229,12 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 	private void finishWithCancel() {
 		this.setResult(RESULT_CANCELED, getIntent());
+		finish();
+	}
+
+	private void finishWithOk() {
+		// NO_TRANSDATA_MEANS_DONT_CHANGE
+		this.setResult(RESULT_OK, getIntent());
 		finish();
 	}
 
