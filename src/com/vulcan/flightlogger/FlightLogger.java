@@ -683,7 +683,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
 
 			// mode button
-			mStartStopButton.setText("STOP LOGGING");
+			mStartStopButton.setText(isTransectReady() ? "END TRANSECT" : "STOP LOGGING");
 			// EVAL_RED_VS_BLACK mStartStopButton.setBackground(mModeButtonBorderGreen);
 			// EVAL_RED_VS_BLACK mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
 			mStartStopButton.setBackground(mModeButtonBorderRed);
@@ -698,7 +698,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mStatusDisplayLeft.setTextColor(mStatusTextColorRed);
 
 			// mode button
-			mStartStopButton.setText("START LOGGING");
+			mStartStopButton.setText(isTransectReady() ? "START TRANSECT" : "START LOGGING");
 			mStartStopButton.setBackground(mModeButtonBorderGreen);
 			mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
 			// EVAL_RED_VS_BLACK mStartStopButton.setBackground(mModeButtonBorderRed);
@@ -802,28 +802,33 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	
 		if (mLogger != null) {
 			if (mLogger.isLogging()) {
-				// STOP LOGGING... CONFIRM
-		        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
-			        .setIcon(android.R.drawable.ic_dialog_alert)
-			        .setTitle(R.string.fs_confirm_stop_logging_title)
-			        .setMessage(R.string.fs_confirm_stop_logging_message)
-			        .setPositiveButton(R.string.fs_confirm_stop_logging_ok, new DialogInterface.OnClickListener() {
-	
-				            @Override
-				            public void onClick(DialogInterface dialog, int which) {
-	
-				                // CONFIRMED!
-								setLogging(false);
+				// STOP LOGGING... 
+				
+				if (isTransectReady()) {
+					// CONFIRM / NEXT
+					doAdvanceTransectActivity();
+				} else {
+					// CONFIRM STOP
+					//  CONFIRM
+			        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+				        .setIcon(android.R.drawable.ic_dialog_alert)
+				        .setTitle(R.string.fs_confirm_stop_logging_title)
+				        .setMessage(R.string.fs_confirm_stop_logging_message)
+				        .setPositiveButton(R.string.fs_confirm_stop_logging_ok, new DialogInterface.OnClickListener() {
+		
+					            @Override
+					            public void onClick(DialogInterface dialog, int which) {
+		
+					                // CONFIRMED
+									setLogging(false);
 
-								// user stopped logging... see if they want to advance the transect
-								doAdvanceTransectActivity();
-								
-			                    dialog.cancel();
-				    			updateUI();
-				            }
-				        })
-				    .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
-				    .show();
+				                    dialog.cancel();
+					    			updateUI();
+					            }
+					        })
+					    .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
+					    .show();
+				}
 
 			} else {
 				// START LOGGING

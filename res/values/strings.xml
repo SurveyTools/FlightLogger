@@ -31,17 +31,18 @@
     
      <string name="chooser_label_transect_graph">Map:</string>
     
-    <string name="nt_label_title">Done with Transect?</string>
+    <string name="nt_label_title">End Transect?</string>
     <string name="nt_label_cur_transect">Current Transect:</string>
     <string name="nt_label_next_transect">Next Transect:</string>
-    <string name="nt_ok_button_text">USE NEXT TRANSECT</string>
+    <string name="nt_stop_button_text">OK</string>
+    <string name="nt_next_button_text">LOAD NEXT TRANSECT</string>
     
     <string name="fs_label_title">GPX Settings</string>
      <string name="fs_label_file">File:</string>
      <string name="fs_label_route">Route:</string>
      <string name="fs_label_transect_list">Transect:</string>
 
-     <string name="fs_confirm_stop_logging_title">Stop Logging Current Transect?</string>
+     <string name="fs_confirm_stop_logging_title">Stop Logging?</string>
      <string name="fs_confirm_stop_logging_message"></string>
      <string name="fs_confirm_stop_logging_ok">Stop Logging</string>
       <string name="fs_confirm_stop_logging_cancel">Cancel</string>
