@@ -13,7 +13,7 @@ import android.location.Location;
 public class GPXLogConverter {
 	
 	public final String GPX_HEADER = new StringBuilder()
-	.append("\"<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
+	.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
 	.append("<gpx version=\"1.0\" ")
 	.append("creator=\"Vulcan FlightLogger\" ")
 	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ")
