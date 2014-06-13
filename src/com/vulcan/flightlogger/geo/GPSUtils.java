@@ -26,7 +26,7 @@ import android.location.Location;
 
 public class GPSUtils {
 
-	public final static float METERS_PER_FOOT = (float) 3.28084;
+	public final static float FEET_PER_METER = (float) 3.28084;
 	
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
 

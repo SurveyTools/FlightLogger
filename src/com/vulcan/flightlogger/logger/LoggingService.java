@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
+import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.data.Transect;
@@ -279,7 +280,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	@Override
 	public void onAltitudeUpdate(float altValueInMeters) {
-		this.mCurrLogEntry.mAlt = altValueInMeters;	
+		this.mCurrLogEntry.mAlt = altValueInMeters * GPSUtils.FEET_PER_METER;;	
 	}
 
 	@Override
