@@ -17,7 +17,7 @@
     <string name="action_load_gpx">Load GPX File</string>
     <string name="action_altimeter">Laser Altimeter</string>
     <string name="action_show_gps_debug">GPS Debug</string>
-    <string name="action_convert_cvs_logfile">Convert CVS Logfile</string>
+    <string name="action_convert_cvs_logfile">Convert Logfile to GPX</string>
     <string name="altitude_placeholder">312</string>
     <string name="nav_status_gps_text">GPS</string>
     <string name="nav_status_alt_text">ALT</string>
