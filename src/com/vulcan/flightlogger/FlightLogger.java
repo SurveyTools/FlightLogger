@@ -487,17 +487,13 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 					// NO_TRANSDATA_MEANS_DONT_CHANGE
 				}
 				break;
-			}
-		} 
-		
-		// TODO need to decide whether we want this exposed
-		else if(requestCode == LOAD_CSV_LOGFILE) {
-			if (resultCode == RESULT_OK) {
+			case LOAD_CSV_LOGFILE:
 				String filePath = data.getStringExtra(FileBrowser.FILE_NAME_STRING_KEY);
 				File logFile = new File(filePath);
 				mLogger.convertLogToGPXFormat(logFile);
+				break;
 			}
-		}
+		} 
 	}
 
 	@Override
