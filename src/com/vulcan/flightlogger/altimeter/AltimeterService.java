@@ -111,6 +111,8 @@ public class AltimeterService extends Service implements
 
 	}
 
+	// TODO Since we have generics support, we should refactor all the 
+	// service listener stuff into a base class if we run out of things to do...
 	public void registerListener(AltitudeUpdateListener listener) {
 		mListeners.add(listener);
 	}

@@ -26,12 +26,12 @@ public class LogEntry {
 		this.mSpeed = cloned.mSpeed;
 	  }
 
-	// TODO - this goes into a log entry formatter
-	public String toLogEntry(String timestamp) {
-		return String.format("%s - lat:%s lon:%s alt:%s speed:%s", timestamp,
-				Double.toString(mLat),
-				Double.toString(mLon), 
-				Float.toString(mAlt),
-				Float.toString(mSpeed));
-	}
+//	// TODO - this goes into a log entry formatter
+//	public String toLogEntry(String timestamp) {
+//		return String.format("%s - lat:%s lon:%s alt:%s speed:%s", timestamp,
+//				Double.toString(mLat),
+//				Double.toString(mLon), 
+//				Float.toString(mAlt),
+//				Float.toString(mSpeed));
+//	}
 }

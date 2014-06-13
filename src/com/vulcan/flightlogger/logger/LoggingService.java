@@ -1,12 +1,14 @@
 package com.vulcan.flightlogger.logger;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -35,7 +37,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		TransectUpdateListener {
 	private static final long LOGGING_FREQUENCY_SECS = 10;
 	private final String mLoggingDirName = "flightlogs";
-	private LogFormatter mLogFormatter;
+	private LogWriter mLogFormatter;
 	private File mLogDir = null;
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mCurrLogfileName;
@@ -43,6 +45,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	protected NavigationService mNavigationService;
 	protected AltimeterService mAltimeterService;
+	
+	private final ArrayList<LoggingStatusListener> mListeners = new ArrayList<LoggingStatusListener>();
 
 	// references to the services consumed
 	private ServiceConnection mNavigationConnection = new ServiceConnection() {
@@ -109,10 +113,36 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		startLog(transectName, LOGGING_FREQUENCY_SECS);
 	}
 
-	public void stopLog() {
+	public void stopLog() 
+	{
+		// clone the File object so we can run it in a separate thread
+		File currLog = new File(mCurrLogfileName.getAbsolutePath());
+		convertLogToGPXFormat(currLog);
 		closeCurrentLog();
 	}
 	
+	// convert contents referenced by an immutable File 
+	public void convertLogToGPXFormat(final File currLog) {
+		if(currLog.canRead())
+		{
+			new Thread() {
+				public void run() {
+					String gpxLog = FilenameUtils.removeExtension(currLog.getName()) + ".gpx";
+					File gpxFile = createLogFile(gpxLog);
+					try {
+						final FileInputStream fis = new FileInputStream(currLog);
+						final FileOutputStream fos = new FileOutputStream(gpxFile, true);
+						final GPXLogConverter gpxLogger = new GPXLogConverter();
+						gpxLogger.writeGPXFile(fis, fos);					
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}.start();
+		}
+	}
+
 	public boolean isLogging() {
 		return mLogData && (mCurrLogfileName != null);
 	}
@@ -122,7 +152,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		{
 			stopLog();
 			mCurrLogEntry = new LogEntry();
-			mCurrLogfileName = createLogFile(transectName);
+			mCurrLogfileName = createCSVLogFile(transectName);
 			mLogData = true;
 			logData((long) logFrequency);
 		}
@@ -134,7 +164,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (mLogFormatter == null)
-			mLogFormatter = new LogFormatter();
+			mLogFormatter = new LogWriter();
 		Log.d(TAG, "starting logging service");
 		createFlightLogDirectory();
 		bindServices();
@@ -188,23 +218,25 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		    } catch (FileNotFoundException e) {
 		        e.printStackTrace();
 		    } catch (IOException e) {
-			Log.e(TAG, "Log write failed: " + e.toString());
-		}
+		    	Log.e(TAG, "Log write failed: " + e.toString());
+		    }
 	}
 
-	/*
-	 * TODO - verify uniqueness of name, and verify that the constructed
-	 * filename indeed can be written to by creating a file on the filesystem
-	 */
-	private File createLogFile(String transectName) {
+	private File createCSVLogFile(String transectName) {
 		File logFile = null;
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
 		String osFriendlyName = (transectName == null) ? "no-transect" : transectName.replaceAll(" ", "_").toLowerCase(
 				Locale.US);
-		String logName = String.format("%s-%s.txt", sdf.format(cal.getTime()),osFriendlyName);
+		String logName = String.format("%s-%s.csv", sdf.format(cal.getTime()),osFriendlyName);
 		
-		// fix any illegal chars
+		logFile = createLogFile(logName);
+		
+		return logFile;
+	}
+
+	private File createLogFile(String logName) {
+		File logFile = null;
 		logName = FilenameUtils.normalize(logName);
 
 		if (mLogDir == null || (mLogDir.exists() == false))
@@ -226,9 +258,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	private boolean createFlightLogDirectory() {
-		// Kinda crazy, will only create a directory if you use a
-		// string constructor, as opposed to (File, String)
-		// broken String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + mLoggingDirName;
 		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + mLoggingDirName;
 		File flightLogDir = new File(dirPath);
 		flightLogDir.mkdirs();
