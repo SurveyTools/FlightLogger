@@ -40,7 +40,18 @@
     <color name="nav_footer_status">#ff888888</color>
     <color name="nav_footer_stop">#ffcccccc</color>
    
-   <!--  flight settings -->
+   <!--  chooser/shared settings -->
+   <color name="nt_background_color">#ff464637</color>
+    <color name="nt_header_color">#ff222222</color>
+    <color name="nt_footer_color">#ff464637</color>
+    <color name="nt_title_text_color">#ffeeeeee</color>
+    <color name="nt_item_label_text_color">#ff808277</color>
+    <color name="nt_cur_item_label_text_color">#ff94948D</color>
+    <color name="nt_next_item_label_text_color">#ffDDDDDD</color>
+    <color name="nt_transect_list_item_text_color">#ffDDDDDD</color>
+    <color name="nt_transect_list_item_state_active_color">#ffaaaaaa</color>
+    
+    <!--  flight settings -->
     <color name="fs_background_color">#ff464637</color>
     <color name="fs_header_color">#ff222222</color>
     <color name="fs_footer_color">#ff464637</color>
@@ -56,7 +67,10 @@
  	<color name="xtransect_graph_active">#ff0B66FF</color>
  	<color name="transect_graph_normal">#99BEC19C</color>
  	<color name="transect_graph_active">#ffDDDDDD</color>
-    <!--  footer status left -->
+ 	<color name="transect_graph_next">#ff00DE00</color>
+ 	<color name="transect_mini_graph_border">#ff64644E</color>
+ 	
+ 	<!--  footer status left -->
     <color name="nav_footer_status_text_red">#ffFC0017</color>
     <color name="nav_footer_status_text_green">#ff44dd44</color>
     <color name="nav_footer_status_text_grey">#ff888888</color>

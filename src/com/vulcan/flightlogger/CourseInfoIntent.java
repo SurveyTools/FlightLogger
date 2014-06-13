@@ -44,6 +44,19 @@ public class CourseInfoIntent implements Parcelable {
 			mAction = 0;
 		}
 	}
+	
+	public void setTransectName(String transectName, String transectDetailsName) {
+		mTransectName = transectName;
+		mTransectDetails = transectDetailsName;
+	}
+
+	public void setTransect(Transect transect) {
+		if (transect == null) {
+			setTransectName(null, null);
+		} else {
+			setTransectName(transect.mName, transect.getDetailsName());
+		}
+	}
 
 	public void clearTransectData() {
 		mTransectName = null;

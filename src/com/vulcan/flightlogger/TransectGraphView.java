@@ -15,23 +15,32 @@ import android.util.Log;
 
 public class TransectGraphView extends View {
 
-	// colors
-	private int mNormalTransectColor;
-	private int mActiveTransectColor;
-
 	// drawing
-	private Paint mPaint;
-	private Path mArrowPath;
+	protected Paint mPaint;
+	protected Path mArrowPath;
 	
 	// data
-	private List<Transect> mTransectList;
-	private Transect mActiveTransect;
-	private double mMinLat = 0;
-	private double mMinLong = 0;
-	private double mMaxLat = 0;
-	private double mMaxLong = 0;
-	
+	protected double mMinLat = 0;
+	protected double mMinLong = 0;
+	protected double mMaxLat = 0;
+	protected double mMaxLong = 0;
 
+	protected static int NORMAL_CIRCLE_SIZE = 5;
+	protected static int IMPORTANT_CIRCLE_SIZE = 9;
+
+	protected static int NORMAL_CIRCLE_STROKE_SIZE = 4;
+	protected static int IMPORTANT_CIRCLE_STROKE_SIZE = 4;
+
+	protected static int ARROW_ANGLE_DEGREES = 20;
+
+	protected static int NORMAL_ARROW_TAIL_SIZE = 14;
+	protected static int NORMAL_ARROW_STROKE_SIZE = 4;
+	protected static int NORMAL_ARROW_BODY_STROKE_SIZE = 4;
+
+	protected static int IMPORTANT_ARROW_TAIL_SIZE = 30;
+	protected static int IMPORTANT_ARROW_STROKE_SIZE = 4;
+	protected static int IMPORTANT_ARROW_BODY_STROKE_SIZE = 8;
+	
 	// for xml construction
 	public TransectGraphView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -44,13 +53,10 @@ public class TransectGraphView extends View {
 		setupVars();
 	}
 
-	private void setupVars() {
+	protected void setupVars() {
 
 		this.mPaint = new Paint();
 		this.mArrowPath = new Path();
-
-		mNormalTransectColor = getResources().getColor(R.color.transect_graph_normal);
-		mActiveTransectColor = getResources().getColor(R.color.transect_graph_active);
 	}
 
 	@Override
@@ -59,54 +65,21 @@ public class TransectGraphView extends View {
 		// save w & h here if need be
 	}
 	
-	public void setTransectList(List<Transect> transectList, Transect activeTransect) {
-		mTransectList = transectList;
-		mActiveTransect = activeTransect;
-		updateGpsBounds();
-		invalidate();
-	}
-
 	protected void updateGpsBounds() {
-
-		if (mTransectList == null) {
-			mMinLat = mMaxLat = mMinLong = mMaxLong = 0;
-		} else {
-			for(int i=0;i<mTransectList.size();i++) {
-				Transect trans = mTransectList.get(i);
-				
-				if (i==0) {
-					// first one
-					mMinLat = Math.min(trans.mStartWaypt.getLatitude(), trans.mEndWaypt.getLatitude());
-					mMaxLat = Math.max(trans.mStartWaypt.getLatitude(), trans.mEndWaypt.getLatitude());
-					mMinLong = Math.min(trans.mStartWaypt.getLongitude(), trans.mEndWaypt.getLongitude());
-					mMaxLong = Math.max(trans.mStartWaypt.getLongitude(), trans.mEndWaypt.getLongitude());
-				} else {
-					// check to see if the bounds are expanded
-					mMinLat = Math.min(trans.mStartWaypt.getLatitude(), mMinLat);
-					mMinLat = Math.min(trans.mEndWaypt.getLatitude(), mMinLat);
-					mMaxLat = Math.max(trans.mStartWaypt.getLatitude(), mMaxLat);
-					mMaxLat = Math.max(trans.mEndWaypt.getLatitude(), mMaxLat);
-
-					mMinLong = Math.min(trans.mStartWaypt.getLongitude(), mMinLong);
-					mMinLong = Math.min(trans.mEndWaypt.getLongitude(), mMinLong);
-					mMaxLong = Math.max(trans.mStartWaypt.getLongitude(), mMaxLong);
-					mMaxLong = Math.max(trans.mEndWaypt.getLongitude(), mMaxLong);
-				}
-			}
-		}
+		// pure virtual
 	}
 	
 	protected float calcPixelForLongitude(double gpsValue, double minGpsValue, double gpsToPixels, double centeringOffset) {
 		double relativeGpsValue = gpsValue - minGpsValue;
 		double relativePixelValue = relativeGpsValue * gpsToPixels;
-		return (float)(centeringOffset + relativePixelValue);
+		return (float)(relativePixelValue + centeringOffset);
 	}
 	
 	protected float calcPixelForLatitude(double gpsValue, double minGpsValue, double gpsToPixels, double centeringOffset, double pixelRange) {
 		double relativeGpsValue = gpsValue - minGpsValue;
 		double relativePixelValue = relativeGpsValue * gpsToPixels;
-		double reflectedPixelValue = (pixelRange > 0) ? pixelRange - relativePixelValue : relativePixelValue;
-		return (float)(centeringOffset + reflectedPixelValue);
+		double reflectedPixelValue = pixelRange - relativePixelValue;
+		return (float)(reflectedPixelValue + centeringOffset);
 	}
 	
 	protected double calcAngleForPoints(float x1, float y1, float x2, float y2) {
@@ -247,122 +220,4 @@ public class TransectGraphView extends View {
 		testArrowQuadrant(centerX, centerY, left, top, left, bottom, tailLen, arrowAngleInDegrees, arrowLoc, n, getResources().getColor(R.color.debug2), canvas);
 		testArrowQuadrant(centerX, centerY, left, bottom, right, bottom, tailLen, arrowAngleInDegrees, arrowLoc, n, getResources().getColor(R.color.debug3), canvas);
 	}
-
-@Override
-protected void onDraw(Canvas canvas)
-{
-	// TESTING testArrows(canvas); return;
-
-	float inset = 16;
-	float w = getWidth()-(inset*2);
-	float h = getHeight()-(inset*2);
-
-	/*
-	 	TESTING
-	 	
-		mPaint.setColor( getResources().getColor(R.color.debug2));
-		mPaint.setStyle(Paint.Style.FILL);
-		RectF rrrr = new RectF(0, 0, w, h);
-		canvas.drawRect(rrrr, mPaint);
-
-		mPaint.setColor( getResources().getColor(R.color.debug1));
-		mPaint.setStyle(Paint.Style.FILL);
-		RectF rrr = new RectF(1, 1, w-2, h-2);
-		canvas.drawRect(rrr, mPaint);
-	*/
-	
-	if ((mTransectList != null) && (mTransectList.size() > 1))
-	{
-		double latRange = Math.abs(mMaxLat - mMinLat);
-		double lonRange = Math.abs(mMaxLong - mMinLong);
-		double gpsRange;
-		double pixelRange;
-		double gpsToPixels;
-		double xCenteringOffset;
-		double yCenteringOffset;
-		
-		if (latRange > lonRange) {
-			// tall
-			gpsRange = latRange;
-			// height is our limiting factor
-			pixelRange = h;
-			// computer scaler
-			gpsToPixels = pixelRange / gpsRange; // e.g. 300px / 10 degrees = 30px/degree 
-			// centering
-			xCenteringOffset = inset + ((w - (lonRange * gpsToPixels)) / 2);
-			yCenteringOffset = inset;
-		} 
-		else 
-		{
-			// wide
-			gpsRange = lonRange;
-			// width is our limiting factor...
-			pixelRange = w;
-			// computer scaler
-			gpsToPixels = pixelRange / gpsRange; // e.g. 300px / 10 degrees = 30px/degree 
-			// centering
-			xCenteringOffset = inset;
-			yCenteringOffset = inset + ((h - (latRange * gpsToPixels)) / 2);
-		}
-					
-		// go from back to front so our start-marker overlays the other lines if need be
-		
-		// ALT (move the arrows around)
-		// float range = .2f; // don't go end to end.
-		// the max is so things are more tightly grouped when the number of transects is low
-		// float arrowPositionDelta = range / (float) Math.max(mTransectList.size(), 8);
-		// float arrowPosition = (1.0f - range) / 2.0f;
-		
-		boolean activeTransectFound = false;
-		float activeTransectFromX = 0;
-		float activeTransectFromY = 0;
-		float activeTransectToX = 0;
-		float activeTransectToY = 0;
-		
-		for(int i=0;i<mTransectList.size();i++) 
-		{
-			Transect trans = mTransectList.get(i);
-			boolean isActiveTransect = (trans == mActiveTransect);
-			
-			float fromX = calcPixelForLongitude(trans.mStartWaypt.getLongitude(), mMinLong, gpsToPixels, xCenteringOffset);
-			float fromY = calcPixelForLatitude(trans.mStartWaypt.getLatitude(), mMinLat, gpsToPixels, yCenteringOffset, h);
-			float toX = calcPixelForLongitude(trans.mEndWaypt.getLongitude(), mMinLong, gpsToPixels, xCenteringOffset);
-			float toY = calcPixelForLatitude(trans.mEndWaypt.getLatitude(), mMinLat, gpsToPixels, yCenteringOffset, h);
-			
-			if (isActiveTransect) {
-				// defer 'til the end
-				activeTransectFound = true;
-				activeTransectFromX = fromX;
-				activeTransectFromY = fromY;
-				activeTransectToX = toX;
-				activeTransectToY = toY;
-			} else {
-				// color
-				mPaint.setColor(mNormalTransectColor);
-
-				// start
-				drawCircleOnLine(fromX, fromY, toX, toY, 5, 4, 0.0f, canvas);
-				
-				// end
-				drawFatArrowOnLine(fromX, fromY, toX, toY, 14, 20, 4, 1f, canvas);
-				
-				//line
-				mPaint.setStrokeWidth(4);
-				canvas.drawLine(fromX, fromY, toX, toY, mPaint);
-
-				// kinda fancy, but tight parallel lines are actually a problem
-				// ALT arrowPosition += arrowPositionDelta;
-			}
-		}
-		
-		// draw the active one last (so it overlaps)
-		if (activeTransectFound) {
-			mPaint.setColor(mActiveTransectColor);
-			drawCircleOnLine(activeTransectFromX, activeTransectFromY, activeTransectToX, activeTransectToY, 9, 4, 0.0f, canvas);
-			drawFatArrowOnLine(activeTransectFromX, activeTransectFromY, activeTransectToX, activeTransectToY, 30, 20, 4, 1f, canvas);
-			mPaint.setStrokeWidth(8);
-			canvas.drawLine(activeTransectFromX, activeTransectFromY, activeTransectToX, activeTransectToY, mPaint);
-		}
-	}
-}
 }
