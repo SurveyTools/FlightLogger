@@ -14,10 +14,10 @@ public class GPXLogConverter {
 	
 	public final String GPX_HEADER = new StringBuilder()
 	.append("\"<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
-	.append("<gpx version=\"1.0\"")
-	.append("creator=\"Vulcan FlightLogger\"")
-	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-	.append("xmlns=\"http://www.topografix.com/GPX/1/0\"")
+	.append("<gpx version=\"1.0\" ")
+	.append("creator=\"Vulcan FlightLogger\" ")
+	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ")
+	.append("xmlns=\"http://www.topografix.com/GPX/1/0\" ")
 	.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\"> ")
 	.toString();
 
