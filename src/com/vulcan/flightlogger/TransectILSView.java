@@ -42,6 +42,7 @@ public class TransectILSView extends View {
 
 	// prefs
 	// TODO - pref
+	// TODO_ILS_REVAMP
 	private boolean mShowNavVerboseData = true;
 
 	// path
@@ -134,7 +135,7 @@ public class TransectILSView extends View {
 
 		// TESTING
 		// TODO_ILS_REVAMP
-		boolean debugShowNumericalData = true;
+		boolean debugShowNumericalData = false;
 		boolean debugOverrideValues = false;
 		float debugRange = 300;
 		float debugNormalizedValue = -.25f;// -.2f;//0.6f;
@@ -275,7 +276,6 @@ public class TransectILSView extends View {
 
 			float transectDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mTransectDeltaNormalized;
 			float pixelHDelta = pixelRadius * transectDeltaNormalized;
-			boolean showNumericalData = false;
 
 			markerColor = mMarkerColorNormal;
 
@@ -310,7 +310,7 @@ public class TransectILSView extends View {
 			canvas.drawLine(x, verticalMarkerY1, x, verticalMarkerY2, mPaint);
 
 			// NUMERICAL DEBUG DISPLAY (to the left or right of the line)
-			if (debugShowNumericalData || showNumericalData) {
+			if (debugShowNumericalData || mShowNavVerboseData) {
 				// show the numberical date (under the line, pinned to the bottom)
 
 				// debug/verbose color is the same as the line in most cases
@@ -364,7 +364,6 @@ public class TransectILSView extends View {
 
 			float altitudeDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mAltitudeDeltaNormalized;
 			float pixelVDelta = pixelRadius * altitudeDeltaNormalized;
-			boolean showNumericalData = false;
 
 			// validate
 			if (pixelVDelta < -errorPixelRadius) {
@@ -397,7 +396,7 @@ public class TransectILSView extends View {
 			canvas.drawLine(horizMarkerX1, yPos, horizMarkerX2, yPos, mPaint);
 
 			// NUMERICAL DEBUG DISPLAY (on the line)
-			if (debugShowNumericalData || showNumericalData) {
+			if (debugShowNumericalData || mShowNavVerboseData) {
 				// show the numberical date (under the line, pinned to the bottom)
 
 				// debug/verbose color is the same as the line in most cases
