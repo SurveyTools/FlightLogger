@@ -1,5 +1,7 @@
 package com.vulcan.flightlogger;
 
+import java.text.NumberFormat;
+
 import android.view.View;
 
 import com.vulcan.flightlogger.AltitudeDatum;
@@ -8,25 +10,39 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.graphics.Color;
+import android.graphics.Paint.Align;
+import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 // import android.graphics.Color;
 // import android.util.Log;
+import android.graphics.Typeface;
 
 public class TransectILSView extends View {
+
+	public enum GraphScaleType {
+	    LINEAR, LOG
+	}
 
 	// altitude
 	private AltitudeDatum mCurAltitude;
 	private float mAltitudeTargetFeet; // e.g. 300 feet
 	private float mAltitudeDialRadiusFeet; // e.g. +/- 20 feet
+	private float mAltitudeDeltaInFeet;
 	private float mAltitudeDeltaNormalized;
+	private float mAltitudeDeltaValue;
 
 	// render snapshot to check for diffs
 	private boolean mRenderedAtitudeDataIsValid;
 	private boolean mRenderedAtitudeDataIsOld;
 	private boolean mRenderedAtitudeDataIsExpired;
 	private float mRenderedAltitudeDeltaNormalized;
+
+	// prefs
+	// TODO - pref
+	private boolean mShowNavVerboseData = true;
 
 	// path
 	private GPSDatum mCurGpsData;
@@ -46,6 +62,9 @@ public class TransectILSView extends View {
 	private float mCircleClipRadius;
 	private float mCircleClipX;
 	private float mCircleClipY;
+	
+	private GraphScaleType mAltitudeGraphType = GraphScaleType.LINEAR;
+	private GraphScaleType mNavigationGraphType = GraphScaleType.LINEAR;
 
 	// for xml construction
 	public TransectILSView(Context context, AttributeSet attrs) {
@@ -67,8 +86,7 @@ public class TransectILSView extends View {
 
 		// DEMO_MODE option
 		// TESTING mAltitudeTargetFeet = 3; mAltitudeDialRadiusFeet = 2;
-
-		// TODO - externalize
+		// TODO_ILS_REVAMP - externalize
 		mTransectDialRadiusFeet = 200;
 
 		mCircleClipRadius = 0;
@@ -99,9 +117,9 @@ public class TransectILSView extends View {
 		float centerX = (float) w / 2;
 		float centerY = (float) h / 2;
 		float centerSize = w / 30;
-		float markerStrokeWidth = 18;
+		float markerStrokeWidth = 24; // TODO_ILS_REVAMP (wider)
 		float hashSize = markerStrokeWidth * 2f;
-		float hashW = hashSize / 4f;
+		float hashW = hashSize / 4f; // TODO_ILS_REVAMP (2 for testing)
 		float hashFullW = hashW * 2f;
 		float markerLen = w * 0.66f;
 		float innerStrokeWidth = 3;
@@ -114,13 +132,21 @@ public class TransectILSView extends View {
 		float errorPixelRadius = contentPixelRadius - markerStrokeWidth; // 15 is perfect, 18 gives you a little gap which is good
 		float warningPixelRadius = errorPixelRadius * .85f; // 15 is perfect, 18 gives you a little gap which is good
 
+		// TESTING
+		// TODO_ILS_REVAMP
+		boolean debugShowNumericalData = true;
+		boolean debugOverrideValues = false;
+		float debugRange = 300;
+		float debugNormalizedValue = -.25f;// -.2f;//0.6f;
+
 		// TESTING Log.i("navView", "draw w = " + w + ", getWidth = " + ww +
 		// ", mw = " + width + ", pl = " + pl);
 
+		// TODO_ILS_REVAMP - efficiency
 		mPaint.setColor(getResources().getColor(R.color.nav_ips_axis));
 		mPaint.setStyle(Paint.Style.STROKE);
 
-		// axis
+		// axison
 		mPaint.setStrokeWidth(innerStrokeWidth);
 		canvas.drawLine(strokePad, centerY, adjW, centerY, mPaint);
 		canvas.drawLine(centerX, strokePad, centerX, adjH, mPaint);
@@ -153,9 +179,28 @@ public class TransectILSView extends View {
 		mOvalH.top = yy0;
 		mOvalH.bottom = yy1;
 
-		for (int i = 0; i < numHashes - 1; i++) {
-			xl -= delta;
-			xr += delta;
+		int numNavHashes = 5;
+		float feetPerHash = mTransectDialRadiusFeet / (numNavHashes + 1); // 40
+		float curFeet = feetPerHash; // start with the first hashmark
+
+		for (int i = 0; i < numNavHashes; i++) {
+			float navValueNormalized = 0;
+
+			switch(mNavigationGraphType) {
+			
+			case LOG:
+				// TODO
+				navValueNormalized = (curFeet / mTransectDialRadiusFeet);
+				break;
+				
+			case LINEAR:
+				navValueNormalized = (curFeet / mTransectDialRadiusFeet);
+				break;
+			}
+
+			float pixelXOffset = pixelRadius * navValueNormalized;
+			xl = centerX + pixelXOffset;
+			xr = centerX - pixelXOffset;
 
 			// left
 			mOvalH.offsetTo(xl - hashW, yy0);
@@ -164,8 +209,11 @@ public class TransectILSView extends View {
 			// right
 			mOvalH.offsetTo(xr - hashW, yy0);
 			canvas.drawOval(mOvalH, mPaint);
+			
+			//navValueNormalized += navDelta;
+			curFeet += feetPerHash;
 		}
-
+		
 		// vertical notches
 
 		mPaint.setColor(getResources().getColor(R.color.nav_ips_notches));
@@ -218,14 +266,16 @@ public class TransectILSView extends View {
 		}
 
 		// clip
-		int markerColor;
+		int markerColor = mMarkerColorNormal;
 		int canvasStateRef = canvas.save();
 		canvas.clipPath(mCircleClip);
 
 		// vertical guide marker |
-		if ((mCurGpsData != null) && mCurGpsData.mDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired()) {
+		if (debugShowNumericalData || ((mCurGpsData != null) && mCurGpsData.mDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired())) {
 
-			float pixelHDelta = pixelRadius * mTransectDeltaNormalized;
+			float transectDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mTransectDeltaNormalized;
+			float pixelHDelta = pixelRadius * transectDeltaNormalized;
+			boolean showNumericalData = false;
 
 			markerColor = mMarkerColorNormal;
 
@@ -256,7 +306,43 @@ public class TransectILSView extends View {
 			float verticalMarkerY2 = centerY + (markerLen / 2);
 
 			mPaint.setColor(markerColor);
+			mPaint.setStrokeWidth(markerStrokeWidth);
 			canvas.drawLine(x, verticalMarkerY1, x, verticalMarkerY2, mPaint);
+
+			// NUMERICAL DEBUG DISPLAY (to the left or right of the line)
+			if (debugShowNumericalData || showNumericalData) {
+				// show the numberical date (under the line, pinned to the bottom)
+
+				// debug/verbose color is the same as the line in most cases
+				int textColor = Color.BLACK;
+				float textY = centerY;
+				float textX = x + (markerStrokeWidth / 2) - 5;
+
+				mPaint.setColor(textColor);
+				mPaint.setTextSize(24);
+				mPaint.setStyle(Style.FILL);
+				mPaint.setStrokeWidth(2);
+				mPaint.setTextAlign(Align.CENTER);
+				mPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+				canvas.save();
+				canvas.rotate(-90, textX, textY);
+
+				int feet = (int) mCurGpsData.getTransectDeltaInFeet();
+				String navDeltaString = null;
+
+				if (debugOverrideValues)
+					feet = (int) (debugRange * transectDeltaNormalized);
+
+				if (transectDeltaNormalized > 0) {
+					navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+					canvas.drawText(navDeltaString, textX, textY, mPaint);
+				} else if (transectDeltaNormalized < 0) {
+					navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+					canvas.drawText(navDeltaString, textX, textY, mPaint);
+				}
+				canvas.restore();
+			}
 		}
 
 		// snapshot for alter diffs
@@ -273,11 +359,12 @@ public class TransectILSView extends View {
 			mRenderedAltitudeDeltaNormalized = 0;
 
 		}
-		if ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired()) {
 
-			float pixelVDelta = pixelRadius * mAltitudeDeltaNormalized;
+		if (debugShowNumericalData || ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired())) {
 
-			markerColor = mMarkerColorNormal;
+			float altitudeDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mAltitudeDeltaNormalized;
+			float pixelVDelta = pixelRadius * altitudeDeltaNormalized;
+			boolean showNumericalData = false;
 
 			// validate
 			if (pixelVDelta < -errorPixelRadius) {
@@ -306,7 +393,38 @@ public class TransectILSView extends View {
 			float horizMarkerX2 = centerX + (markerLen / 2);
 
 			mPaint.setColor(markerColor);
+			mPaint.setStrokeWidth(markerStrokeWidth);
 			canvas.drawLine(horizMarkerX1, yPos, horizMarkerX2, yPos, mPaint);
+
+			// NUMERICAL DEBUG DISPLAY (on the line)
+			if (debugShowNumericalData || showNumericalData) {
+				// show the numberical date (under the line, pinned to the bottom)
+
+				// debug/verbose color is the same as the line in most cases
+				int textColor = Color.BLACK;
+				float textX = centerX;
+				float textY = yPos + (markerStrokeWidth / 2) - 3;
+
+				mPaint.setColor(textColor);
+				mPaint.setTextSize(24);
+				mPaint.setStyle(Style.FILL);
+				mPaint.setStrokeWidth(2);
+				mPaint.setTextAlign(Align.CENTER);
+
+				int feet = (int) mAltitudeDeltaInFeet;
+				String navDeltaString = null;
+
+				if (debugOverrideValues)
+					feet = (int) (debugRange * altitudeDeltaNormalized);
+
+				if (feet < 0) {
+					navDeltaString = "+" + NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+					canvas.drawText(navDeltaString, textX, textY, mPaint);
+				} else if (feet > 0) {
+					navDeltaString = "-" + NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+					canvas.drawText(navDeltaString, textX, textY, mPaint);
+				}
+			}
 		}
 
 		/*
@@ -331,10 +449,10 @@ public class TransectILSView extends View {
 
 				// physical delta
 				float altitudeInFeet = altitudeData.getAltitudeInFeet();
-				float physicalDeltaFeet = altitudeInFeet - mAltitudeTargetFeet;
+				mAltitudeDeltaInFeet = altitudeInFeet - mAltitudeTargetFeet;
 
 				// normalized delta
-				mAltitudeDeltaNormalized = physicalDeltaFeet / mAltitudeDialRadiusFeet;
+				mAltitudeDeltaNormalized = mAltitudeDeltaInFeet / mAltitudeDialRadiusFeet;
 
 				// DEMO_MODE
 				if (altitudeData.mDemoMode)

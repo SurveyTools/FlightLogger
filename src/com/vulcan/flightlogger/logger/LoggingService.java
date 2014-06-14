@@ -250,7 +250,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	@Override
 	public void onAltitudeUpdate(float altValueInMeters) {
-		this.mCurrLogEntry.mAlt = altValueInMeters;	
+		// note: we get altitude updates when we're not logging
+		if (mCurrLogEntry != null)
+			this.mCurrLogEntry.mAlt = altValueInMeters;	
 	}
 
 	@Override
