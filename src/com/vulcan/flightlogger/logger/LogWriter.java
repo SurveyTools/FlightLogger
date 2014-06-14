@@ -10,7 +10,7 @@ import android.location.Location;
 // OK, OK, in OO this would typically by a 'Visitor' object. We may visit that
 // approach if we need multiple formats, but for now, let's keep it simple-ish...
 
-public class LogFormatter {
+public class LogWriter {
 
 	private static final NumberFormat ELEVATION_FORMAT = NumberFormat
 			.getInstance(Locale.US);
@@ -22,17 +22,6 @@ public class LogFormatter {
 		ELEVATION_FORMAT.setGroupingUsed(false);
 		ISO_8601_DATE_TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
-
-	public final String GPX_HEADER = new StringBuilder()
-			.append("\"<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
-			.append("<gpx version=\"1.0\"")
-			.append("creator=\"Vulcan FlightLogger\"")
-			.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-			.append("xmlns=\"http://www.topografix.com/GPX/1/0\"")
-			.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\"> ")
-			.toString();
-
-	public final String GPX_Footer = "</gpx>";
 
 	public String writeGenericCSVRecord(String... values) {
 		StringBuilder builder = new StringBuilder();
@@ -61,19 +50,6 @@ public class LogFormatter {
 				String.valueOf(currLoc.getLongitude()),
 				ELEVATION_FORMAT.format(altitude),
 				ELEVATION_FORMAT.format(airSpeed));
-	}
-
-	public String writeGPSTrackRecord(Location currLoc, float altitude,
-			float airSpeed) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<trkpt " + formatGeoLocation(currLoc) + ">");
-		builder.append("<ele>" + ELEVATION_FORMAT.format(altitude) + "</ele>");
-		builder.append("<speed>" + ELEVATION_FORMAT.format(airSpeed) + "</speed>");
-		builder.append("<time>"
-				+ ISO_8601_DATE_TIME_FORMAT.format(currLoc.getTime())
-				+ "</time>");
-		builder.append("</trkpt>");
-		return builder.toString();
 	}
 
 	private String formatGeoLocation(Location location) {

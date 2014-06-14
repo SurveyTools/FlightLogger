@@ -22,9 +22,9 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
 public class AltimeterService extends Service implements
 		AdapterConnectionListener, USB2SerialAdapter.DataListener {
 	// used for mock data, assume a range of 300 ft +/- 20
-	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.METERS_PER_FOOT;
-	public final float MOCK_DELTA_ALT = 2/GPSUtils.METERS_PER_FOOT;
-	public final float MOCK_TARGET_ALT = 300/GPSUtils.METERS_PER_FOOT;
+	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.FEET_PER_METER;
+	public final float MOCK_DELTA_ALT = 2/GPSUtils.FEET_PER_METER;
+	public final float MOCK_TARGET_ALT = 300/GPSUtils.FEET_PER_METER;
 
 	// how many samples for an alt avg.
 	public static final String USE_MOCK_DATA = "useMockData";
@@ -111,6 +111,8 @@ public class AltimeterService extends Service implements
 
 	}
 
+	// TODO Since we have generics support, we should refactor all the 
+	// service listener stuff into a base class if we run out of things to do...
 	public void registerListener(AltitudeUpdateListener listener) {
 		mListeners.add(listener);
 	}

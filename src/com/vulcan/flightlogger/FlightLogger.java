@@ -1,5 +1,6 @@
 package com.vulcan.flightlogger;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -43,6 +44,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	// used for identifying Activities that return results
 	static final int LOAD_FLIGHT_PATH = 10011;
+	static final int LOAD_CSV_LOGFILE = 1001299;
 	static final int CHOOSE_NEXT_TRANSECT = 10012;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
 	static final boolean DEMO_MODE = false;
@@ -407,6 +409,9 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			intent = new Intent(this, SerialConsole.class);
 			startActivity(intent);
 			break;
+		case R.id.action_convert_cvs_logfile:
+			intent = new Intent(this, FileBrowser.class);
+			startActivityForResult(intent, LOAD_CSV_LOGFILE);
 		}
 		return true;
 	}
@@ -482,8 +487,13 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 					// NO_TRANSDATA_MEANS_DONT_CHANGE
 				}
 				break;
+			case LOAD_CSV_LOGFILE:
+				String filePath = data.getStringExtra(FileBrowser.FILE_NAME_STRING_KEY);
+				File logFile = new File(filePath);
+				mLogger.convertLogToGPXFormat(logFile);
+				break;
 			}
-		}
+		} 
 	}
 
 	@Override
