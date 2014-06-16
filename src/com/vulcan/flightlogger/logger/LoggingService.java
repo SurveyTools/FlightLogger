@@ -119,8 +119,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		// clone the File object so we can run it in a separate thread
 		if (mCurrLogfileName != null)
 		{
-			File currLog = new File(mCurrLogfileName.getAbsolutePath());
-			convertLogToGPXFormat(currLog);
+			// XXX JayL Disabling until schema is straightened out
+			// File currLog = new File(mCurrLogfileName.getAbsolutePath());
+			// convertLogToGPXFormat(currLog);
 			closeCurrentLog();
 		}
 	}
