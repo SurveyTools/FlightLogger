@@ -43,7 +43,7 @@ public class TransectILSView extends View {
 	// prefs
 	// TODO - pref
 	// TODO_ILS_REVAMP
-	private boolean mShowNavVerboseData = true;
+	private boolean mShowNavVerboseData = false;
 
 	// path
 	private GPSDatum mCurGpsData;
@@ -272,7 +272,7 @@ public class TransectILSView extends View {
 		canvas.clipPath(mCircleClip);
 
 		// vertical guide marker |
-		if (debugShowNumericalData || ((mCurGpsData != null) && mCurGpsData.mDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired())) {
+		if (debugShowNumericalData || ((mCurGpsData != null) && mCurGpsData.mDataIsValid && mCurGpsData.mCrossTrackDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired())) {
 
 			float transectDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mTransectDeltaNormalized;
 			float pixelHDelta = pixelRadius * transectDeltaNormalized;
