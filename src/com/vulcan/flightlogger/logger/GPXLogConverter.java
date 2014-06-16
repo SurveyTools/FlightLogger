@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import android.location.Location;
-
 public class GPXLogConverter {
 	
 	public final String GPX_HEADER = new StringBuilder()
@@ -18,15 +16,17 @@ public class GPXLogConverter {
 	.append("creator=\"Vulcan FlightLogger\" ")
 	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ")
 	.append("xmlns=\"http://www.topografix.com/GPX/1/0\" ")
-	.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\"> ")
+	.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\">")
+	.append("<trk><name>TRANSECT LOG</name><trkseg>")
 	.toString();
 
-	public final String GPX_FOOTER = "</gpx>";
+	public final String GPX_FOOTER = "</trkseg></trk></gpx>";
 	
 	void writeGPXFile(InputStream is, OutputStream os) throws IOException
 	{
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
+	    // TODO PUT TRANSECT NAME IN <TRK>
 	    writer.write(GPX_HEADER);
 	    try {
 	        String line;
