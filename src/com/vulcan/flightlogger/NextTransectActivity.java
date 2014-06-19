@@ -36,6 +36,7 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 	
 	private TextView mCurTransectView;
 	private TextView mNextTransectView;
+	private TextView mTransectsGraphLabel;
 	private AllTransectsView mTransectGraph;
 	private MiniTransectView mCurTransectMiniGraph;
 	private MiniTransectView mNextTransectMiniGraph;
@@ -99,6 +100,8 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 		mCurTransectView = (TextView) findViewById(R.id.nt_cur_transect_value);
 		mNextTransectView = (TextView) findViewById(R.id.nt_next_transect_value);
+
+		mTransectsGraphLabel = (TextView) findViewById(R.id.nt_transect_graph_label);
 
 		mCancelButton = (Button) findViewById(R.id.nt_cancel_button);
 		mStopButton = (Button) findViewById(R.id.nt_stop_button);
@@ -197,6 +200,13 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 		updateTransectListUI();
 		updateTransectGraphUI();
 		
+		String transBase = getResources().getString(R.string.chooser_label_transect_graph);
+		if (mTransectArray == null) {
+			mTransectsGraphLabel.setText(transBase + ":");
+		} else {
+			mTransectsGraphLabel.setText(transBase + " (" + mTransectArray.size() + "):");
+		}
+
 		mCurTransectIcon.setImageAlpha((int)(.6f * 255));
 		
 		// always false so we get the colors

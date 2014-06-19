@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<gpx 
+  version="1.0" 
+  creator="DNRGarmin - http://www.dnr.state.mn.us/mis/gis/tools/arcview/extensions/DNRGarmin/DNRGarmin.html"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.topografix.com/GPX/1/0"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+ <author>USER</author>
+ <time>2014-03-01T16:43:16Z</time>
+<wpt lat="-3.92320732" lon="38.94982267">
+  <name>1</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.31852057" lon="38.720895">
+  <name>2</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.29137966" lon="38.68313373">
+  <name>3</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.67893914" lon="39.0371456">
+  <name>4</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.65533835" lon="38.99820429">
+  <name>5</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.26541879" lon="38.64773255">
+  <name>6</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.23827788" lon="38.60997128">
+  <name>7</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.62937748" lon="38.96280311">
+  <name>8</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.60459665" lon="38.92504184">
+  <name>9</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.21467709" lon="38.57102998">
+  <name>10</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.18753618" lon="38.53444875">
+  <name>11</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.58099586" lon="38.88610054">
+  <name>12</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.55503498" lon="38.84951931">
+  <name>13</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.16393539" lon="38.49668748">
+  <name>14</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.13679448" lon="38.46010626">
+  <name>15</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.54323459" lon="38.80467781">
+  <name>16</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.53497431" lon="38.75747622">
+  <name>17</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.11201365" lon="38.42234499">
+  <name>18</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.08723282" lon="38.38458373">
+  <name>19</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.51137352" lon="38.71853492">
+  <name>20</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.47597234" lon="38.68667385">
+  <name>21</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.06245199" lon="38.34682246">
+  <name>22</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.03531108" lon="38.31024124">
+  <name>23</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.44293123" lon="38.65245271">
+  <name>24</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.40516996" lon="38.62295172">
+  <name>25</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-4.01171029" lon="38.27129993">
+  <name>26</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.98456938" lon="38.23589874">
+  <name>27</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.38274921" lon="38.58519045">
+  <name>28</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.41697036" lon="38.512028">
+  <name>29</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.95978855" lon="38.20049756">
+  <name>30</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.93500772" lon="38.16037621">
+  <name>31</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.46181186" lon="38.43414539">
+  <name>32</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.49839309" lon="38.36098294">
+  <name>33</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.90786681" lon="38.12261495">
+  <name>34</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.88308598" lon="38.08721376">
+  <name>35</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.49249289" lon="38.31496139">
+  <name>36</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.47361226" lon="38.27247997">
+  <name>37</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.85594507" lon="38.05063254">
+  <name>38</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.82880416" lon="38.01405131">
+  <name>39</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.45001147" lon="38.23353867">
+  <name>40</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.4181504" lon="38.19813748">
+  <name>41</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.80284329" lon="37.97629004">
+  <name>42</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.77570238" lon="37.94088886">
+  <name>43</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.38510929" lon="38.16745645">
+  <name>44</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.28952609" lon="38.16863649">
+  <name>45</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.75092155" lon="37.90430763">
+  <name>46</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.7285008" lon="37.86418629">
+  <name>47</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.20102312" lon="38.16981653">
+  <name>48</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.16444189" lon="38.13795546">
+  <name>49</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.69899981" lon="37.82760506">
+  <name>50</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.66123854" lon="37.79928411">
+  <name>51</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.13612095" lon="38.10255428">
+  <name>52</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.0959996" lon="38.07187325">
+  <name>53</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.60813676" lon="37.77686336">
+  <name>54</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.55503498" lon="37.75444261">
+  <name>55</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05823834" lon="38.04237226">
+  <name>56</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05941838" lon="37.98927048">
+  <name>57</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.50193321" lon="37.73556198">
+  <name>58</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.45355158" lon="37.70960111">
+  <name>59</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05941838" lon="37.93852878">
+  <name>60</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05823834" lon="37.88660704">
+  <name>61</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.40280988" lon="37.68954043">
+  <name>62</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.27182549" lon="37.71078115">
+  <name>63</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05941838" lon="37.83350526">
+  <name>64</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05823834" lon="37.78276356">
+  <name>65</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.20220316" lon="37.70016079">
+  <name>66</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.13022075" lon="37.6883604">
+  <name>67</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+<wpt lat="-3.05941838" lon="37.73084182">
+  <name>68</name>
+  <cmt>16:41 01-Mar-14</cmt>
+</wpt>
+</gpx>

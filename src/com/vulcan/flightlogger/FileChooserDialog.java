@@ -2,6 +2,7 @@ package com.vulcan.flightlogger;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Locale;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -29,6 +30,7 @@ public class FileChooserDialog extends DialogFragment {
 	private static final String TITLE_PARAM_KEY = "title";
 	private static final String STYLE_PARAM_KEY = "style";
 	private static final String THEME_PARAM_KEY = "theme";
+	private static final String FILTER_EXTENSION_PARAM_KEY = "filterExtension";
 
 	private static final String BASE_PATH = "base_path";
 	private static final String PATH_LEVEL = "path_level";
@@ -41,13 +43,14 @@ public class FileChooserDialog extends DialogFragment {
 
 	private Item[] fileList;
 	private String mBasePath;
+	private String mFilterExtension = null; // lowercase
 	private int mLevel;
 	private File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "");
 
 	public FileChooserDialog() {
 	}
 
-	public static FileChooserDialog newInstance(String title, int style, int theme, String basePath, int level) {
+	public static FileChooserDialog newInstance(String title, int style, int theme, String basePath, String filterExtension, int level) {
 		FileChooserDialog dialog = new FileChooserDialog();
 		Bundle bundle = new Bundle();
 
@@ -57,6 +60,7 @@ public class FileChooserDialog extends DialogFragment {
 		bundle.putInt(THEME_PARAM_KEY, theme); // e.g. 0
 		bundle.putString(BASE_PATH, basePath);
 		bundle.putInt(PATH_LEVEL, level);
+		bundle.putString(FILTER_EXTENSION_PARAM_KEY, filterExtension);
 
 		dialog.setArguments(bundle);
 		return dialog;
@@ -76,6 +80,8 @@ public class FileChooserDialog extends DialogFragment {
 		int theme = getArguments().getInt(THEME_PARAM_KEY);
 		String basePath = getArguments().getString(BASE_PATH);
 		mLevel = getArguments().getInt(PATH_LEVEL);
+		String rawExtension = getArguments().getString(FILTER_EXTENSION_PARAM_KEY);
+		mFilterExtension = (rawExtension == null) ? null : rawExtension.toLowerCase();
 		setStyle(style, theme);
 		setBasePath(basePath);
 
@@ -125,7 +131,7 @@ public class FileChooserDialog extends DialogFragment {
 					// GO DOWN A LEVEL
 					// showChooseRouteDialog()
 					FragmentManager fm = getActivity().getSupportFragmentManager();
-					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), getArguments().getInt(STYLE_PARAM_KEY), getArguments().getInt(THEME_PARAM_KEY), selectedItemPath, mLevel + 1);
+					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), getArguments().getInt(STYLE_PARAM_KEY), getArguments().getInt(THEME_PARAM_KEY), selectedItemPath, mFilterExtension, mLevel + 1);
 
 					dlog.show(fm, FILE_CHOOSER_DIALOG_KEY);
 
@@ -136,7 +142,7 @@ public class FileChooserDialog extends DialogFragment {
 
 					// showChooseRouteDialog()
 					FragmentManager fm = getActivity().getSupportFragmentManager();
-					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), getArguments().getInt(STYLE_PARAM_KEY), getArguments().getInt(THEME_PARAM_KEY), upPath, mLevel - 1);
+					FileChooserDialog dlog = FileChooserDialog.newInstance(getArguments().getString(TITLE_PARAM_KEY), getArguments().getInt(STYLE_PARAM_KEY), getArguments().getInt(THEME_PARAM_KEY), upPath, mFilterExtension, mLevel - 1);
 
 					dlog.show(fm, FILE_CHOOSER_DIALOG_KEY);
 				} else {
@@ -168,9 +174,26 @@ public class FileChooserDialog extends DialogFragment {
 				@Override
 				public boolean accept(File dir, String filename) {
 					File sel = new File(dir, filename);
-					// Filters based on whether the file is hidden or not
-					return (sel.isFile() || sel.isDirectory()) && !sel.isHidden();
-
+					// Filters based on whether the file, is hidden, has extension, etc.
+					
+					if ((filename != null) && !sel.isHidden()) {
+						if (sel.isFile()) {
+							// FILE
+							if (mFilterExtension != null) {
+								// honor the extension
+								return filename.toLowerCase(Locale.US).endsWith(mFilterExtension);
+							} else {
+								// no extension - take it
+								return true;
+							}
+						} else if (sel.isDirectory()){
+							// all directories are ok
+							return true;
+						}
+					}
+					
+					// default
+					return false;
 				}
 			};
 

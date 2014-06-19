@@ -58,9 +58,18 @@
     <color name="fs_title_text_color">#ffeeeeee</color>
     <color name="fs_item_label_text_color">#ff808277</color>
     <color name="fs_item_value_text_color">#ffDDDDDD</color>
-    <color name="fs_footer_button_text_color">#ffffffff</color>
     <color name="fs_transect_list_item_text_color">#ffDDDDDD</color>
     <color name="fs_transect_list_item_state_active_color">#ffaaaaaa</color>
+
+    <!--  app settings -->
+    <color name="as_background_color">#ff444444</color>
+    <color name="as_header_color">#ff222222</color>
+    <color name="as_footer_color">#ff222222</color>
+    <color name="as_title_text_color">#ffeeeeee</color>
+    <color name="as_item_label_text_color">#ff808277</color>
+    <color name="as_item_value_text_color">#ffDDDDDD</color>
+    <color name="as_transect_list_item_text_color">#ffDDDDDD</color>
+    <color name="as_transect_list_item_state_active_color">#ffaaaaaa</color>
 
     <!--  transect graph -->
  	<color name="xtransect_graph_normal">#bbffffff</color>

@@ -32,6 +32,8 @@ public class GPSUtils {
 
 	public enum TransectParsingMethod { 
 		ADJACENT_PAIRS, 
+		ANGLES_OVER_10_NO_DUPS, 
+		ANGLES_OVER_15_NO_DUPS, 
 		ANGLES_OVER_20_NO_DUPS, 
 		ANGLES_OVER_30_NO_DUPS
 	}
@@ -274,6 +276,12 @@ public class GPSUtils {
 		case ADJACENT_PAIRS:
 			return parseTransectsUsingPairs(route);
 
+		case ANGLES_OVER_10_NO_DUPS:
+			return parseTransectsUsingAngles(route, 10, false);
+			
+		case ANGLES_OVER_15_NO_DUPS:
+			return parseTransectsUsingAngles(route, 15, false);
+			
 		case ANGLES_OVER_20_NO_DUPS:
 			return parseTransectsUsingAngles(route, 20, false);
 			
@@ -287,7 +295,7 @@ public class GPSUtils {
 
 	public static List<Transect> parseTransects(Route route) {
 		// default
-		return parseTransectsWithMethod(route, TransectParsingMethod.ANGLES_OVER_20_NO_DUPS);
+		return parseTransectsWithMethod(route, TransectParsingMethod.ANGLES_OVER_15_NO_DUPS);
 	}
 
 	public static Route getDefaultRouteFromList(List<Route> routes) {

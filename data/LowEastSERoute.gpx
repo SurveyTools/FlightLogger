@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx
+  version="1.0"
+  creator="GPSBabel - http://www.gpsbabel.org"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.topografix.com/GPX/1/0"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+<author>USER </author>
+<time>2014-04-11T21:35:05Z</time>
+<bounds minlat="-4.117116500" minlon="38.586192480" maxlat="-1.673810800" maxlon="39.991249690"/>
+<rte>
+  <rtept lat="-1.673810800" lon="38.586192480">
+    <name>1</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.673810800" lon="38.958066810">
+    <name>2</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.764395570" lon="38.973958870">
+    <name>3</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.764395570" lon="38.589370890">
+    <name>4</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.854980350" lon="38.590960100">
+    <name>5</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.854980350" lon="38.997796970">
+    <name>6</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.945565120" lon="38.996207760">
+    <name>7</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-1.945565120" lon="38.587781690">
+    <name>8</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.036149890" lon="38.641814710">
+    <name>9</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.036149890" lon="38.951709980">
+    <name>10</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.126734660" lon="38.937407120">
+    <name>11</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.126734660" lon="38.691080110">
+    <name>12</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.217319430" lon="38.746702340">
+    <name>13</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.217319430" lon="38.972369660">
+    <name>14</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.306315000" lon="39.279086520">
+    <name>15</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.306315000" lon="38.794378530">
+    <name>16</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.396899770" lon="38.846822350">
+    <name>17</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.396303820" lon="39.809980830">
+    <name>18</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.488179820" lon="39.966418340">
+    <name>19</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.488179820" lon="38.896187080">
+    <name>20</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.577572680" lon="38.948332920">
+    <name>21</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.577572680" lon="39.978834020">
+    <name>22</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.669448690" lon="39.991249690">
+    <name>23</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.669448690" lon="39.000478750">
+    <name>24</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.758841550" lon="39.052624590">
+    <name>25</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.758841550" lon="39.939103860">
+    <name>26</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.850717560" lon="39.827362770">
+    <name>27</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.850717560" lon="39.104770430">
+    <name>28</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.940110420" lon="39.154433140">
+    <name>29</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-2.940110420" lon="39.713138550">
+    <name>30</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.029503290" lon="39.603880610">
+    <name>31</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.031986420" lon="39.191680160">
+    <name>32</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.121379290" lon="39.189197030">
+    <name>33</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.121379290" lon="39.591464930">
+    <name>34</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.210772160" lon="39.564150440">
+    <name>35</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.210772160" lon="39.132084920">
+    <name>36</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.302648160" lon="39.087388490">
+    <name>37</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.302648160" lon="39.534352820">
+    <name>38</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.392041030" lon="39.477240710">
+    <name>39</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.392041030" lon="39.032759510">
+    <name>40</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.483917030" lon="38.938400380">
+    <name>41</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.483917030" lon="39.315836920">
+    <name>42</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.573309900" lon="39.318320060">
+    <name>43</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.573309900" lon="38.881288270">
+    <name>44</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.665185900" lon="39.017860700">
+    <name>45</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.665185900" lon="39.278589900">
+    <name>46</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.754578760" lon="39.281073030">
+    <name>47</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.754578760" lon="39.015377570">
+    <name>48</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.843971630" lon="38.980613670">
+    <name>49</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.843971630" lon="39.348117680">
+    <name>50</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.935847630" lon="39.345634550">
+    <name>51</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-3.935847630" lon="38.950816050">
+    <name>52</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-4.025240500" lon="38.911085890">
+    <name>53</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-4.022757360" lon="39.348117680">
+    <name>54</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-4.117116500" lon="39.345634550">
+    <name>55</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+  <rtept lat="-4.117116500" lon="38.873838860">
+    <name>56</name>
+    <cmt>17:04 07-Mar-14</cmt>
+    <desc>17:04 07-Mar-14</desc>
+  </rtept>
+</rte>
+</gpx>

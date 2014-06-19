@@ -42,6 +42,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	private TextView mFile;
 	private TextView mRoute;
 	private TextView mTransect;
+	private TextView mTransectsGraphLabel;
 	private AllTransectsView mAllTransectsGraph;
 	private MiniTransectView mCurTransectMiniGraph;
 
@@ -99,6 +100,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mTransectBigButton = findViewById(R.id.fs_transect_big_button);
 		mAllTransectsGraph = (AllTransectsView) findViewById(R.id.fs_transect_graph);
 		mCurTransectMiniGraph = (MiniTransectView) findViewById(R.id.fs_transect_mini_graph);
+		mTransectsGraphLabel = (TextView) findViewById(R.id.fs_transect_graph_label);
 		
 		mCurTransectMiniGraph.setup(getResources().getColor(R.color.transect_graph_active), getResources().getColor(R.color.transect_mini_graph_border), false);
 
@@ -220,6 +222,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		mRoute.setText(mWorkingData.getShortRouteName());
 		mTransect.setText(mWorkingData.getFullTransectName());
 		
+		
 		// TODO_FS_WIP int numRoutes = (mCurRoutes == null) ? 0 : mCurRoutes.size();
 		// TODO_FS_WIP int numTransects = (mCurTransects == null) ? 0 : mCurTransects.size();
 		// TODO_FS_WIP mRouteIcon.setEnabled(numRoutes > 1);
@@ -228,12 +231,21 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 		updateTransectListUI();
 		updateTransectGraphUI();
 
+		String transBase = getResources().getString(R.string.chooser_label_transect_graph);
+		if (mTransectArray == null) {
+			mTransectsGraphLabel.setText(transBase + ":");
+		} else {
+			mTransectsGraphLabel.setText(transBase + " (" + mTransectArray.size() + "):");
+		}
+		
 		// disable things as need be
 		if (mCurTransect == null) {
 			mCurTransectMiniGraph.setVisibility(ImageView.INVISIBLE);
 		} else {
 			mCurTransectMiniGraph.setVisibility(ImageView.VISIBLE);
 		}
+		
+		mOkButton.setEnabled(mCurGpxFile != null);
 }
 
 	private void finishWithCancel() {
@@ -377,6 +389,8 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 			
 			// cascade
 			updateCurRouteFromWorkingData();
+			
+			// note: ok button updated via updateDataUI
 		}
 	}
 
@@ -422,7 +436,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
 	public void doChooseFile() {
 		FragmentManager fm = getSupportFragmentManager();
 		String startingDir = calcDownloadsDirectoryPath();
-		FileChooserDialog dlog = FileChooserDialog.newInstance("Choose a GPX File", FS_DIALOG_STYLE, FS_DIALOG_THEME, startingDir, 0);
+		FileChooserDialog dlog = FileChooserDialog.newInstance("Choose a GPX File", FS_DIALOG_STYLE, FS_DIALOG_THEME, startingDir, ".gpx", 0);
 		dlog.show(fm, FileChooserDialog.FILE_CHOOSER_DIALOG_KEY);
 		// IMMERSIVE_MODE NOTE: getWindow().getDecorView().postDelayed(mImmersiveRunnable, 500);
 	}

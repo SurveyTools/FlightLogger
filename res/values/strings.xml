@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+  	<string name="pref_sync">sync</string>
+  	<string name="pref_sync_summ">summary</string>
+  	<string name="pref_syncConnectionType">conn type</string>
+  	<string name="pref_syncConnectionTypes_default">default</string>
+  	
     <string name="blank"></string>
     <string name="app_name">FlightLogger</string>
     <string name="enable_laser_alt_button">Enable Laser Altimeter</string>
@@ -12,6 +17,8 @@
     <string name="speed_label">Speed</string>
     <string name="crosstrack_label">Cross Track</string>
     <string name="distance_label">Distance</string>
+    <string name="action_show_about_menu_item">About</string>
+    <string name="action_show_settings_menu_item">Settings</string>
     <string name="action_show_serial_console">Serial Debug Console</string>
     <string name="action_show_laser_alt">Enable Laser Altimeter</string>
     <string name="action_load_gpx">Load GPX File</string>
@@ -37,13 +44,24 @@
     <string name="nav_action_start_logging">START LOGGING</string>
     <string name="nav_action_stop_logging">STOP LOGGING</string>
     
-	<string name="chooser_label_transect_graph">Map:</string>
+	<string name="nav_about_title">About FlightLogger</string>
+	<string name="nav_about_version_base">Version</string>
+	<string name="nav_about_version_missing">**missing**</string>
+		
+	<string name="chooser_label_transect_graph">Transects</string>
     
     <string name="nt_label_title">Stopping Transect...</string>
     <string name="nt_label_cur_transect">Current Transect:</string>
     <string name="nt_label_next_transect">Next Transect:</string>
     <string name="nt_stop_button_text">OK</string>
     <string name="nt_next_button_text">USE NEXT TRANSECT</string>
+    
+    <string name="settings_label_title">Settings</string>
+    <string name="as_reset_button_text">Reset To Defaults</string>
+	<string name="as_confirm_reset_title">Confirm</string>
+	<string name="as_confirm_reset_message">Reset All Settings to Default values?</string>
+	<string name="as_confirm_reset_ok">Reset All</string>
+	<string name="as_confirm_reset_cancel">Cancel</string>
     
     <string name="fs_label_title">GPX Settings</string>
      <string name="fs_label_file">File:</string>

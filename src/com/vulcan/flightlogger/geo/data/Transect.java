@@ -43,17 +43,19 @@ public class Transect implements Parcelable{
 	
 	static public Transect newTransect(CourseInfoIntent data) {
 		
-		File gpxFile = new File(data.mGpxName);
-		
-		if (gpxFile != null) {
-			// find the route
-			Route theRoute = GPSUtils.findRouteInFile(data.mRouteName, gpxFile);
+		if ((data != null) && data.hasFile()) {
+			File gpxFile = new File(data.mGpxName);
 			
-			if (theRoute != null) {
-				// find the transect
-				Transect trans = GPSUtils.findTransectInRoute(data.mTransectName, theRoute);
+			if (gpxFile != null) {
+				// find the route
+				Route theRoute = GPSUtils.findRouteInFile(data.mRouteName, gpxFile);
 				
-				return trans;
+				if (theRoute != null) {
+					// find the transect
+					Transect trans = GPSUtils.findTransectInRoute(data.mTransectName, theRoute);
+					
+					return trans;
+				}
 			}
 		}
 		

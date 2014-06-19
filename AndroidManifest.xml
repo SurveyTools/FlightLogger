@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vulcan.flightlogger"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.3" >
 
     <uses-sdk
         android:minSdkVersion="19"
@@ -88,7 +88,11 @@
             android:label="Logging Stopped"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
         </activity>
-        
+        <activity
+            android:name="com.vulcan.flightlogger.AppSettingsActivity"
+            android:label="Settings"
+            android:theme="@style/SettingsTheme" >
+        </activity>
         <service android:name="com.vulcan.flightlogger.altimeter.AltimeterService" />
         
         <service android:name="com.vulcan.flightlogger.geo.NavigationService" />

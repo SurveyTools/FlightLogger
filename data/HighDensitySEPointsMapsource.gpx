@@ -1,0 +1,410 @@
+<?xml version="1.0"?>
+<gpx 
+  version="1.0" 
+  creator="DNRGarmin - http://www.dnr.state.mn.us/mis/gis/tools/arcview/extensions/DNRGarmin/DNRGarmin.html"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.topografix.com/GPX/1/0"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+ <author>USER</author>
+ <time>2014-02-25T17:00:53Z</time>
+<wpt lat="-3.43895008" lon="38.99209761">
+  <name>01</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.1000213" lon="39.18778864">
+  <name>02</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.0516029" lon="39.18980607">
+  <name>03</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.47829003" lon="38.94367922">
+  <name>04</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.5186387" lon="38.8942521">
+  <name>05</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.00721937" lon="39.18879735">
+  <name>06</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.98502761" lon="39.17669275">
+  <name>07</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.53074329" lon="38.86197317">
+  <name>08</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.54183918" lon="38.82868552">
+  <name>09</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.96687071" lon="39.16055329">
+  <name>10</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.95577483" lon="39.14037896">
+  <name>11</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.54183918" lon="38.80346761">
+  <name>12</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.53881303" lon="38.77824969">
+  <name>13</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.94568766" lon="39.12121334">
+  <name>14</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.94064408" lon="39.09801286">
+  <name>15</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.53578688" lon="38.75404049">
+  <name>16</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.52469099" lon="38.7358836">
+  <name>17</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93761793" lon="39.07380366">
+  <name>18</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93660921" lon="39.04757703">
+  <name>19</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.50855153" lon="38.71671798">
+  <name>20</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.49342078" lon="38.70057851">
+  <name>21</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93459178" lon="39.02235911">
+  <name>22</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93761793" lon="38.99512376">
+  <name>23</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.47728131" lon="38.68544776">
+  <name>24</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.46013313" lon="38.66829958">
+  <name>25</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93660921" lon="38.97091457">
+  <name>26</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93660921" lon="38.94468793">
+  <name>27</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.44298495" lon="38.65216012">
+  <name>28</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.4218019" lon="38.63803808">
+  <name>29</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.93963536" lon="38.91543515">
+  <name>30</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.94266151" lon="38.88920852">
+  <name>31</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.403645" lon="38.62189862">
+  <name>32</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.3854881" lon="38.60676787">
+  <name>33</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.94266151" lon="38.86298189">
+  <name>34</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.94770509" lon="38.83372911">
+  <name>35</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.38145324" lon="38.58356739">
+  <name>36</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.38145324" lon="38.55734076">
+  <name>37</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.97191429" lon="38.79237173">
+  <name>38</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.00923681" lon="38.74697948">
+  <name>39</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.36934864" lon="38.53918386">
+  <name>40</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.34110457" lon="38.52909669">
+  <name>41</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.00923681" lon="38.71974413">
+  <name>42</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.01024552" lon="38.6935175">
+  <name>43</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.30983436" lon="38.52102696">
+  <name>44</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.27755543" lon="38.51396594">
+  <name>45</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.01024552" lon="38.66729087">
+  <name>46</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.01024552" lon="38.64308167">
+  <name>47</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.24729393" lon="38.50488749">
+  <name>48</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.2089627" lon="38.50186134">
+  <name>49</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.99914964" lon="38.6208899">
+  <name>50</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.99208862" lon="38.60071557">
+  <name>51</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.20997141" lon="38.47462599">
+  <name>52</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19887553" lon="38.45344294">
+  <name>53</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.98301018" lon="38.57953252">
+  <name>54</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.97292301" lon="38.55935819">
+  <name>55</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19484066" lon="38.43024246">
+  <name>56</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.1968581" lon="38.40401583">
+  <name>57</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.96081841" lon="38.54019257">
+  <name>58</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.94972253" lon="38.52102696">
+  <name>59</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19484066" lon="38.37879792">
+  <name>60</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19383195" lon="38.35257128">
+  <name>61</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.92954819" lon="38.50892236">
+  <name>62</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.90332156" lon="38.49480033">
+  <name>63</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19484066" lon="38.32735337">
+  <name>64</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19282323" lon="38.30011802">
+  <name>65</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.8811298" lon="38.48269573">
+  <name>66</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.85591188" lon="38.47059113">
+  <name>67</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19383195" lon="38.27590882">
+  <name>68</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19181451" lon="38.24968219">
+  <name>69</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.8327114" lon="38.45747781">
+  <name>70</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.80446734" lon="38.44839936">
+  <name>71</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19282323" lon="38.22345556">
+  <name>72</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.19181451" lon="38.19823764">
+  <name>73</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.77319712" lon="38.44133835">
+  <name>74</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.74596177" lon="38.43024246">
+  <name>75</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.1908058" lon="38.17301973">
+  <name>76</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.17970991" lon="38.15284539">
+  <name>77</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.71469156" lon="38.42217273">
+  <name>78</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.68846493" lon="38.41006813">
+  <name>79</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.16256173" lon="38.13670593">
+  <name>80</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.14944842" lon="38.11955775">
+  <name>81</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.66425573" lon="38.39897225">
+  <name>82</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.65416856" lon="38.37879792">
+  <name>83</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.13532638" lon="38.10240956">
+  <name>84</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.11918692" lon="38.08425267">
+  <name>85</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.65114241" lon="38.35458872">
+  <name>86</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.65315984" lon="38.32836208">
+  <name>87</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.09699515" lon="38.07214807">
+  <name>88</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.07480339" lon="38.05802603">
+  <name>89</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.66122958" lon="38.29709187">
+  <name>90</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.68846493" lon="38.25472577">
+  <name>91</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.05462905" lon="38.043904">
+  <name>92</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.03142857" lon="38.03079068">
+  <name>93</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.71368284" lon="38.21538582">
+  <name>94</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.73789204" lon="38.17402844">
+  <name>95</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-3.00520194" lon="38.02070352">
+  <name>96</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.95880098" lon="38.02171224">
+  <name>97</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.76411867" lon="38.13367978">
+  <name>98</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.78933659" lon="38.0923224">
+  <name>99</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+<wpt lat="-2.91441745" lon="38.02070352">
+  <name>100</name>
+  <cmt>16:59 25-Feb-14</cmt>
+</wpt>
+</gpx>

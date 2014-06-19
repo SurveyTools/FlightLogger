@@ -14,6 +14,7 @@ import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
 import com.vulcan.flightlogger.util.SquishyTextView;
+import com.vulcan.flightlogger.util.SystemUtils;
 import com.vulcan.flightlogger.FlightDatum;
 
 import android.app.AlertDialog;
@@ -46,11 +47,13 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	static final int LOAD_FLIGHT_PATH = 10011;
 	static final int LOAD_CSV_LOGFILE = 1001299;
 	static final int CHOOSE_NEXT_TRANSECT = 10012;
+	static final int CHANGE_APP_SETTINGS = 10013;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
 	static final boolean DEMO_MODE = false;
 	public static final int UPDATE_IMAGE = 666;
 	public static final String LOG_CLASSNAME = "FlightLogger";
 	private static final String SAVED_FLIGHT_DATA_KEY = "FlightData";
+	private static final String SAVED_APP_SETTINGS_DATA_KEY = "AppSettingsData";
 
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
@@ -105,6 +108,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private int mStatusButtonTextColorOnIgnore;
 
 	// data
+	protected AppSettings mAppSettings;
 	protected CourseInfoIntent mFlightData;
 	protected AltitudeDatum mAltitudeData;
 	protected GPSDatum mGPSData;
@@ -261,13 +265,16 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// SAVE_RESTORE_STATE
 		if (savedInstanceState != null) {
 			mFlightData = savedInstanceState.getParcelable(SAVED_FLIGHT_DATA_KEY);
+			mAppSettings = savedInstanceState.getParcelable(SAVED_APP_SETTINGS_DATA_KEY);
 
 			if (mNavigationService != null)
 				mCurTransect = mNavigationService.mCurrTransect;
 		} else if (DEMO_MODE) {
 			mFlightData = new CourseInfoIntent("Example_survey_route.gpx", "Session 1", "Transect 3", "T03_S ~ T03_N", 0);
+			mAppSettings = new AppSettings(this);
 		} else {
 			mFlightData = new CourseInfoIntent(null, null, null, null, 0);
+			mAppSettings = new AppSettings(this);
 		}
 
 		mUpdateUIHandler = new Handler();
@@ -388,7 +395,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// note: might want to update the ui (last param) depending on use
 	}
 
-	public boolean showSettingsPopup(View v) {
+	public boolean showMainMenuPopup(View v) {
 		PopupMenu popup = new PopupMenu(this, v);
 		popup.setOnMenuItemClickListener(this);
 		MenuInflater inflater = popup.getMenuInflater();
@@ -397,14 +404,50 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		return true;
 	}
 
+	public void showAboutDialog() {
+		String versionString = SystemUtils.getVersionString(this);
+		if (versionString == null)
+			versionString = getResources().getString(R.string.nav_about_version_missing);
+
+		String fullVersionString = getResources().getString(R.string.nav_about_version_base) + " " + versionString;
+		
+		new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+	        .setIcon(android.R.drawable.ic_dialog_alert)
+	        .setTitle(R.string.nav_about_title)
+	        .setMessage(fullVersionString)
+	        .setPositiveButton(R.string.modal_ok, new DialogInterface.OnClickListener() {
+
+		            @Override
+		            public void onClick(DialogInterface dialog, int which) {
+	                    dialog.cancel();
+		            }
+		        })
+		    .show();
+	}
+
+	public void showAppSettings() {
+		// APP_SETTINGS_WIP
+		Log.d(LOG_CLASSNAME, "showAppSettings NYI");
+		/*
+			Intent intent = new Intent(this, AppSettingsActivity.class);
+			intent.putExtra(AppSettingsActivity.APP_SETTINGS_DATA_KEY, mAppSettings);
+			this.startActivityForResult(intent, CHANGE_APP_SETTINGS);
+		*/
+	}
+
 	public boolean onMenuItemClick(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
+		case R.id.action_show_about:
+			showAboutDialog();
+			break;
+		case R.id.action_show_settings:
+			showAppSettings();
+			break;
 		case R.id.action_show_gps_debug:
 			intent = new Intent(this, GPSDebugActivity.class);
 			startActivity(intent);
 			break;
-		// use laser altimeter
 		case R.id.action_show_serial_console:
 			intent = new Intent(this, SerialConsole.class);
 			startActivity(intent);
@@ -491,6 +534,9 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				String filePath = data.getStringExtra(FileBrowser.FILE_NAME_STRING_KEY);
 				File logFile = new File(filePath);
 				mLogger.convertLogToGPXFormat(logFile);
+				break;
+			case CHANGE_APP_SETTINGS:
+				// APP_SETTINGS_WIP
 				break;
 			}
 		} 
@@ -820,7 +866,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 					doAdvanceTransectActivity();
 				} else {
 					// CONFIRM STOP
-					//  CONFIRM
 			        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
 				        .setIcon(android.R.drawable.ic_dialog_alert)
 				        .setTitle(R.string.fs_confirm_stop_logging_title)
@@ -839,7 +884,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 					        })
 					    .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
 					    .show();
-				}
+						}
 
 			} else {
 				// START LOGGING
@@ -852,6 +897,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);
+		outState.putParcelable(SAVED_APP_SETTINGS_DATA_KEY, mAppSettings);
 	}
 
 }

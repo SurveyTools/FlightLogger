@@ -337,7 +337,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/stopbutton"
             android:text="@string/modal_cancel"
-            android:textColor="@color/fs_footer_button_text_color"
+            android:textColor="@color/fs_footer_button_colors"
             android:textSize="32sp"
             android:textStyle="bold" />
 
@@ -357,7 +357,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/stopbutton"
             android:text="@string/modal_ok"
-            android:textColor="@color/fs_footer_button_text_color"
+            android:textColor="@color/fs_footer_button_colors"
             android:textSize="32sp"
             android:textStyle="bold" />
     </LinearLayout>

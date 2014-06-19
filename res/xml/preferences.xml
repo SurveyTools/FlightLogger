@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <!--  note: use PreferenceCategory (with android:title) if you want headers -->
+
+     <CheckBoxPreference
+        android:key="pref_sync"
+        android:title="@string/pref_sync"
+        android:summary="@string/pref_sync_summ"
+        android:defaultValue="true" />
+    
+     <SwitchPreference
+        android:key="pref_sync2"
+        android:title="my switch"
+        android:summary="switch summary"
+        android:defaultValue="true" />
+    
+     <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+        android:key="pref_sync3"
+        android:title="my edit text"
+        android:defaultValue="true" />
+    
+     <com.vulcan.flightlogger.util.MultiSelectListPreferenceShowSummary
+        android:key="pref_sync4"
+        android:title="multi title"
+        android:dialogTitle="multi dialog title"
+        android:entries="@array/pref_syncConnectionTypes_entries"
+        android:entryValues="@array/pref_syncConnectionTypes_values"
+        android:defaultValue="@array/empty_array" />
+    
+     <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:dependency="pref_sync"
+        android:key="pref_syncConnectionType"
+        android:title="@string/pref_syncConnectionType"
+        android:dialogTitle="@string/pref_syncConnectionType"
+        android:entries="@array/pref_syncConnectionTypes_entries"
+        android:entryValues="@array/pref_syncConnectionTypes_values"
+        android:defaultValue="@string/pref_syncConnectionTypes_default" />
+    
+</PreferenceScreen>
