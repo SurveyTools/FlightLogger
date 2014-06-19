@@ -264,7 +264,6 @@ public class GPSDebugActivity extends Activity implements TransectUpdateListener
 
 	@Override
 	protected void onDestroy() {
-		SlickUSB2Serial.cleanup(this);
 		super.onDestroy();
 	}
 
