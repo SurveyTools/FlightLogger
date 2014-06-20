@@ -41,9 +41,9 @@
     <style name="SettingsTheme" parent="android:Theme.Holo.NoActionBar.Fullscreen">
 	    <item name="android:windowBackground">@color/custom_theme_color</item>
 	    <item name="android:colorBackground">@color/custom_theme_color</item>
-		<!--  <item name="android:textSize">21sp</item> -->
+		<item name="android:textSize">22sp</item>
 		<item name="android:textColor">@color/as_text_button_colors</item>
-				<item name="android:textColorSecondary">@color/as_subtext_button_colors</item>
+		<item name="android:textColorSecondary">@color/as_subtext_button_colors</item>
 	</style>
     
 </resources>

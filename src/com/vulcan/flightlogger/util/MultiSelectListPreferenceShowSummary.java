@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import android.content.Context;
-import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.util.AttributeSet;

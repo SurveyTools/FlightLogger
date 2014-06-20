@@ -1,13 +1,8 @@
 package com.vulcan.flightlogger.util;
 
-import com.vulcan.flightlogger.R;
-
-import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class SystemUtils {

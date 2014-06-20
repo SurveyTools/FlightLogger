@@ -1,36 +1,20 @@
 package com.vulcan.flightlogger;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 
-import com.vulcan.flightlogger.geo.RouteChooserDialog;
-import com.vulcan.flightlogger.geo.TransectChooserDialog;
-import com.vulcan.flightlogger.util.SystemUtils;
+import com.vulcan.flightlogger.util.EditTextPreferenceShowSummary;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.util.Log;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.view.View.OnClickListener;
 
 public class AppSettingsActivity extends FragmentActivity implements OnSharedPreferenceChangeListener {
 
@@ -38,23 +22,19 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 	
 	private Button mResetButton;
 	private Button mOkButton;
-
-	private AppSettings mOriginalData;
-	private AppSettings mWorkingData;
-
-	private static final String LOGGER_TAG = "AppSettingsActivity";
-	public static final String APP_SETTINGS_DATA_KEY = "ASOriginalData";
-	private static final String AS_WORKING_DATA_KEY = "ASWorkingData";
+	private EditTextPreferenceShowSummary mAltitudeTargetView;
+	private EditTextPreferenceShowSummary mAltitudeRadiusView;
+	private EditTextPreferenceShowSummary mNavigationRadiusView;
 	
-	public static final String PREF1_BOOLEAN_KEY = "PREF1_BOOLEAN_KEY";
-	public static final String PREF2_BOOLEAN_KEY = "PREF2_BOOLEAN_KEY";
-	public static final String PREF3_STRING_KEY = "PREF3_STRING_KEY";
-	public static final String PREF4_STRINGSET_KEY = "PREF4_STRINGSET_KEY";
+	private Boolean	mDataChanged;
+
+	private static final String TAG = "AppSettingsActivity";
+	public static final String APP_SETTINGS_CHANGED_KEY = "AppSettingsChanged";
 	
 	protected void immerseMe(String caller) {
 
 		// IMMERSIVE_MODE
-		// TESTING Log.i(LOGGER_TAG, "setting the window to immersive and sticky (from " + caller + ")");
+		// TESTING Log.i(TAG, "setting the window to immersive and sticky (from " + caller + ")");
 		// ref: source code for View
 		// also ref ref https://plus.google.com/+MichaelLeahy/posts/CqSCP653UrW
 
@@ -64,6 +44,29 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // bottom 3 buttons
 				| View.SYSTEM_UI_FLAG_FULLSCREEN // top bar (system bar)
 				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+	}
+
+	protected void setupPreferenceElements() {
+		mSettingsList = (AppSettingsFragment) getFragmentManager().findFragmentById(R.id.prefs_fragment);
+		mAltitudeTargetView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_TARGET_KEY);
+		mAltitudeRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_RADIUS_KEY);
+		mNavigationRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_NAVIGATION_RADIUS_KEY);
+
+		String plusMinusPrefix = getResources().getString(R.string.pref_plus_minus_prefix);
+		String unitsSuffix = getResources().getString(R.string.pref_units_feet_suffix);
+		
+		if (mAltitudeTargetView != null)
+			mAltitudeTargetView.setSummarySuffix(unitsSuffix);
+
+		if (mAltitudeRadiusView != null) {
+			mAltitudeRadiusView.setSummaryPrefix(plusMinusPrefix);
+			mAltitudeRadiusView.setSummarySuffix(unitsSuffix);
+		}
+
+		if (mNavigationRadiusView != null) {
+			mNavigationRadiusView.setSummaryPrefix(plusMinusPrefix);
+			mNavigationRadiusView.setSummarySuffix(unitsSuffix);
+		}
 	}
 
 	@Override
@@ -76,26 +79,17 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		mSettingsList = (AppSettingsFragment) getFragmentManager().findFragmentById(R.id.prefs_fragment);
 		mResetButton = (Button) findViewById(R.id.as_reset_button);
 		mOkButton = (Button) findViewById(R.id.as_ok_button);
-		
+
 		// SAVE_RESTORE_STATE
 		if (savedInstanceState != null) {
-			mOriginalData = savedInstanceState.getParcelable(APP_SETTINGS_DATA_KEY);
-			mWorkingData = savedInstanceState.getParcelable(AS_WORKING_DATA_KEY);
-		} 
+			mDataChanged = savedInstanceState.getBoolean(APP_SETTINGS_CHANGED_KEY);
+		} else {
+			mDataChanged = false;
+		}
 		
-		if (mOriginalData == null)
-			mOriginalData = getIntent().getParcelableExtra(APP_SETTINGS_DATA_KEY);
-		
-		if (mWorkingData == null)
-			mWorkingData =  new AppSettings(mOriginalData); // clone;
-		
-		mWorkingData.debugDump();
-		
-		updateFromWorkingData();
-
+		setupPreferenceElements();
 		setupButtons();
 		setupColors();
 		updateDataUI();
@@ -109,20 +103,27 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 	// SAVE_RESTORE_STATE
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(APP_SETTINGS_DATA_KEY, mOriginalData);
-		outState.putParcelable(AS_WORKING_DATA_KEY, mWorkingData);
+		outState.putBoolean (APP_SETTINGS_CHANGED_KEY, mDataChanged);
 	}
 
+	protected void reloadSettingsList() {
+		mSettingsList.fakeInvalidate();
+		setupPreferenceElements();
+	}
+	
 	protected void resetAllToDefaults() {
 		// wacky
 		// note: stored in /data/user/0/com.vulcan.flightlogger/shared_prefs/com.vulcan.flightlogger_preferences.xml
+		
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.clear();
 		editor.commit();
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
-		mSettingsList.fakeInvalidate();
+		reloadSettingsList();
+		
+		mDataChanged = true;
 
 	}
 	
@@ -166,14 +167,8 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		mOkButton.setEnabled(true);
 	}
 	
-	protected void updateFromWorkingData() {
-		// APP_SETTINGS_WIP
-	}
-
 	private void finishWithDone() {
-		Intent intent = getIntent();
-		intent.putExtra(APP_SETTINGS_DATA_KEY, mWorkingData);
-		this.setResult(RESULT_OK, intent);
+		this.setResult(mDataChanged ? RESULT_OK : RESULT_CANCELED, getIntent());
 		finish();
 	}
 
@@ -217,7 +212,16 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		// APP_SETTINGS_WIP - we get notified or each key
-		Log.d(LOGGER_TAG, "onSharedPreferenceChanged: " + key);
+		// TESTING Log.d(TAG, "onSharedPreferenceChanged: " + key);
+		mDataChanged = true;
+		if (AppSettings.isPrefUseCustomTransectParsingKey(key)) {
+			if (AppSettings.getPrefUseCustomTransectParsing(this) == false) {
+				if (AppSettings.resetCustomTransectParsingMethodToDefault(this)) {
+					// changed to false!
+					reloadSettingsList();
+				}
+			}
+		}
 	}
 
 	@Override

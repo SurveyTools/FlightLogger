@@ -75,4 +75,21 @@
      <string name="modal_ok">OK</string>
      <string name="modal_cancel">Cancel</string>
      
+     <!-- ref: http://myhandbook.info/codes_htmlchr.html  -->
+ 	<string name="pref_show_debug_title">Show Debugging Info</string>
+ 	<string name="pref_plus_minus_prefix">±</string>
+ 	<string name="pref_units_feet_suffix">feet</string>
+ 	<string name="pref_altitude_target_title">Target Altitude</string>
+ 	<string name="pref_altitude_radius_title">Altitude Scale (distance from center of graph to top or bottom)</string>
+ 	<string name="pref_navigation_radius_title">Navigation Scale (distance from center of graph to left or right edge)</string>
+ 	<string name="pref_use_custom_transect_parsing_method_title">Use Custom GPX Transect Parsing Method</string>
+ 	<string name="pref_transect_parsing_method_title">GPX Transect Parsing Method</string>
+ 		 	
+ 	<string name="pref_show_debug_default_value">false</string>
+ 	<string name="pref_altitude_target_default_value">300</string>
+ 	<string name="pref_altitude_radius_default_value">100</string>
+ 	<string name="pref_navigation_radius_default_value">200</string>
+ 	<string name="pref_use_custom_transect_parsing_method_default_value">false</string>
+ 	<string name="pref_transect_parsing_method_default_value">tpm_angles_15</string>
+ 					 		     
 </resources>

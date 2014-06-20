@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.util.Log;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.View.OnClickListener;
 
@@ -371,7 +372,7 @@ public class CourseSettingsActivity extends FragmentActivity implements OnClickL
     		}
 
 			// get the transects
-		    mCurTransects = GPSUtils.parseTransects(mCurRoute);
+		    mCurTransects = GPSUtils.parseTransects(mCurRoute, AppSettings.getPrefTransectParsingMethod(this));
 		    
 		    // cascade
 		    updateCurTransectFromWorkingData();

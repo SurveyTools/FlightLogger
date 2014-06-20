@@ -26,24 +26,20 @@ public class TransectILSView extends View {
 	    LINEAR, LOG
 	}
 
+	private boolean mShowDebugInfo;
+	
 	// altitude
 	private AltitudeDatum mCurAltitude;
 	private float mAltitudeTargetFeet; // e.g. 300 feet
 	private float mAltitudeDialRadiusFeet; // e.g. +/- 20 feet
 	private float mAltitudeDeltaInFeet;
 	private float mAltitudeDeltaNormalized;
-	private float mAltitudeDeltaValue;
 
 	// render snapshot to check for diffs
 	private boolean mRenderedAtitudeDataIsValid;
 	private boolean mRenderedAtitudeDataIsOld;
 	private boolean mRenderedAtitudeDataIsExpired;
 	private float mRenderedAltitudeDeltaNormalized;
-
-	// prefs
-	// TODO - pref
-	// TODO_ILS_REVAMP
-	private boolean mShowNavVerboseData = false;
 
 	// path
 	private GPSDatum mCurGpsData;
@@ -78,17 +74,33 @@ public class TransectILSView extends View {
 		super(context);
 		setupVars();
 	}
+	
+	public void updateSettings(AppSettings prefs) {
+		if (prefs != null) {
+			mShowDebugInfo = prefs.mPrefShowDebug;
+			mAltitudeTargetFeet = prefs.mPrefAltitudeTarget;
+			mAltitudeDialRadiusFeet = prefs.mPrefAltitudeRadius;
+			mTransectDialRadiusFeet = prefs.mPrefNavigationRadius;
+			
+			// force the dependent variables to update
+			updateAltitude(mCurAltitude);
+			updateGps(mCurGpsData);
+		}
+		
+		invalidate();
+	}
 
 	private void setupVars() {
-
-		// TODO - externalize
+		
+		// override with updateSettings
+		mShowDebugInfo = false;
 		mAltitudeTargetFeet = 300;
 		mAltitudeDialRadiusFeet = 100;
+		mTransectDialRadiusFeet = 200;
 
 		// DEMO_MODE option
 		// TESTING mAltitudeTargetFeet = 3; mAltitudeDialRadiusFeet = 2;
 		// TODO_ILS_REVAMP - externalize
-		mTransectDialRadiusFeet = 200;
 
 		mCircleClipRadius = 0;
 		mCircleClipX = 0;
@@ -134,12 +146,12 @@ public class TransectILSView extends View {
 		float warningPixelRadius = errorPixelRadius * .85f; // 15 is perfect, 18 gives you a little gap which is good
 
 		// TESTING
-		// TODO_ILS_REVAMP
-		boolean debugShowNumericalData = false;
-		boolean debugOverrideValues = false;
+		// ILS_BAR_DEBUGGING
+		boolean debugAlwaysShowBars = false;
+		boolean debugOverrideValues = false;;
 		float debugRange = 300;
 		float debugNormalizedValue = -.25f;// -.2f;//0.6f;
-
+		
 		// TESTING Log.i("navView", "draw w = " + w + ", getWidth = " + ww +
 		// ", mw = " + width + ", pl = " + pl);
 
@@ -271,10 +283,13 @@ public class TransectILSView extends View {
 		int canvasStateRef = canvas.save();
 		canvas.clipPath(mCircleClip);
 
+		float verticalMarkerX = centerX;
+		float transectDeltaNormalized = 0;
+		
 		// vertical guide marker |
-		if (debugShowNumericalData || ((mCurGpsData != null) && mCurGpsData.mDataIsValid && mCurGpsData.mCrossTrackDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired())) {
+		if (debugAlwaysShowBars || ((mCurGpsData != null) && mCurGpsData.mDataIsValid && mCurGpsData.mCrossTrackDataIsValid && !mCurGpsData.mIgnore && !mCurGpsData.dataIsExpired())) {
 
-			float transectDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mTransectDeltaNormalized;
+			transectDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mTransectDeltaNormalized;
 			float pixelHDelta = pixelRadius * transectDeltaNormalized;
 
 			markerColor = mMarkerColorNormal;
@@ -301,48 +316,13 @@ public class TransectILSView extends View {
 				// optional markerColor = mMarkerColorWarning;
 			}
 
-			float x = centerX + pixelHDelta;
+			verticalMarkerX = centerX + pixelHDelta;
 			float verticalMarkerY1 = centerY - (markerLen / 2);
 			float verticalMarkerY2 = centerY + (markerLen / 2);
 
 			mPaint.setColor(markerColor);
 			mPaint.setStrokeWidth(markerStrokeWidth);
-			canvas.drawLine(x, verticalMarkerY1, x, verticalMarkerY2, mPaint);
-
-			// NUMERICAL DEBUG DISPLAY (to the left or right of the line)
-			if (debugShowNumericalData || mShowNavVerboseData) {
-				// show the numberical date (under the line, pinned to the bottom)
-
-				// debug/verbose color is the same as the line in most cases
-				int textColor = Color.BLACK;
-				float textY = centerY;
-				float textX = x + (markerStrokeWidth / 2) - 5;
-
-				mPaint.setColor(textColor);
-				mPaint.setTextSize(24);
-				mPaint.setStyle(Style.FILL);
-				mPaint.setStrokeWidth(2);
-				mPaint.setTextAlign(Align.CENTER);
-				mPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-
-				canvas.save();
-				canvas.rotate(-90, textX, textY);
-
-				int feet = (int) mCurGpsData.getTransectDeltaInFeet();
-				String navDeltaString = null;
-
-				if (debugOverrideValues)
-					feet = (int) (debugRange * transectDeltaNormalized);
-
-				if (transectDeltaNormalized > 0) {
-					navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
-					canvas.drawText(navDeltaString, textX, textY, mPaint);
-				} else if (transectDeltaNormalized < 0) {
-					navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
-					canvas.drawText(navDeltaString, textX, textY, mPaint);
-				}
-				canvas.restore();
-			}
+			canvas.drawLine(verticalMarkerX, verticalMarkerY1, verticalMarkerX, verticalMarkerY2, mPaint);
 		}
 
 		// snapshot for alter diffs
@@ -360,10 +340,11 @@ public class TransectILSView extends View {
 
 		}
 
-		if (debugShowNumericalData || ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired())) {
+		if (debugAlwaysShowBars || ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired())) {
 
 			float altitudeDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mAltitudeDeltaNormalized;
 			float pixelVDelta = pixelRadius * altitudeDeltaNormalized;
+			markerColor = mMarkerColorNormal;
 
 			// validate
 			if (pixelVDelta < -errorPixelRadius) {
@@ -396,8 +377,8 @@ public class TransectILSView extends View {
 			canvas.drawLine(horizMarkerX1, yPos, horizMarkerX2, yPos, mPaint);
 
 			// NUMERICAL DEBUG DISPLAY (on the line)
-			if (debugShowNumericalData || mShowNavVerboseData) {
-				// show the numberical date (under the line, pinned to the bottom)
+			if (mShowDebugInfo) {
+				// show the numerical date (under the line, pinned to the bottom)
 
 				// debug/verbose color is the same as the line in most cases
 				int textColor = Color.BLACK;
@@ -426,6 +407,42 @@ public class TransectILSView extends View {
 			}
 		}
 
+		// NUMERICAL DEBUG DISPLAY (to the left or right of the line)
+		// this is done on the outside so that it overlaps
+		if (mShowDebugInfo) {
+			// show the numerical date (under the line, pinned to the bottom)
+
+			// debug/verbose color is the same as the line in most cases
+			int textColor = Color.BLACK;
+			float textY = centerY;
+			float textX = verticalMarkerX + (markerStrokeWidth / 2) - 5;
+
+			mPaint.setColor(textColor);
+			mPaint.setTextSize(24);
+			mPaint.setStyle(Style.FILL);
+			mPaint.setStrokeWidth(2);
+			mPaint.setTextAlign(Align.CENTER);
+			mPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+			canvas.save();
+			canvas.rotate(-90, textX, textY);
+
+			int feet = (int) mCurGpsData.getTransectDeltaInFeet();
+			String navDeltaString = null;
+
+			if (debugOverrideValues)
+				feet = (int) (debugRange * transectDeltaNormalized);
+
+			if (transectDeltaNormalized > 0) {
+				navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+				canvas.drawText(navDeltaString, textX, textY, mPaint);
+			} else if (transectDeltaNormalized < 0) {
+				navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+				canvas.drawText(navDeltaString, textX, textY, mPaint);
+			}
+			canvas.restore();
+		}
+
 		/*
 		 * TESTING the clip: RectF bigRect = new RectF(-10, -10, w + 20, h + 20); mPaint.setStyle(Paint.Style.FILL); canvas.drawRect(bigRect, mPaint);
 		 */
@@ -439,10 +456,10 @@ public class TransectILSView extends View {
 		// snapshot
 		// float oldAtitudeDeltaNormalized = mAltitudeDeltaNormalized;
 
-		// always accept and copy the data
-		mCurAltitude = new AltitudeDatum(altitudeData);
-
 		if (altitudeData != null) {
+
+			// always accept and copy the data
+			mCurAltitude = new AltitudeDatum(altitudeData);
 
 			if (altitudeData.mDataIsValid) {
 

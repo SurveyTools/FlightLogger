@@ -261,25 +261,31 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		setupSquishyFontView(R.id.nav_speed_value, 130, 20);
 
 		resetData();
-
+		
 		// SAVE_RESTORE_STATE
 		if (savedInstanceState != null) {
 			mFlightData = savedInstanceState.getParcelable(SAVED_FLIGHT_DATA_KEY);
-			mAppSettings = savedInstanceState.getParcelable(SAVED_APP_SETTINGS_DATA_KEY);
 
 			if (mNavigationService != null)
 				mCurTransect = mNavigationService.mCurrTransect;
 		} else if (DEMO_MODE) {
 			mFlightData = new CourseInfoIntent("Example_survey_route.gpx", "Session 1", "Transect 3", "T03_S ~ T03_N", 0);
-			mAppSettings = new AppSettings(this);
 		} else {
 			mFlightData = new CourseInfoIntent(null, null, null, null, 0);
-			mAppSettings = new AppSettings(this);
 		}
+		
+		// update the prefs
+		if (mAppSettings == null)
+			mAppSettings = new AppSettings(this);
+		mAppSettings.refresh(this);
+		
+		mNavigationDisplay.updateSettings(mAppSettings);
 
 		mUpdateUIHandler = new Handler();
 
 		setupColors();
+		
+		// TESTING showAppSettings();
 	}
 
 	private void startServices() {
@@ -426,13 +432,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	public void showAppSettings() {
-		// APP_SETTINGS_WIP
-		Log.d(LOG_CLASSNAME, "showAppSettings NYI");
-		/*
-			Intent intent = new Intent(this, AppSettingsActivity.class);
-			intent.putExtra(AppSettingsActivity.APP_SETTINGS_DATA_KEY, mAppSettings);
-			this.startActivityForResult(intent, CHANGE_APP_SETTINGS);
-		*/
+		Intent intent = new Intent(this, AppSettingsActivity.class);
+		this.startActivityForResult(intent, CHANGE_APP_SETTINGS);
 	}
 
 	public boolean onMenuItemClick(MenuItem item) {
@@ -489,8 +490,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	protected void setFlightData(CourseInfoIntent data) {
 		mFlightData = data;
-
-		mCurTransect = Transect.newTransect(data);
+		mCurTransect = Transect.newTransect(data, mAppSettings.mPrefTransectParsingMethod);
 
 		if (mCurTransect != null) {
 
@@ -536,7 +536,11 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				mLogger.convertLogToGPXFormat(logFile);
 				break;
 			case CHANGE_APP_SETTINGS:
-				// APP_SETTINGS_WIP
+				// SETTINGS_OK_MEANS_REFRESH
+				mAppSettings.refresh(this);
+				// TESTING mAppSettings.debugDump();
+				// TODO - event this
+				mNavigationDisplay.updateSettings(mAppSettings);
 				break;
 			}
 		} 
@@ -897,7 +901,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);
-		outState.putParcelable(SAVED_APP_SETTINGS_DATA_KEY, mAppSettings);
 	}
 
 }

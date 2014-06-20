@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 import com.vulcan.flightlogger.geo.data.Route;
 import com.vulcan.flightlogger.geo.data.Transect;
 
+import android.content.res.Resources.NotFoundException;
 import android.location.Location;
 
 public class GPSUtils {
@@ -31,11 +32,13 @@ public class GPSUtils {
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
 
 	public enum TransectParsingMethod { 
+		// note: immutable since these are stored as prefs
+		USE_DEFAULT,
 		ADJACENT_PAIRS, 
 		ANGLES_OVER_10_NO_DUPS, 
 		ANGLES_OVER_15_NO_DUPS, 
 		ANGLES_OVER_20_NO_DUPS, 
-		ANGLES_OVER_30_NO_DUPS
+		ANGLES_OVER_30_NO_DUPS,
 	}
 	
 	/**
@@ -270,7 +273,7 @@ public class GPSUtils {
 		return transects;
 	}
 
-	public static List<Transect> parseTransectsWithMethod(Route route, TransectParsingMethod parsingMethod) {
+	public static List<Transect> parseTransects(Route route, TransectParsingMethod parsingMethod) {
 		switch (parsingMethod) {
 		
 		case ADJACENT_PAIRS:
@@ -279,6 +282,7 @@ public class GPSUtils {
 		case ANGLES_OVER_10_NO_DUPS:
 			return parseTransectsUsingAngles(route, 10, false);
 			
+		case USE_DEFAULT:
 		case ANGLES_OVER_15_NO_DUPS:
 			return parseTransectsUsingAngles(route, 15, false);
 			
@@ -291,11 +295,6 @@ public class GPSUtils {
 		
 		// no dice - return empty list
 		return new ArrayList<Transect>();
-	}
-
-	public static List<Transect> parseTransects(Route route) {
-		// default
-		return parseTransectsWithMethod(route, TransectParsingMethod.ANGLES_OVER_15_NO_DUPS);
 	}
 
 	public static Route getDefaultRouteFromList(List<Route> routes) {
@@ -365,9 +364,9 @@ public class GPSUtils {
 		return null;
 	}
 
-	public static Transect findTransectInRoute(String targetTransectName, Route route) {
+	public static Transect findTransectInRoute(String targetTransectName, Route route, TransectParsingMethod parsingMethod) {
 		if (route != null) {
-			return findTransectInList(targetTransectName, GPSUtils.parseTransects(route));
+			return findTransectInList(targetTransectName, GPSUtils.parseTransects(route, parsingMethod));
 		}
 		
 		// no dice
@@ -413,13 +412,20 @@ public class GPSUtils {
 		return null;
 	}
 
-	public static Transect getDefaultTransectFromRoute(Route route) {
-		if (route != null) {
-		    return getDefaultTransectFromList(GPSUtils.parseTransects(route));
-		}
-		
-		// no dice
-		return null;
-	}
+	// APP_SETTINGS_WIP - hash table
+	public static TransectParsingMethod getTransectParsingMethodForKey(String tpmKey) throws NotFoundException {
 
+		if (tpmKey.equalsIgnoreCase("tpm_adjacent_pairs"))
+			return TransectParsingMethod.ADJACENT_PAIRS;
+		else if (tpmKey.equalsIgnoreCase("tpm_angles_10"))
+			return TransectParsingMethod.ANGLES_OVER_10_NO_DUPS;
+		else if (tpmKey.equalsIgnoreCase("tpm_angles_15"))
+			return TransectParsingMethod.ANGLES_OVER_15_NO_DUPS;
+		else if (tpmKey.equalsIgnoreCase("tpm_angles_20"))
+			return TransectParsingMethod.ANGLES_OVER_20_NO_DUPS;
+		else if (tpmKey.equalsIgnoreCase("tpm_angles_30"))
+			return TransectParsingMethod.ANGLES_OVER_30_NO_DUPS;
+		
+		throw new NotFoundException("transect parsing key not found");
+	}
 }

@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import java.io.File;
 import java.util.List;
 
+import com.vulcan.flightlogger.AppSettings;
 import com.vulcan.flightlogger.R;
 import com.vulcan.flightlogger.geo.data.Route;
 import com.vulcan.flightlogger.geo.data.Transect;
@@ -65,6 +66,7 @@ public class TransectChooserDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+		// TODO_DIALOG_STYLE_UPDATE AlertDialog.THEME_HOLO_DARK
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 		String title = getArguments().getString(TITLE_PARAM_KEY);
@@ -83,7 +85,7 @@ public class TransectChooserDialog extends DialogFragment {
 	    
 	    // find the route
 	    Route route = GPSUtils.findRouteByName(routeName, routes);
-		List<Transect> transects = GPSUtils.parseTransects(route);
+		List<Transect> transects = GPSUtils.parseTransects(route, AppSettings.getPrefTransectParsingMethod(getActivity()));
 
 		final ArrayAdapter<Transect> adapter = new ArrayAdapter<Transect>(getActivity(), R.layout.transect_list_row, R.id.transect_name, transects);
 

@@ -58,6 +58,7 @@ public class GPSDatum extends FlightDatum {
 
 	public float getTransectDeltaInFeet() {
 		// TODO fix units
+		// TESTING ILS_BAR_DEBUGGING if (true) return 50;
 		return metersToFeet((float) mRawCrossTrackErrorMeters);
 	}
 

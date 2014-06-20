@@ -372,7 +372,7 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
     		}
 
 			// get the transects
-		    mCurTransects = GPSUtils.parseTransects(mCurRoute);
+		    mCurTransects = GPSUtils.parseTransects(mCurRoute, AppSettings.getPrefTransectParsingMethod(this));
 		    
 		    // cascade
 		    updateCurTransectFromWorkingData();

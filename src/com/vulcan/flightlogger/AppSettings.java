@@ -1,108 +1,118 @@
 package com.vulcan.flightlogger;
 
-import java.util.Set;
+import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.util.PreferenceUtils;
+import com.vulcan.flightlogger.util.ResourceUtils;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.apache.commons.io.FilenameUtils;
+public class AppSettings {
 
-import com.vulcan.flightlogger.geo.data.Transect;
-
-public class AppSettings implements Parcelable {
-
-	public boolean mPref1Boolean;
-	public boolean mPref2Boolean;
-	public String mPref3String;
-	public Set<String> mPref4StringSet;
+	private ContextWrapper mContextWrapper;
+	
+	public boolean mPrefShowDebug;
+	public int mPrefAltitudeTarget; // e.g. 300
+	public int mPrefAltitudeRadius; // e.g. +/- 100'
+	public int mPrefNavigationRadius; // e.g. +/- 200'
+	public boolean mUseCustomParsingMethod;
+	public GPSUtils.TransectParsingMethod mPrefTransectParsingMethod; // e.g. TransectParsingMethod.USE_DEFAULT
 
 	private static final String LOGGER_TAG = "AppSettings";
 
-	public AppSettings(Context context) {
+	public static final String PREF_SHOW_DEBUG_KEY = "PREF_SHOW_DEBUG_KEY";
+	public static final String PREF_ALTITUDE_TARGET_KEY = "PREF_ALTITUDE_TARGET_KEY";
+	public static final String PREF_ALTITUDE_RADIUS_KEY = "PREF_ALTITUDE_RADIUS_KEY";
+	public static final String PREF_NAVIGATION_RADIUS_KEY = "PREF_NAVIGATION_RADIUS_KEY";
+	public static final String PREF_USE_CUSTOM_PARSING_METHOD_KEY = "PREF_USE_CUSTOM_PARSING_METHOD_KEY";
+	public static final String PREF_TRANSECT_PARSING_METHOD_KEY = "PREF_TRANSECT_PARSING_METHOD_KEY";
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		
-		// APP_SETTINGS_WIP
-		mPref1Boolean = sharedPref.getBoolean(AppSettingsActivity.PREF1_BOOLEAN_KEY, false);
-		mPref2Boolean = sharedPref.getBoolean(AppSettingsActivity.PREF2_BOOLEAN_KEY, false);
-		mPref3String = sharedPref.getString(AppSettingsActivity.PREF3_STRING_KEY, "");
-		mPref4StringSet = sharedPref.getStringSet(AppSettingsActivity.PREF4_STRINGSET_KEY, null);
+	public AppSettings(ContextWrapper contextWrapper) {
+		mContextWrapper = contextWrapper;
+		refresh(contextWrapper);
 	}
 
 	// copy constructor
 	public AppSettings(AppSettings srcData) {
 
 		if (srcData != null) {
-			mPref1Boolean = srcData.mPref1Boolean;
-			mPref2Boolean = srcData.mPref2Boolean;
-			mPref3String = srcData.mPref3String;
-			mPref4StringSet = srcData.mPref4StringSet;
+			mPrefShowDebug = srcData.mPrefShowDebug;
+			mPrefAltitudeTarget = srcData.mPrefAltitudeTarget;
+			mPrefAltitudeRadius = srcData.mPrefAltitudeRadius;
+			mPrefNavigationRadius = srcData.mPrefNavigationRadius;
+			mUseCustomParsingMethod = srcData.mUseCustomParsingMethod;
+			mPrefTransectParsingMethod = srcData.mPrefTransectParsingMethod;
+
+			mContextWrapper = srcData.mContextWrapper;
 		} else {
-			// TODO - defaults
-			// APP_SETTINGS_WIP
-			mPref1Boolean = false;
-			mPref2Boolean = false;
-			mPref3String = "";
-			mPref4StringSet = null;
+			reset();
 		}
-	}
-
-	public void clearAll() {
-	}
-
-	// parcel part
-	public AppSettings(Parcel in) {
-		
-		// APP_SETTINGS_WIP - hacked out for now
-		if (true)
-			return;
-		
-		String[] data = new String[4];
-
-		in.readStringArray(data);
-		
-		this.mPref1Boolean = Boolean.parseBoolean(data[0]);
-		this.mPref2Boolean =  Boolean.parseBoolean(data[1]);
-		this.mPref3String = data[2];
-		// APP_SETTINGS_WIP this.mPref4StringSet = data[3];
 	}
 
 	public void debugDump() {
-		Log.d(LOGGER_TAG, "pref1: " + mPref1Boolean);
-		Log.d(LOGGER_TAG, "pref2: " + mPref2Boolean);
-		Log.d(LOGGER_TAG, "pref3: " + mPref3String);
-		Log.d(LOGGER_TAG, "pref4: " + mPref4StringSet);
+		Log.d(LOGGER_TAG, "mPrefShowDebug: " + mPrefShowDebug);
+		Log.d(LOGGER_TAG, "mPrefAltitudeTarget: " + mPrefAltitudeTarget);
+		Log.d(LOGGER_TAG, "mPrefAltitudeRadius: " + mPrefAltitudeRadius);
+		Log.d(LOGGER_TAG, "mPrefNavigationRadius: " + mPrefNavigationRadius);
+		Log.d(LOGGER_TAG, "mUseCustomParsingMethod: " + mUseCustomParsingMethod);
+		Log.d(LOGGER_TAG, "mPrefTransectParsingMethod: " + mPrefTransectParsingMethod);
 	}
 
-	@Override
-	public int describeContents() {
-		return 0;
+	public void refresh(Context context) {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		// TODO eval context.getSharedPreferences("userdetails", Context.MODE_PRIVATE)
+
+		mPrefShowDebug = sharedPref.getBoolean(PREF_SHOW_DEBUG_KEY, ResourceUtils.getResourceBooleanFromString(context, R.string.pref_show_debug_default_value));
+		mPrefAltitudeTarget = PreferenceUtils.getSharedPrefInteger(sharedPref, PREF_ALTITUDE_TARGET_KEY, ResourceUtils.getResourceIntegerFromString(context, R.string.pref_altitude_target_default_value));
+		mPrefAltitudeRadius = PreferenceUtils.getSharedPrefInteger(sharedPref, PREF_ALTITUDE_RADIUS_KEY, ResourceUtils.getResourceIntegerFromString(context, R.string.pref_altitude_radius_default_value));
+		mPrefNavigationRadius = PreferenceUtils.getSharedPrefInteger(sharedPref, PREF_NAVIGATION_RADIUS_KEY, ResourceUtils.getResourceIntegerFromString(context, R.string.pref_navigation_radius_default_value));
+		mUseCustomParsingMethod = sharedPref.getBoolean(PREF_USE_CUSTOM_PARSING_METHOD_KEY, ResourceUtils.getResourceBooleanFromString(context, R.string.pref_use_custom_transect_parsing_method_default_value));
+		mPrefTransectParsingMethod = PreferenceUtils.getSharedPrefTransectParsingMethod(sharedPref, PREF_TRANSECT_PARSING_METHOD_KEY, ResourceUtils.getResourceTransectParsingMethod(context, R.string.pref_transect_parsing_method_default_value));
+		
+		// TESTING debugDump();
 	}
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		// APP_SETTINGS_WIP, 4th, etc.
-
-        // APP_SETTINGS_WIP - hacked out for now dest.writeStringArray(values.toArray(new String[values.size()]));
-
-       //  dest.writeStringArray(new String[] { String.valueOf(this.mPref1Boolean), String.valueOf(this.mPref2Boolean), this.mPref3String, this.mPref4StringSet.toString()});
+	public void reset() {
+		mPrefShowDebug = ResourceUtils.getResourceBooleanFromString(mContextWrapper, R.string.pref_show_debug_default_value);
+		mPrefAltitudeTarget = ResourceUtils.getResourceIntegerFromString(mContextWrapper, R.string.pref_altitude_target_default_value);
+		mPrefAltitudeRadius = ResourceUtils.getResourceIntegerFromString(mContextWrapper, R.string.pref_altitude_radius_default_value);
+		mPrefNavigationRadius = ResourceUtils.getResourceIntegerFromString(mContextWrapper, R.string.pref_navigation_radius_default_value);
+		mUseCustomParsingMethod = ResourceUtils.getResourceBooleanFromString(mContextWrapper, R.string.pref_use_custom_transect_parsing_method_default_value);
+		mPrefTransectParsingMethod = ResourceUtils.getResourceTransectParsingMethod(mContextWrapper, R.string.pref_transect_parsing_method_default_value);
 	}
+	
+	public static GPSUtils.TransectParsingMethod getPrefTransectParsingMethod(Context context) {
+		// note: could honor mUseCustomParsingMethod
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return PreferenceUtils.getSharedPrefTransectParsingMethod(sharedPref, PREF_TRANSECT_PARSING_METHOD_KEY, ResourceUtils.getResourceTransectParsingMethod(context, R.string.pref_transect_parsing_method_default_value));
+	}
+	
+	public static boolean isPrefUseCustomTransectParsingKey(String key) {
+		return key.equalsIgnoreCase(PREF_USE_CUSTOM_PARSING_METHOD_KEY);
+	}
+	
+	public static boolean getPrefUseCustomTransectParsing(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		return prefs.getBoolean(PREF_USE_CUSTOM_PARSING_METHOD_KEY, ResourceUtils.getResourceBooleanFromString(context, R.string.pref_show_debug_default_value));
+	}
+	
+	public static boolean resetCustomTransectParsingMethodToDefault(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-	public static final Parcelable.Creator<AppSettings> CREATOR = new Parcelable.Creator<AppSettings>() {
+		GPSUtils.TransectParsingMethod oldMethod = PreferenceUtils.getSharedPrefTransectParsingMethod(prefs, PREF_TRANSECT_PARSING_METHOD_KEY, ResourceUtils.getResourceTransectParsingMethod(context, R.string.pref_transect_parsing_method_default_value));
+	
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(PREF_TRANSECT_PARSING_METHOD_KEY, context.getResources().getString(R.string.pref_transect_parsing_method_default_value));
+		editor.commit();
 
-		@Override
-		public AppSettings createFromParcel(Parcel source) {
-			return new AppSettings(source);
-		}
-
-		@Override
-		public AppSettings[] newArray(int size) {
-			return new AppSettings[size];
-		}
-	};
+		GPSUtils.TransectParsingMethod newMethod = PreferenceUtils.getSharedPrefTransectParsingMethod(prefs, PREF_TRANSECT_PARSING_METHOD_KEY, ResourceUtils.getResourceTransectParsingMethod(context, R.string.pref_transect_parsing_method_default_value));
+		
+		// return true if something changed
+		return oldMethod != newMethod;
+}
+	
 
 }

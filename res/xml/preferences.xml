@@ -3,38 +3,38 @@
     
     <!--  note: use PreferenceCategory (with android:title) if you want headers -->
 
-     <CheckBoxPreference
-        android:key="pref_sync"
-        android:title="@string/pref_sync"
-        android:summary="@string/pref_sync_summ"
-        android:defaultValue="true" />
+       <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+        android:key="PREF_ALTITUDE_TARGET_KEY"
+        android:title="@string/pref_altitude_target_title"
+        android:defaultValue="@string/pref_altitude_target_default_value" />
+     
+      <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+        android:key="PREF_ALTITUDE_RADIUS_KEY"
+        android:title="@string/pref_altitude_radius_title"
+        android:defaultValue="@string/pref_altitude_radius_default_value" />
+     
+  	   <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+        android:key="PREF_NAVIGATION_RADIUS_KEY"
+        android:title="@string/pref_navigation_radius_title"
+        android:defaultValue="@string/pref_navigation_radius_default_value" />
+     
+      <CheckBoxPreference
+        android:key="PREF_USE_CUSTOM_PARSING_METHOD_KEY"
+        android:title="@string/pref_use_custom_transect_parsing_method_title"
+        android:defaultValue="@string/pref_use_custom_transect_parsing_method_default_value" />
+    
+  	   <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:dependency="PREF_USE_CUSTOM_PARSING_METHOD_KEY"
+        android:key="PREF_TRANSECT_PARSING_METHOD_KEY"
+        android:title="@string/pref_transect_parsing_method_title"
+        android:dialogTitle="@string/pref_transect_parsing_method_title"
+        android:entries="@array/pref_transect_parsing_method_default_names"
+        android:entryValues="@array/pref_transect_parsing_method_default_values"
+        android:defaultValue="@string/pref_transect_parsing_method_default_value" />
     
      <SwitchPreference
-        android:key="pref_sync2"
-        android:title="my switch"
-        android:summary="switch summary"
-        android:defaultValue="true" />
-    
-     <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
-        android:key="pref_sync3"
-        android:title="my edit text"
-        android:defaultValue="true" />
-    
-     <com.vulcan.flightlogger.util.MultiSelectListPreferenceShowSummary
-        android:key="pref_sync4"
-        android:title="multi title"
-        android:dialogTitle="multi dialog title"
-        android:entries="@array/pref_syncConnectionTypes_entries"
-        android:entryValues="@array/pref_syncConnectionTypes_values"
-        android:defaultValue="@array/empty_array" />
-    
-     <com.vulcan.flightlogger.util.ListPreferenceShowSummary
-        android:dependency="pref_sync"
-        android:key="pref_syncConnectionType"
-        android:title="@string/pref_syncConnectionType"
-        android:dialogTitle="@string/pref_syncConnectionType"
-        android:entries="@array/pref_syncConnectionTypes_entries"
-        android:entryValues="@array/pref_syncConnectionTypes_values"
-        android:defaultValue="@string/pref_syncConnectionTypes_default" />
-    
+        android:key="PREF_SHOW_DEBUG_KEY"
+        android:title="@string/pref_show_debug_title"
+        android:defaultValue="@string/pref_show_debug_default_value" />
+
 </PreferenceScreen>

@@ -63,6 +63,7 @@ public class AltitudeDatum extends FlightDatum {
 	}
 
 	public float getAltitudeInFeet() {
+		// TESTING ILS_BAR_DEBUGGING if (true) return 350f;
 		return metersToFeet(mRawAltitudeInMeters);
 	}
 
