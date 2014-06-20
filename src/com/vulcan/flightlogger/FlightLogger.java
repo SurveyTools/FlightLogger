@@ -449,10 +449,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			intent = new Intent(this, GPSDebugActivity.class);
 			startActivity(intent);
 			break;
-		case R.id.action_show_serial_console:
-			intent = new Intent(this, SerialConsole.class);
-			startActivity(intent);
-			break;
 		case R.id.action_convert_cvs_logfile:
 			intent = new Intent(this, FileBrowser.class);
 			startActivityForResult(intent, LOAD_CSV_LOGFILE);

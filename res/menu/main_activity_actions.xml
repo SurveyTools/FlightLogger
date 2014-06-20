@@ -4,10 +4,6 @@
           android:title="@string/action_show_about_menu_item" />
     <item android:id="@+id/action_show_gps_debug"
           android:title="@string/action_show_gps_debug" />
-    <item android:id="@+id/action_show_laser_alt"
-          android:title="@string/action_show_laser_alt" />
-    <item android:id="@+id/action_show_serial_console"
-          android:title="@string/action_show_serial_console" />
     <item android:id="@+id/action_convert_cvs_logfile"
           android:title="@string/action_convert_cvs_logfile" />
     <!--  settings goes below everything except help -->
