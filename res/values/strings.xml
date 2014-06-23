@@ -8,9 +8,7 @@
   	
     <string name="blank"></string>
     <string name="app_name">FlightLogger</string>
-    <string name="enable_laser_alt_button">Enable Laser Altimeter</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="disable_laser_alt_button">Disable Laser Altimeter</string>
     <string name="lat_label">Latitude</string>
     <string name="long_label">Longitude</string>
     <string name="alt_label">Altitude</string>
@@ -20,7 +18,6 @@
     <string name="action_show_about_menu_item">About</string>
     <string name="action_show_settings_menu_item">Settings</string>
     <string name="action_show_serial_console">Serial Debug Console</string>
-    <string name="action_show_laser_alt">Enable Laser Altimeter</string>
     <string name="action_load_gpx">Load GPX File</string>
     <string name="action_altimeter">Laser Altimeter</string>
     <string name="action_show_gps_debug">GPS Debug</string>

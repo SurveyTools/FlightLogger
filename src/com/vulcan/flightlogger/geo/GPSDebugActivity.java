@@ -4,10 +4,7 @@ import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial;
-
 import com.vulcan.flightlogger.FileBrowser;
-import com.vulcan.flightlogger.FlightLogger;
 import com.vulcan.flightlogger.R;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.util.SystemUiHider;
@@ -16,15 +13,10 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,19 +32,6 @@ public class GPSDebugActivity extends Activity implements TransectUpdateListener
 	// used for identifying Activities that return results
 	static final int LOAD_GPX_FILE = 10001;
 
-	private final String LOGGER_TAG = GPSDebugActivity.class.getSimpleName();
-
-	private LocationManager mLocationManager;
-	private boolean mGpsEnabled;
-
-	// need to get a better number in here to save battery life, once testing in
-	// the air
-	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
-
-	// need to revisit this guy, to see if we need more accuracy. Currently they
-	// sample at 30 seconds
-	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
-
 	// refs to our ui controls, so we don't do a resource lookup each time
 	TextView mLatTV, mLonTV, mAltTV, mSpeedTV, mDistanceTV, mCrossTrackTV;
 
@@ -64,22 +43,10 @@ public class GPSDebugActivity extends Activity implements TransectUpdateListener
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 	private SystemUiHider mSystemUiHider;
 
-	private static final String ACTION_USB_PERMISSION = "com.vulcan.flightlogger.USB_PERMISSION";
 	PendingIntent mPermissionIntent;
 	
 	private NavigationService mNavigationService;
 
-	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (ACTION_USB_PERMISSION.equals(action)) {
-				synchronized (this) {
-					// TODO - start the serial process here
-				}
-			}
-		}
-	};
-	
 	private ServiceConnection mNavigationConnection = new ServiceConnection() {
 
 		@Override
@@ -109,11 +76,6 @@ public class GPSDebugActivity extends Activity implements TransectUpdateListener
 		bindUIControls();
 		
 		initNavService();
-
-		mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(
-				ACTION_USB_PERMISSION), 0);
-		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-		registerReceiver(mUsbReceiver, filter);
 
 		// Autohide the parent controls, to maximize monitor space when running
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -221,10 +183,6 @@ public class GPSDebugActivity extends Activity implements TransectUpdateListener
 	public void initNavService() {
 		Intent intent2 = new Intent(this, NavigationService.class);
 		this.bindService(intent2, mNavigationConnection, 0);
-	}
-
-	public void setGpsEnabled(boolean isEnabled) {
-		this.mGpsEnabled = isEnabled;
 	}
 
 	/**

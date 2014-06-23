@@ -2,6 +2,9 @@ package com.vulcan.flightlogger.logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +13,7 @@ import java.io.OutputStreamWriter;
 
 public class GPXLogConverter {
 	
-	public final String GPX_HEADER = new StringBuilder()
+	final String GPX_HEADER = new StringBuilder()
 	.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
 	.append("<gpx version=\"1.0\" ")
 	.append("creator=\"Vulcan FlightLogger\" ")
@@ -20,7 +23,14 @@ public class GPXLogConverter {
 	.append("<trk><name>TRANSECT LOG</name><trkseg>")
 	.toString();
 
-	public final String GPX_FOOTER = "</trkseg></trk></gpx>";
+	final String GPX_FOOTER = "</trkseg></trk></gpx>";
+	
+	void writeGPXFile(File currLog) throws IOException
+	{
+		final FileInputStream fis = new FileInputStream(currLog);
+		final FileOutputStream fos = new FileOutputStream(currLog.getAbsoluteFile(), true);
+		writeGPXFile(fis, fos);
+	}
 	
 	void writeGPXFile(InputStream is, OutputStream os) throws IOException
 	{
