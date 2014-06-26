@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import com.vulcan.flightlogger.geo.data.TransectStatus;
 
 import android.app.Service;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.MediaScannerConnection;
@@ -119,9 +117,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		// clone the File object so we can run it in a separate thread
 		if (mCurrLogfileName != null)
 		{
-			// XXX JayL Disabling until schema is straightened out
-			// File currLog = new File(mCurrLogfileName.getAbsolutePath());
-			// convertLogToGPXFormat(currLog);
+			File currLog = new File(mCurrLogfileName.getAbsolutePath());
+			convertLogToGPXFormat(currLog);
 			closeCurrentLog();
 		}
 	}
@@ -136,7 +133,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 					File gpxFile = createLogFile(gpxLog);
 					try {
 						final FileInputStream fis = new FileInputStream(currLog);
-						final FileOutputStream fos = new FileOutputStream(gpxFile, true);
+						final FileOutputStream fos = new FileOutputStream(gpxFile);
 						final GPXLogConverter gpxLogger = new GPXLogConverter();
 						gpxLogger.writeGPXFile(fis, fos);					
 					} catch (IOException e) {
