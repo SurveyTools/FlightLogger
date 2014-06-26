@@ -117,9 +117,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		// clone the File object so we can run it in a separate thread
 		if (mCurrLogfileName != null)
 		{
-			// XXX JayL Disabling until schema is straightened out
-			// File currLog = new File(mCurrLogfileName.getAbsolutePath());
-			// convertLogToGPXFormat(currLog);
+			File currLog = new File(mCurrLogfileName.getAbsolutePath());
+			convertLogToGPXFormat(currLog);
 			closeCurrentLog();
 		}
 	}
@@ -134,7 +133,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 					File gpxFile = createLogFile(gpxLog);
 					try {
 						final FileInputStream fis = new FileInputStream(currLog);
-						final FileOutputStream fos = new FileOutputStream(gpxFile, true);
+						final FileOutputStream fos = new FileOutputStream(gpxFile);
 						final GPXLogConverter gpxLogger = new GPXLogConverter();
 						gpxLogger.writeGPXFile(fis, fos);					
 					} catch (IOException e) {
