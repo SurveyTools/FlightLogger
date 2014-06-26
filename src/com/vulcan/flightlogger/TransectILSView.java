@@ -16,8 +16,6 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
-// import android.graphics.Color;
-// import android.util.Log;
 import android.graphics.Typeface;
 
 public class TransectILSView extends View {

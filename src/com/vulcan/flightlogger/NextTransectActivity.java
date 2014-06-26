@@ -33,7 +33,7 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 	private ImageView mCurTransectIcon;
 	private ImageView mNextTransectIcon;
-	
+
 	private TextView mCurTransectView;
 	private TextView mNextTransectView;
 	private TextView mTransectsGraphLabel;
@@ -50,12 +50,12 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 	// objects based on mWorkingData
 	private File mCurGpxFile;
-	private List<Route> mCurRoutes;		
+	private List<Route> mCurRoutes;
 	private Route mCurRoute;
-    private List<Transect> mCurTransects;
-    private Transect mCurTransect;
-    private Transect mNextTransect;
-    
+	private List<Transect> mCurTransects;
+	private Transect mCurTransect;
+	private Transect mNextTransect;
+
 	private ArrayList<Transect> mTransectArray;
 
 	private static final String LOGGER_TAG = "NextTransectActivity";
@@ -63,7 +63,6 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 	private final int NT_DIALOG_THEME = android.R.style.Theme_NoTitleBar_Fullscreen;
 	public static final String NT_CUR_TRANSECT_DATA_KEY = "NTCurTransectData";
 	private static final String NT_NEXT_TRANSECT_DATA_KEY = "NTNextTransectData";
-	
 
 	protected void immerseMe(String caller) {
 
@@ -91,12 +90,12 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 		mTransectGraph = (AllTransectsView) findViewById(R.id.nt_transect_graph);
 		mCurTransectMiniGraph = (MiniTransectView) findViewById(R.id.nt_cur_transect_mini_graph);
 		mNextTransectMiniGraph = (MiniTransectView) findViewById(R.id.nt_next_transect_mini_graph);
-		
+
 		mCurTransectMiniGraph.setup(getResources().getColor(R.color.transect_graph_active), getResources().getColor(R.color.transect_mini_graph_border), false);
 		mNextTransectMiniGraph.setup(getResources().getColor(R.color.transect_graph_next), getResources().getColor(R.color.transect_mini_graph_border), false);
-		
+
 		mCurTransectIcon = (ImageView) findViewById(R.id.nt_cur_transect_icon);
-		 mNextTransectIcon = (ImageView) findViewById(R.id.nt_next_transect_icon);
+		mNextTransectIcon = (ImageView) findViewById(R.id.nt_next_transect_icon);
 
 		mCurTransectView = (TextView) findViewById(R.id.nt_cur_transect_value);
 		mNextTransectView = (TextView) findViewById(R.id.nt_next_transect_value);
@@ -105,24 +104,24 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 		mCancelButton = (Button) findViewById(R.id.nt_cancel_button);
 		mStopButton = (Button) findViewById(R.id.nt_stop_button);
-		mUseNextTransectButton =  (Button) findViewById(R.id.nt_next_button);
+		mUseNextTransectButton = (Button) findViewById(R.id.nt_next_button);
 
 		// SAVE_RESTORE_STATE
 		if (savedInstanceState != null) {
 			mCurTransectData = savedInstanceState.getParcelable(NT_CUR_TRANSECT_DATA_KEY);
 			mNextTransectData = savedInstanceState.getParcelable(NT_NEXT_TRANSECT_DATA_KEY);
-		} 
-		
+		}
+
 		if (mCurTransectData == null)
 			mCurTransectData = getIntent().getParcelableExtra(NT_CUR_TRANSECT_DATA_KEY);
-		
+
 		if (mNextTransectData == null) {
-			mNextTransectData =  new CourseInfoIntent(mCurTransectData); // clone;
+			mNextTransectData = new CourseInfoIntent(mCurTransectData); // clone;
 			mNextTransectData.clearTransectData(); // see NEXT_TRANSECT_DERIVATION
 		}
-		
+
 		mNextTransectData.debugDump();
-		
+
 		updateCurFileFromWorkingData();
 
 		setupButtons();
@@ -141,7 +140,6 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 		outState.putParcelable(NT_CUR_TRANSECT_DATA_KEY, mCurTransectData);
 		outState.putParcelable(NT_NEXT_TRANSECT_DATA_KEY, mNextTransectData);
 	}
-
 
 	protected void setupButtons() {
 
@@ -177,13 +175,13 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 			// TODO_NT_WIP doChooseNextTransect();
 		}
 	}
-	
+
 	protected void updateTransectListUI() {
 		if (mCurTransects != null) {
 			mTransectArray = new ArrayList<Transect>(mCurTransects);
 		}
 	}
-	
+
 	protected void updateTransectGraphUI() {
 
 		if (mCurTransects != null) {
@@ -192,14 +190,14 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 			mNextTransectMiniGraph.setTransect(mNextTransect);
 		}
 	}
-	
+
 	protected void updateDataUI() {
 		mCurTransectView.setText(mCurTransectData.getFullTransectName());
 		mNextTransectView.setText(mNextTransectData.getFullTransectName());
-		
+
 		updateTransectListUI();
 		updateTransectGraphUI();
-		
+
 		String transBase = getResources().getString(R.string.chooser_label_transect_graph);
 		if (mTransectArray == null) {
 			mTransectsGraphLabel.setText(transBase + ":");
@@ -207,12 +205,12 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 			mTransectsGraphLabel.setText(transBase + " (" + mTransectArray.size() + "):");
 		}
 
-		mCurTransectIcon.setImageAlpha((int)(.6f * 255));
-		
+		mCurTransectIcon.setImageAlpha((int) (.6f * 255));
+
 		// always false so we get the colors
 		mCurTransectBigButton.setEnabled(false);
 		mCurTransectView.setEnabled(false);
-		
+
 		// disable things as need be
 		if (mCurTransect == null) {
 			mCurTransectMiniGraph.setVisibility(ImageView.INVISIBLE);
@@ -223,14 +221,14 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 		// disable things as need be
 		if (mNextTransect == null) {
 			mNextTransectBigButton.setEnabled(false);
-			mNextTransectIcon.setImageAlpha((int)(.6f * 255));
+			mNextTransectIcon.setImageAlpha((int) (.6f * 255));
 			mNextTransectView.setText("None");
 			mNextTransectView.setEnabled(false);
 			mNextTransectMiniGraph.setVisibility(ImageView.INVISIBLE);
 			mUseNextTransectButton.setEnabled(false);
 		} else {
 			mNextTransectBigButton.setEnabled(true);
-			mNextTransectIcon.setImageAlpha((int)(255));
+			mNextTransectIcon.setImageAlpha((int) (255));
 			mNextTransectView.setEnabled(true);
 			mNextTransectMiniGraph.setVisibility(ImageView.VISIBLE);
 			mUseNextTransectButton.setEnabled(true);
@@ -308,74 +306,74 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 		}
 	}
 
-    protected void clearCurTransect() {
-    	mCurTransect = null;
-    	mNextTransect = null;
-    }
-    
-    protected void clearCurRouteAndDependencies() {
-    	mCurRoute = null;
-    	mCurTransects = null;
-    	clearCurTransect();
-    }
-    
-    protected void clearCurFileAndDependencies() {
-    	mCurGpxFile = null;
-    	mCurRoutes = null;
-    	clearCurRouteAndDependencies();
-    }
-    
+	protected void clearCurTransect() {
+		mCurTransect = null;
+		mNextTransect = null;
+	}
+
+	protected void clearCurRouteAndDependencies() {
+		mCurRoute = null;
+		mCurTransects = null;
+		clearCurTransect();
+	}
+
+	protected void clearCurFileAndDependencies() {
+		mCurGpxFile = null;
+		mCurRoutes = null;
+		clearCurRouteAndDependencies();
+	}
+
 	protected void updateCurTransectFromWorkingData() {
 		clearCurTransect();
 
-    	if (mCurTransects != null) {
+		if (mCurTransects != null) {
 
-    		// CUR - should always be there, but just in case
-    		if (mCurTransectData.hasTransect()) {
-    			// get the specified one
-    			mCurTransect = GPSUtils.findTransectInList(mCurTransectData.mTransectName, mCurTransects);
-    		} else {
-    			// get the default
-    			mCurTransect = GPSUtils.getDefaultTransectFromList(mCurTransects);
-    			
-    			// update our working data
-    			mCurTransectData.setTransect(mCurTransect);
-    		}
-    		
+			// CUR - should always be there, but just in case
+			if (mCurTransectData.hasTransect()) {
+				// get the specified one
+				mCurTransect = GPSUtils.findTransectInList(mCurTransectData.mTransectName, mCurTransects);
+			} else {
+				// get the default
+				mCurTransect = GPSUtils.getDefaultTransectFromList(mCurTransects);
+
+				// update our working data
+				mCurTransectData.setTransect(mCurTransect);
+			}
+
 			// NEXT
-    		if (mNextTransectData.hasTransect()) {
-    			// get the specified one
-    			mNextTransect = GPSUtils.findTransectInList(mNextTransectData.mTransectName, mCurTransects);
-    		} else {
-    			// find the next transect
-    			mNextTransect = GPSUtils.getNextTransectFromList(mCurTransects, mCurTransect);
-    			
-    			// backfill the data
-    			mNextTransectData.setTransect(mNextTransect);
-    		}
+			if (mNextTransectData.hasTransect()) {
+				// get the specified one
+				mNextTransect = GPSUtils.findTransectInList(mNextTransectData.mTransectName, mCurTransects);
+			} else {
+				// find the next transect
+				mNextTransect = GPSUtils.getNextTransectFromList(mCurTransects, mCurTransect);
+
+				// backfill the data
+				mNextTransectData.setTransect(mNextTransect);
+			}
 		}
 	}
 
 	protected void updateCurRouteFromWorkingData() {
 		clearCurRouteAndDependencies();
-    	if (mCurRoutes != null) {
+		if (mCurRoutes != null) {
 			// get the route
-    		if (mNextTransectData.hasRoute()) {
-    			// get the specified one
-    			mCurRoute = GPSUtils.findRouteByName(mNextTransectData.mRouteName, mCurRoutes);
-    		} else {
-    			// get the default
-    			mCurRoute = GPSUtils.getDefaultRouteFromList(mCurRoutes);
- 
-    			// update our working data
-    			mNextTransectData.mRouteName = (mCurRoute == null) ? null : mCurRoute.mName;
-    		}
+			if (mNextTransectData.hasRoute()) {
+				// get the specified one
+				mCurRoute = GPSUtils.findRouteByName(mNextTransectData.mRouteName, mCurRoutes);
+			} else {
+				// get the default
+				mCurRoute = GPSUtils.getDefaultRouteFromList(mCurRoutes);
+
+				// update our working data
+				mNextTransectData.mRouteName = (mCurRoute == null) ? null : mCurRoute.mName;
+			}
 
 			// get the transects
-		    mCurTransects = GPSUtils.parseTransects(mCurRoute, AppSettings.getPrefTransectParsingMethod(this));
-		    
-		    // cascade
-		    updateCurTransectFromWorkingData();
+			mCurTransects = GPSUtils.parseTransects(mCurRoute, AppSettings.getPrefTransectParsingMethod(this));
+
+			// cascade
+			updateCurTransectFromWorkingData();
 		}
 	}
 
@@ -386,8 +384,8 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 			mCurGpxFile = new File(mNextTransectData.mGpxName);
 
 			// get the routes
-			mCurRoutes = GPSUtils.parseRoute(mCurGpxFile);			
-			
+			mCurRoutes = GPSUtils.parseRoute(mCurGpxFile);
+
 			// cascade
 			updateCurRouteFromWorkingData();
 		}

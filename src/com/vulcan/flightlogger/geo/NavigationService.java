@@ -96,14 +96,13 @@ public class NavigationService extends Service implements LocationListener {
 		double distance = 0;
 		double crossTrackErr = 0;
 		float currBearing = 0;
-		float speed = 0;
+		float speed =  currLoc.getSpeed();
 		
 		if (mCurrTransect != null)
 		{
 			distance = currLoc.distanceTo(mCurrTransect.mEndWaypt);
 			crossTrackErr = calcCrossTrackError(currLoc, mCurrTransect.mStartWaypt, mCurrTransect.mEndWaypt);
 			currBearing = currLoc.bearingTo(mCurrTransect.mEndWaypt);
-			speed = currLoc.getSpeed();
 		}
 		TransectStatus ts = new TransectStatus(mCurrTransect, distance, crossTrackErr,  currBearing, speed);
 		ts.mCurrGpsLat = currLoc.getLatitude();

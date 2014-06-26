@@ -91,7 +91,7 @@ public class AppSettings {
 	}
 	
 	public static boolean isPrefUseCustomTransectParsingKey(String key) {
-		return key.equalsIgnoreCase(PREF_USE_CUSTOM_PARSING_METHOD_KEY);
+		return PREF_USE_CUSTOM_PARSING_METHOD_KEY.equalsIgnoreCase(key);
 	}
 	
 	public static boolean getPrefUseCustomTransectParsing(Context context) {

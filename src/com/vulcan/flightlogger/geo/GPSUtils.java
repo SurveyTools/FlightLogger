@@ -415,16 +415,18 @@ public class GPSUtils {
 	// APP_SETTINGS_WIP - hash table
 	public static TransectParsingMethod getTransectParsingMethodForKey(String tpmKey) throws NotFoundException {
 
-		if (tpmKey.equalsIgnoreCase("tpm_adjacent_pairs"))
-			return TransectParsingMethod.ADJACENT_PAIRS;
-		else if (tpmKey.equalsIgnoreCase("tpm_angles_10"))
-			return TransectParsingMethod.ANGLES_OVER_10_NO_DUPS;
-		else if (tpmKey.equalsIgnoreCase("tpm_angles_15"))
-			return TransectParsingMethod.ANGLES_OVER_15_NO_DUPS;
-		else if (tpmKey.equalsIgnoreCase("tpm_angles_20"))
-			return TransectParsingMethod.ANGLES_OVER_20_NO_DUPS;
-		else if (tpmKey.equalsIgnoreCase("tpm_angles_30"))
-			return TransectParsingMethod.ANGLES_OVER_30_NO_DUPS;
+		if (tpmKey != null) {
+			if (tpmKey.equalsIgnoreCase("tpm_adjacent_pairs"))
+				return TransectParsingMethod.ADJACENT_PAIRS;
+			else if (tpmKey.equalsIgnoreCase("tpm_angles_10"))
+				return TransectParsingMethod.ANGLES_OVER_10_NO_DUPS;
+			else if (tpmKey.equalsIgnoreCase("tpm_angles_15"))
+				return TransectParsingMethod.ANGLES_OVER_15_NO_DUPS;
+			else if (tpmKey.equalsIgnoreCase("tpm_angles_20"))
+				return TransectParsingMethod.ANGLES_OVER_20_NO_DUPS;
+			else if (tpmKey.equalsIgnoreCase("tpm_angles_30"))
+				return TransectParsingMethod.ANGLES_OVER_30_NO_DUPS;
+		}
 		
 		throw new NotFoundException("transect parsing key not found");
 	}

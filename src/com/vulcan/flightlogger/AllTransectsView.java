@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 
 public class AllTransectsView extends TransectGraphView {
 
@@ -21,6 +22,8 @@ public class AllTransectsView extends TransectGraphView {
 	private List<Transect> mTransectList;
 	private Transect mActiveTransect;
 	private Transect mNextTransect;
+
+	protected final String TAG = this.getClass().getSimpleName();
 
 	// for xml construction
 	public AllTransectsView(Context context, AttributeSet attrs) {
@@ -108,10 +111,10 @@ public class AllTransectsView extends TransectGraphView {
 			double latRange = Math.abs(mMaxLat - mMinLat); // south->north (0 at equator, 90 at north pole)
 			double lonRange = Math.abs(mMaxLong - mMinLong); // east->west
 
-			if ((latRange > 0) && (lonRange > 0)) {
+			if ((latRange >= 0) && (lonRange >= 0)) {
 				// e.g. 300px / 10 degrees = 30px/degree 
-				double	hGpsToPixelScaler = w / lonRange;
-				double	vGpsToPixelScaler = h / latRange; 
+				double	hGpsToPixelScaler = (lonRange == 0) ? 0 : w / lonRange;
+				double	vGpsToPixelScaler = (latRange == 0) ? 0 : h / latRange; 
 				double	gpsToPixels;
 				double	hPixelsUsed;
 				double	vPixelsUsed;
@@ -223,6 +226,13 @@ public class AllTransectsView extends TransectGraphView {
 					mPaint.setStrokeWidth(IMPORTANT_ARROW_BODY_STROKE_SIZE);
 					canvas.drawLine(nextTransectFromX, nextTransectFromY, nextTransectToX, nextTransectToY, mPaint);
 				}
+			}
+			else 
+			{
+				if (latRange <= 0)
+					Log.d(TAG, "latRange is <= 0: " + latRange);
+				if (lonRange <= 0)
+					Log.d(TAG, "lonRange is <= 0: " + lonRange);
 			}
 		}
 	}

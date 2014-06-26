@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 
 public class MiniTransectView extends TransectGraphView {
 
@@ -17,6 +18,8 @@ public class MiniTransectView extends TransectGraphView {
 	int			mBorderColor;
 	boolean		mDrawBorder;
 	
+	protected final String TAG = this.getClass().getSimpleName();
+
 	// for xml construction
 	public MiniTransectView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -66,10 +69,10 @@ public class MiniTransectView extends TransectGraphView {
 			double latRange = Math.abs(mMaxLat - mMinLat); // south->north (0 at equator, 90 at north pole)
 			double lonRange = Math.abs(mMaxLong - mMinLong); // east->west
 
-			if ((latRange > 0) && (lonRange > 0)) {
+			if ((latRange >= 0) && (lonRange >= 0)) {
 				// e.g. 300px / 10 degrees = 30px/degree 
-				double	hGpsToPixelScaler = w / lonRange;
-				double	vGpsToPixelScaler = h / latRange; 
+				double	hGpsToPixelScaler = (lonRange == 0) ? Double.MAX_VALUE : w / lonRange;
+				double	vGpsToPixelScaler = (latRange == 0) ? Double.MAX_VALUE : h / latRange; 
 				double	gpsToPixels;
 				double	hPixelsUsed;
 				double	vPixelsUsed;
@@ -121,6 +124,13 @@ public class MiniTransectView extends TransectGraphView {
 				
 				// kinda fancy, but tight parallel lines are actually a problem
 				// ALT arrowPosition += arrowPositionDelta;
+			}
+			else 
+			{
+				if (latRange <= 0)
+					Log.d(TAG, "latRange is <= 0: " + latRange);
+				if (lonRange <= 0)
+					Log.d(TAG, "lonRange is <= 0: " + lonRange);
 			}
 		}
 		

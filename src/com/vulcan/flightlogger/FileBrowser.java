@@ -192,7 +192,7 @@ public class FileBrowser extends Activity {
 
 					}
 
-					else if (chosenFile.equalsIgnoreCase("up") && !sel.exists()) {
+					else if ("up".equalsIgnoreCase(chosenFile) && !sel.exists()) {
 
 						// present directory removed from list
 						String s = dirList.remove(dirList.size() - 1);
