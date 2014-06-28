@@ -113,8 +113,8 @@ public class AllTransectsView extends TransectGraphView {
 
 			if ((latRange >= 0) && (lonRange >= 0)) {
 				// e.g. 300px / 10 degrees = 30px/degree 
-				double	hGpsToPixelScaler = (lonRange == 0) ? 0 : w / lonRange;
-				double	vGpsToPixelScaler = (latRange == 0) ? 0 : h / latRange; 
+				double	hGpsToPixelScaler = (lonRange == 0) ? Double.MAX_VALUE : w / lonRange;
+				double	vGpsToPixelScaler = (latRange == 0) ? Double.MAX_VALUE : h / latRange; 
 				double	gpsToPixels;
 				double	hPixelsUsed;
 				double	vPixelsUsed;
