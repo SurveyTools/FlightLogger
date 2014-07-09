@@ -1,5 +1,7 @@
 package com.vulcan.flightlogger;
 
+import com.vulcan.flightlogger.geo.GPSUtils;
+
 public class FlightDatum {
 
 	public static final short FLIGHT_STATUS_UNKNOWN = 0; // UNKNOWN
@@ -86,16 +88,12 @@ public class FlightDatum {
 		mDataTimestamp = 0;
 	}
 
-	// TODO - move to a util
 	protected float metersToFeet(float meters) {
-		return meters * 3.2808399f;
+		return GPSUtils.metersToFeet(meters);
 	}
 
-	// TODO - move to a util
 	protected float metersPerSecondToKnotsPerHour(float metersPerSecond) {
-		// 1 meter/sec = 11811.024 ft/hour = 2.24 mph.
-		// 1 meter/sec = 1.94384 knots
-		return metersPerSecond * 1.94384f;
+		return GPSUtils.metersPerSecondToKilometersPerHour(metersPerSecond);
 	}
 
 }

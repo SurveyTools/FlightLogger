@@ -27,8 +27,9 @@ import android.location.Location;
 
 public class GPSUtils {
 
-	public final static float FEET_PER_METER = (float) 3.28084;
-	
+	public final static float FEET_PER_METER = 3.2808399f;
+	public final static float M_PER_SEC_TO_KM_PER_HOUR = 3.6f;
+	public final static float M_PER_SEC_TO_KNOTS_PER_HOUR = 1.94384f;
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
 
 	public enum TransectParsingMethod { 
@@ -39,6 +40,16 @@ public class GPSUtils {
 		ANGLES_OVER_15_NO_DUPS, 
 		ANGLES_OVER_20_NO_DUPS, 
 		ANGLES_OVER_30_NO_DUPS,
+	}
+	
+	public enum DistanceUnit { 
+		METRIC,
+		IMPERIAL
+	}
+	
+	public enum AirspeedUnit { 
+		KM_PER_HOUR,
+		KNOTS_PER_HOUR
 	}
 	
 	/**
@@ -429,5 +440,19 @@ public class GPSUtils {
 		}
 		
 		throw new NotFoundException("transect parsing key not found");
+	}
+	
+	public static float metersPerSecondToKnotsPerHour(float metersPerSecond) {
+		// 1 meter/sec = 11811.024 ft/hour = 2.24 mph.
+		// 1 meter/sec = 1.94384 knots
+		return metersPerSecond * M_PER_SEC_TO_KNOTS_PER_HOUR;
+	}
+	
+	public static float metersPerSecondToKilometersPerHour(float metersPerSecond) {
+		return metersPerSecond * M_PER_SEC_TO_KM_PER_HOUR;
+	}
+	
+	public static float metersToFeet(float meters) {
+		return meters * FEET_PER_METER;
 	}
 }
