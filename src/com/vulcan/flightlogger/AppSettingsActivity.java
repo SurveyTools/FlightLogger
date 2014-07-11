@@ -53,6 +53,8 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		mNavigationRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_NAVIGATION_RADIUS_KEY);
 
 		String plusMinusPrefix = getResources().getString(R.string.pref_plus_minus_prefix);
+		
+		// TODO_SCALE_WITH_UNITS
 		String unitsSuffix = getResources().getString(R.string.pref_units_feet_suffix);
 		
 		if (mAltitudeTargetView != null)
@@ -221,6 +223,15 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 					reloadSettingsList();
 				}
 			}
+		}
+		else if (AppSettings.isPrefUseCustomTransectParsingKey(key)) {
+			// TODO_SCALE_WITH_UNITS
+		}
+		else if (AppSettings.isPrefDisplayUnitsSpeedParsingKey(key)) {
+			// TODO_SCALE_WITH_UNITS
+		}
+		else if (AppSettings.isPrefDisplayUnitsAltitudeParsingKey(key)) {
+			// TODO_SCALE_WITH_UNITS
 		}
 	}
 

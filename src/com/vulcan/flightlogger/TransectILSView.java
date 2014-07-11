@@ -5,11 +5,14 @@ import java.text.NumberFormat;
 import android.view.View;
 
 import com.vulcan.flightlogger.AltitudeDatum;
+import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
@@ -60,6 +63,8 @@ public class TransectILSView extends View {
 	
 	private GraphScaleType mAltitudeGraphType = GraphScaleType.LINEAR;
 	private GraphScaleType mNavigationGraphType = GraphScaleType.LINEAR;
+	private Distance2Unit mDisplayUnits = Distance2Unit.FEET;
+	private String mDisplayUnitsString = "";
 
 	// for xml construction
 	public TransectILSView(Context context, AttributeSet attrs) {
@@ -73,6 +78,30 @@ public class TransectILSView extends View {
 		setupVars();
 	}
 	
+	public void setDisplayUnits(Distance2Unit displayUnits) {
+		mDisplayUnits = displayUnits;
+		
+		// EVAL_CENTRALIZE?
+		switch(displayUnits) {
+		case FEET:
+			mDisplayUnitsString = "ft";
+			break;
+			
+		case METERS:
+			mDisplayUnitsString = "m";
+			break;
+
+		case KILOMETERS:
+		case MILES:
+		case NAUTICAL_MILES:
+		default:
+			mDisplayUnitsString = "";
+			break;
+}
+		
+		reset();
+	}
+
 	public void updateSettings(AppSettings prefs) {
 		if (prefs != null) {
 			mShowDebugInfo = prefs.mPrefShowDebug;
@@ -425,17 +454,19 @@ public class TransectILSView extends View {
 			canvas.save();
 			canvas.rotate(-90, textX, textY);
 
-			int feet = (int) mCurGpsData.getTransectDeltaInFeet();
+			int feet = (int) mCurGpsData.getTransectDeltaDistanceUnits(Distance2Unit.FEET);
 			String navDeltaString = null;
 
 			if (debugOverrideValues)
 				feet = (int) (debugRange * transectDeltaNormalized);
 
+			int displayDistance = (int) GPSUtils.convertMetersToDistanceUnits(GPSUtils.feetToMeters((float)feet), mDisplayUnits);
+			
 			if (transectDeltaNormalized > 0) {
-				navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+				navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(displayDistance)) + " " + mDisplayUnitsString;
 				canvas.drawText(navDeltaString, textX, textY, mPaint);
 			} else if (transectDeltaNormalized < 0) {
-				navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(feet)) + " ft";
+				navDeltaString = NumberFormat.getIntegerInstance().format(Math.abs(displayDistance)) + " " + mDisplayUnitsString;
 				canvas.drawText(navDeltaString, textX, textY, mPaint);
 			}
 			canvas.restore();
@@ -462,7 +493,7 @@ public class TransectILSView extends View {
 			if (altitudeData.mDataIsValid) {
 
 				// physical delta
-				float altitudeInFeet = altitudeData.getAltitudeInFeet();
+				float altitudeInFeet = (float) altitudeData.getAltitudeInDistanceUnits(Distance2Unit.FEET);
 				mAltitudeDeltaInFeet = altitudeInFeet - mAltitudeTargetFeet;
 
 				// normalized delta
@@ -504,7 +535,7 @@ public class TransectILSView extends View {
 
 				// physical delta
 				// BUG FIX note: the minus is so we show the direction TO instead of AT
-				float pathDeviationInFeet = -gpsData.getTransectDeltaInFeet();
+				float pathDeviationInFeet = -(float)gpsData.getTransectDeltaDistanceUnits(Distance2Unit.FEET);
 
 				// normalized delta
 				mTransectDeltaNormalized = pathDeviationInFeet / mTransectDialRadiusFeet;

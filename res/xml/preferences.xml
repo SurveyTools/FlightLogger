@@ -3,7 +3,9 @@
     
     <!--  note: use PreferenceCategory (with android:title) if you want headers -->
 
-       <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+		<!--  PREF_UNITS -->
+ 
+    	<com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
         android:key="PREF_ALTITUDE_TARGET_KEY"
         android:title="@string/pref_altitude_target_title"
         android:defaultValue="@string/pref_altitude_target_default_value" />
@@ -18,7 +20,31 @@
         android:title="@string/pref_navigation_radius_title"
         android:defaultValue="@string/pref_navigation_radius_default_value" />
      
-      <CheckBoxPreference
+   	   <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:key="PREF_DISPLAY_UNITS_DISTANCE_KEY"
+        android:title="@string/pref_distance_units_title"
+        android:dialogTitle="@string/pref_distance_units_title"
+        android:entries="@array/pref_distance_unit_names"
+        android:entryValues="@array/pref_distance_unit_values"
+        android:defaultValue="@string/pref_distance_units_default_value" />
+ 
+    <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:key="PREF_DISPLAY_UNITS_SPEED_KEY"
+        android:title="@string/pref_speed_units_title"
+        android:dialogTitle="@string/pref_speed_units_title"
+        android:entries="@array/pref_speed_unit_names"
+        android:entryValues="@array/pref_speed_unit_values"
+        android:defaultValue="@string/pref_speed_units_default_value" />
+   	   
+    <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:key="PREF_DISPLAY_UNITS_ALTITUDE_KEY"
+        android:title="@string/pref_altitude_units_title"
+        android:dialogTitle="@string/pref_altitude_units_title"
+        android:entries="@array/pref_altitude_unit_names"
+        android:entryValues="@array/pref_altitude_unit_values"
+        android:defaultValue="@string/pref_altitude_units_default_value" />
+ 
+  	   <CheckBoxPreference
         android:key="PREF_USE_CUSTOM_PARSING_METHOD_KEY"
         android:title="@string/pref_use_custom_transect_parsing_method_title"
         android:defaultValue="@string/pref_use_custom_transect_parsing_method_default_value" />

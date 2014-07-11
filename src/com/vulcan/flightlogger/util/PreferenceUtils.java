@@ -1,6 +1,8 @@
 package com.vulcan.flightlogger.util;
 
 import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.geo.GPSUtils.*;
+
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -20,8 +22,8 @@ public class PreferenceUtils {
 		return intValue;
 	}
 	
-	public static GPSUtils.TransectParsingMethod getSharedPrefTransectParsingMethod(SharedPreferences sharedPref, String key, GPSUtils.TransectParsingMethod defaultValue) {
-		GPSUtils.TransectParsingMethod value = defaultValue;
+	public static TransectParsingMethod getSharedPrefTransectParsingMethod(SharedPreferences sharedPref, String key, TransectParsingMethod defaultValue) {
+		TransectParsingMethod value = defaultValue;
 		try {
 			value = GPSUtils.getTransectParsingMethodForKey(sharedPref.getString(key, ""));
 		} catch(Exception e) {
@@ -31,5 +33,25 @@ public class PreferenceUtils {
 		return value;
 	}
 	
+	public static Distance2Unit getSharedPrefDistanceUnits(SharedPreferences sharedPref, String key, Distance2Unit defaultValue) {
+		Distance2Unit value = defaultValue;
+		try {
+			value = GPSUtils.getDistanceUnitForKey(sharedPref.getString(key, ""));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error parsing distance unit pref for \"" + key + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		return value;
+	}
 	
+	public static VelocityUnit getSharedPrefVelocityUnits(SharedPreferences sharedPref, String key, VelocityUnit defaultValue) {
+		VelocityUnit value = defaultValue;
+		try {
+			value = GPSUtils.getVelocityUnitForKey(sharedPref.getString(key, ""));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error parsing speed unit pref for \"" + key + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		return value;
+	}
 }

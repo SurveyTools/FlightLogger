@@ -1,5 +1,9 @@
 package com.vulcan.flightlogger;
 
+import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+import com.vulcan.flightlogger.geo.GPSUtils.VelocityUnit;
+
 import android.util.Log;
 
 public class GPSDatum extends FlightDatum {
@@ -8,6 +12,7 @@ public class GPSDatum extends FlightDatum {
 	protected float mRawGroundSpeedMetersPerSecond; // raw float value
 	protected double mRawCrossTrackErrorMeters;
 	protected boolean mCrossTrackDataIsValid;
+	protected VelocityUnit	mDisplaySpeedUnits;
 
 	static final String INVALID_GPS_STRING = "--";
 	static final String IGNORE_GPS_STRING = "";
@@ -23,28 +28,25 @@ public class GPSDatum extends FlightDatum {
 			// ignore data
 			return IGNORE_GPS_STRING;
 		} else if (validData) {
-			// good data -- eval
-			// float to int
-
-			// knots for now.
-			float knotsPerHour = metersPerSecondToKnotsPerHour(rawGroundSpeedMetersPerSecond);
-
-			int intValue = (int) knotsPerHour;
-
-			// int to string
-			return Integer.toString(intValue);
+			// good data
+			int velocityUnitsPerHour = (int) GPSUtils.convertMetersPerSecondToVelocityUnits(rawGroundSpeedMetersPerSecond, mDisplaySpeedUnits);
+			return Integer.toString(velocityUnitsPerHour);
 		} else {
 			// bad data
 			return INVALID_GPS_STRING;
 		}
 	}
-
 	@Override
 	public void reset() {
 		super.reset();
 		setRawGroundSpeed(0, false, 0, false, curDataTimestamp());
 	}
 
+	public void setDisplaySpeedUnits(VelocityUnit displayUnits) {
+		mDisplaySpeedUnits = displayUnits;
+		reset();
+	}
+	
 	public String getGroundSpeedDisplayText() {
 		if (mIgnore)
 			return IGNORE_GPS_STRING;
@@ -56,10 +58,9 @@ public class GPSDatum extends FlightDatum {
 			return mValueToDisplay;
 	}
 
-	public float getTransectDeltaInFeet() {
-		// TODO fix units
+	public double getTransectDeltaDistanceUnits(Distance2Unit units) {
 		// TESTING ILS_BAR_DEBUGGING if (true) return 50;
-		return metersToFeet((float) mRawCrossTrackErrorMeters);
+		return GPSUtils.convertMetersToDistanceUnits(mRawCrossTrackErrorMeters, units);
 	}
 
 	public boolean setRawGroundSpeed(float rawGroundSpeedMetersPerSecond, boolean validSpeed, double crossTrackErrorMeters, boolean validCrosstrack, long timestamp) {

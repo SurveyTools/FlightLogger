@@ -6,10 +6,11 @@ import java.text.NumberFormat;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
-import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
+import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
+import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
@@ -33,7 +34,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -53,7 +53,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	public static final int UPDATE_IMAGE = 666;
 	public static final String LOG_CLASSNAME = "FlightLogger";
 	private static final String SAVED_FLIGHT_DATA_KEY = "FlightData";
-	private static final String SAVED_APP_SETTINGS_DATA_KEY = "AppSettingsData";
 
 	private AltimeterService mAltimeterService;
 	private NavigationService mNavigationService;
@@ -66,8 +65,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	private TextView mTransectDisplay;
 	private TextView mFileMessageDisplay;
 
-	private TextView mAltitudeDisplay;
-	private TextView mGroundSpeedDisplay;
+	private TextView mAltitudeValueDisplay;
+	private TextView mAltitudeUnitsDisplay;
+	private TextView mGroundSpeedValueDisplay;
+	private TextView mGroundSpeedUnitsDisplay;
 
 	private Button mStatusButtonGPS;
 	private Button mStatusButtonALT;
@@ -114,6 +115,9 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected GPSDatum mGPSData;
 	protected BatteryDatum mBatteryData;
 	protected BoxDatum mBoxData;
+	
+	protected Distance2Unit mStatusBarDistanceUnits = Distance2Unit.MILES;
+	protected String mStatusBarDistanceUnitsDisplayString = "";
 
 	// STATE
 	protected Transect mCurTransect;
@@ -219,8 +223,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mTransectDisplay = (TextView) findViewById(R.id.nav_header_transect_text);
 		mFileMessageDisplay = (TextView) findViewById(R.id.nav_header_message);
 
-		mAltitudeDisplay = (TextView) findViewById(R.id.nav_altitude_value);
-		mGroundSpeedDisplay = (TextView) findViewById(R.id.nav_speed_value);
+		mAltitudeValueDisplay = (TextView) findViewById(R.id.nav_altitude_value);
+		mAltitudeUnitsDisplay = (TextView) findViewById(R.id.nav_altitude_units);
+		mGroundSpeedValueDisplay = (TextView) findViewById(R.id.nav_speed_value);
+		mGroundSpeedUnitsDisplay = (TextView) findViewById(R.id.nav_speed_units);
 		mNavigationDisplay = tv;
 
 		mStatusButtonGPS = (Button) findViewById(R.id.nav_header_status_gps);
@@ -284,6 +290,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mUpdateUIHandler = new Handler();
 
 		setupColors();
+		updateUnitsUI();
 		
 		// TESTING showAppSettings();
 	}
@@ -388,6 +395,83 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mModeButtonTextColorOnRed = getResources().getColor(R.color.nav_footer_mode_text_over_red);
 		mModeButtonTextColorOnGrey = getResources().getColor(R.color.nav_footer_mode_text_over_grey);
 		mModeButtonTextColorOnGreen = getResources().getColor(R.color.nav_footer_mode_text_over_green);
+	}
+	
+	protected void updateUnitsUI() {
+		int distanceUnitsRsrcID = R.string.nav_distance_units_miles;
+		int speedUnitsRsrcID = R.string.nav_speed_units_knots;
+		int altitudeUnitsRsrcID = R.string.nav_altitude_units_feet;
+
+		// EVAL_CENTRALIZE?
+		switch(AppSettings.getPrefDistanceUnit(this)) {
+		case KILOMETERS:
+			distanceUnitsRsrcID = R.string.nav_distance_units_lowercase_kilometers;
+			break;
+			
+		case MILES:
+			distanceUnitsRsrcID = R.string.nav_distance_units_lowercase_miles;
+			break;
+			
+		case NAUTICAL_MILES:
+			distanceUnitsRsrcID = R.string.nav_distance_units_lowercase_nautical_miles;
+			break;
+			
+		case FEET:
+		case METERS:
+		default:
+			Log.e(LOGGER_TAG, "distance units not supported");
+				break;
+		}
+	    
+		// EVAL_CENTRALIZE?
+		switch(AppSettings.getPrefSpeedUnit(this)) {
+		case KNOTS_AKA_NAUTICAL_MILES_PER_HOUR:
+			speedUnitsRsrcID = R.string.nav_speed_units_knots;
+			break;
+			
+		case KILOMETERS_PER_HOUR:
+			speedUnitsRsrcID = R.string.nav_speed_units_kmh;
+			break;
+			
+		case MILES_PER_HOUR:
+			speedUnitsRsrcID = R.string.nav_speed_units_mph;
+			break;
+			
+		case METERS_PER_SECOND:
+		default:
+			Log.e(LOGGER_TAG, "speed units not supported");
+				break;
+		}
+		
+		// EVAL_CENTRALIZE?
+		switch(AppSettings.getPrefAltitudeUnit(this)) {
+		case FEET:
+			altitudeUnitsRsrcID = R.string.nav_altitude_units_feet;
+			break;
+			
+		case METERS:
+			altitudeUnitsRsrcID = R.string.nav_altitude_units_meters;
+			break;
+
+		case KILOMETERS:
+		case MILES:
+		case NAUTICAL_MILES:
+			default:
+			Log.e(LOGGER_TAG, "altitude units not supported");
+				break;
+
+		}
+	
+		mAltitudeUnitsDisplay.setText(getResources().getString(altitudeUnitsRsrcID));
+		mGroundSpeedUnitsDisplay.setText(getResources().getString(speedUnitsRsrcID));
+		mStatusBarDistanceUnitsDisplayString = getResources().getString(distanceUnitsRsrcID);
+		
+		// PREF_UNITS
+		mAltitudeData.setDisplayUnits(AppSettings.getPrefAltitudeUnit(this));
+		mGPSData.setDisplaySpeedUnits(AppSettings.getPrefSpeedUnit(this));
+		mNavigationDisplay.setDisplayUnits(AppSettings.getPrefAltitudeUnit(this));
+		mStatusBarDistanceUnits = AppSettings.getPrefDistanceUnit(this);
+		updateFooterUI(); // "miles to xxx"
 	}
 
 	protected void resetData() {
@@ -533,6 +617,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				break;
 			case CHANGE_APP_SETTINGS:
 				// SETTINGS_OK_MEANS_REFRESH
+				updateUnitsUI();
 				mAppSettings.refresh(this);
 				// TESTING mAppSettings.debugDump();
 				// TODO - event this
@@ -670,17 +755,21 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	protected void updateNavigationUI() {
+		// superdevo units?
 		mNavigationDisplay.update(mAltitudeData, mGPSData);
 	}
 
 	protected void updateAltitudeUI() {
 		updateStatusButton(mStatusButtonALT, mAltitudeData);
-		mAltitudeDisplay.setText(mAltitudeData.getAltitudeDisplayText());
+		// superdevo
+		
+		mAltitudeValueDisplay.setText(mAltitudeData.getAltitudeDisplayText());
 	}
 
 	protected void updateGPSUI() {
 		updateStatusButton(mStatusButtonGPS, mGPSData);
-		mGroundSpeedDisplay.setText(mGPSData.getGroundSpeedDisplayText());
+		// superdevo
+		mGroundSpeedValueDisplay.setText(mGPSData.getGroundSpeedDisplayText());
 	}
 
 	protected void updateBatteryUI() {
@@ -712,8 +801,16 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			// we expect to be recording the transect
 			if (mGPSData.mDataIsValid && !mGPSData.mIgnore && !mGPSData.dataIsExpired()) {
 				double metersToNext = toStart ? mNavigationService.calcMetersToStart() : mNavigationService.calcMetersToEnd();
-				String kmString = (metersToNext == NavigationService.METERS_NOT_AVAILABLE ? "??" : mDistanceStatusFormatter.format(metersToNext / 1000f));
-				mStatusDisplayRight.setText((toStart ? "Start" : "Stop") + " in " + kmString + " km");
+				String distanceString = "??";
+				String unitsString = "";
+				
+				// PREF_UNITS
+				if (metersToNext != NavigationService.METERS_NOT_AVAILABLE) {
+					distanceString = mDistanceStatusFormatter.format(GPSUtils.convertMetersToDistanceUnits(metersToNext, mStatusBarDistanceUnits));
+					unitsString = mStatusBarDistanceUnitsDisplayString;
+				}
+
+				mStatusDisplayRight.setText((toStart ? "Start" : "Stop") + " in " + distanceString + " " + unitsString);
 			} else {
 				// right status
 				if (mGPSData.mIgnore)

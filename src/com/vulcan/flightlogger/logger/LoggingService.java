@@ -17,7 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.AirspeedUnit;
+import com.vulcan.flightlogger.geo.GPSUtils.AirVelocityUnit;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
@@ -43,8 +43,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mCurrLogfileName;
 	private LogEntry mCurrLogEntry;
+	// superdevo
 	private DistanceUnit mDistanceUnits;
-	private AirspeedUnit mAirspeedUnits;
+	private AirVelocityUnit mVelocityUnits;
 
 	protected NavigationService mNavigationService;
 	protected AltimeterService mAltimeterService;
@@ -108,14 +109,15 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 
-	public void startLog(Transect transect, DistanceUnit dUnit, AirspeedUnit airUnit) {
+	public void startLog(Transect transect, DistanceUnit dUnit, AirVelocityUnit airUnit) {
 		mDistanceUnits = dUnit;
-		mAirspeedUnits = airUnit;
+		mVelocityUnits = airUnit;
 		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
 	}
 
 	public void startLog(Transect transect) {
-		startLog(transect, DistanceUnit.METRIC, AirspeedUnit.KNOTS_PER_HOUR);
+		// superdevo
+		startLog(transect, DistanceUnit.METRIC, AirVelocityUnit.KNOTS_PER_HOUR);
 	}
 	
 
@@ -289,21 +291,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public void onAltitudeUpdate(float altValueInMeters) {
 		// note: we get altitude updates when we're not logging
 		if (mCurrLogEntry != null)
-			this.mCurrLogEntry.mAlt = calcAltitude(altValueInMeters);
+			this.mCurrLogEntry.mAlt  =altValueInMeters;
 	}
 	
-	private float calcAltitude(float currAlt)
-	{
-		return (mDistanceUnits == DistanceUnit.IMPERIAL) ? GPSUtils.metersToFeet(currAlt) : currAlt;
-	}
-	
-	private float calcAirSpeed(float airSpeed)
-	{
-		return (mAirspeedUnits == AirspeedUnit.KNOTS_PER_HOUR) ? 
-				GPSUtils.metersPerSecondToKnotsPerHour(airSpeed) : 
-				GPSUtils.metersPerSecondToKilometersPerHour(airSpeed);
-	}
-
 	@Override
 	public void onAltitudeError(String error) {
 		// TODO Auto-generated method stub

@@ -282,7 +282,7 @@
                             android:layout_gravity="bottom"
                             android:layout_margin="4dp"
                             android:background="@color/debug4"
-                            android:text="@string/nav_altitude_units"
+                            android:text="@string/nav_altitude_units_feet"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/nav_altitude_units"
                             android:textSize="30sp" />
@@ -380,7 +380,7 @@
                             android:layout_gravity="bottom"
                             android:layout_margin="4dp"
                             android:background="@color/debug4"
-                            android:text="@string/nav_speed_units"
+                            android:text="@string/nav_speed_units_knots"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/nav_speed_units"
                             android:textSize="24sp" />

@@ -60,4 +60,29 @@ public class ResourceUtils {
 		return value;
 	}
 		
+	public static GPSUtils.Distance2Unit getResourceDistanceUnits(Context context, int rsrcID) {
+		GPSUtils.Distance2Unit value = GPSUtils.Distance2Unit.MILES; // APP_SETTINGS_WIP
+
+		try {
+			value = GPSUtils.getDistanceUnitForKey(context.getResources().getString(rsrcID));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error loading distance unit rsrc \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		
+		return value;
+	}
+		
+	public static GPSUtils.VelocityUnit getResourceVelocityUnits(Context context, int rsrcID) {
+		GPSUtils.VelocityUnit value = GPSUtils.VelocityUnit.KNOTS_AKA_NAUTICAL_MILES_PER_HOUR; // APP_SETTINGS_WIP
+
+		try {
+			value = GPSUtils.getVelocityUnitForKey(context.getResources().getString(rsrcID));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error loading speed unit rsrc \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		
+		return value;
+	}
 }

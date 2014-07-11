@@ -1,8 +1,12 @@
 package com.vulcan.flightlogger;
 
+import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+
 public class AltitudeDatum extends FlightDatum {
 
 	protected float mRawAltitudeInMeters; // raw float value
+	protected Distance2Unit	mDisplayUnits;
 
 	static final String INVALID_ALTITUDE_STRING = "--";
 	static final String IGNORE_ALTITUDE_STRING = "";
@@ -16,6 +20,7 @@ public class AltitudeDatum extends FlightDatum {
 	public AltitudeDatum(AltitudeDatum srcDatum) {
 		super(srcDatum);
 		mRawAltitudeInMeters = srcDatum.mRawAltitudeInMeters;
+		mDisplayUnits = srcDatum.mDisplayUnits;
 	}
 
 	protected String calcDisplayAltitudeFromRaw(float rawAltitudeInMeters, boolean validData) {
@@ -24,12 +29,9 @@ public class AltitudeDatum extends FlightDatum {
 			// ignore data
 			return IGNORE_ALTITUDE_STRING;
 		} else if (validData && !dataIsOld()) {
-			// good data -- eval
-			// meters to feet, and float to int
-			int intValue = (int) metersToFeet(rawAltitudeInMeters);
-
-			// int to string
-			return Integer.toString(intValue);
+			// good data
+			int altitudeInDisplayUnits = (int) GPSUtils.convertMetersToDistanceUnits(rawAltitudeInMeters, mDisplayUnits);
+			return Integer.toString(altitudeInDisplayUnits);
 		} else {
 			// bad data
 			return INVALID_ALTITUDE_STRING;
@@ -42,6 +44,11 @@ public class AltitudeDatum extends FlightDatum {
 		setRawAltitudeInMeters(0, false, curDataTimestamp());
 	}
 
+	public void setDisplayUnits(Distance2Unit displayUnits) {
+		mDisplayUnits = displayUnits;
+		reset();
+	}
+	
 	@Override
 	public short getStatusColor() {
 		if (mDemoMode)
@@ -62,9 +69,9 @@ public class AltitudeDatum extends FlightDatum {
 			return mValueToDisplay;
 	}
 
-	public float getAltitudeInFeet() {
+	public double getAltitudeInDistanceUnits(Distance2Unit units) {
 		// TESTING ILS_BAR_DEBUGGING if (true) return 350f;
-		return metersToFeet(mRawAltitudeInMeters);
+		return GPSUtils.convertMetersToDistanceUnits(mRawAltitudeInMeters, units);
 	}
 
 	public boolean setRawAltitudeInMeters(float rawAltitudeInMeters, boolean validData, long timestamp) {

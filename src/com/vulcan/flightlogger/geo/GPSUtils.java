@@ -24,13 +24,20 @@ import com.vulcan.flightlogger.geo.data.Transect;
 
 import android.content.res.Resources.NotFoundException;
 import android.location.Location;
+import android.util.Log;
 
 public class GPSUtils {
 
 	public final static float FEET_PER_METER = 3.2808399f;
-	public final static float M_PER_SEC_TO_KM_PER_HOUR = 3.6f;
-	public final static float M_PER_SEC_TO_KNOTS_PER_HOUR = 1.94384f;
+	public final static float MILES_PER_METER = 0.000621371192f;
+	public final static float KILOMETERS_PER_METER = 0.001f;
+	public final static float NAUTICAL_MILES_PER_METER = 0.000539956803f;
+	public final static float M_PER_SEC_TO_KILOMETERS_PER_HOUR = 3.6f;
+	public final static float M_PER_SEC_TO_MILES_PER_HOUR = 2.23693629f;
+	public final static float M_PER_SEC_TO_NAUTICAL_MILES_PER_PER_HOUR = 1.94384449f;
 	public static final double EARTH_RADIUS_METERS = 6371008.7714; // mean avg for WGS84 projection 
+
+	private static final String TAG = NavigationService.class.getSimpleName();
 
 	public enum TransectParsingMethod { 
 		// note: immutable since these are stored as prefs
@@ -42,16 +49,35 @@ public class GPSUtils {
 		ANGLES_OVER_30_NO_DUPS,
 	}
 	
+	// todo
 	public enum DistanceUnit { 
 		METRIC,
 		IMPERIAL
 	}
 	
-	public enum AirspeedUnit { 
+	// todo
+	public enum AirVelocityUnit { 
 		KM_PER_HOUR,
 		KNOTS_PER_HOUR
 	}
+
+	// PREF_UNITS
+	public enum Distance2Unit { 
+		FEET,
+		METERS,
+		KILOMETERS,
+		MILES,
+		NAUTICAL_MILES
+	}
 	
+	// PREF_UNITS
+	public enum VelocityUnit { 
+		METERS_PER_SECOND,
+		KNOTS_AKA_NAUTICAL_MILES_PER_HOUR,
+		KILOMETERS_PER_HOUR,
+		MILES_PER_HOUR
+	}
+
 	/**
 	 * Parses GPX routes for use in navigation. Expected format of the form:
 	 * <rte><name>Session 1</name> <rtept lat="-3.4985590"
@@ -441,18 +467,108 @@ public class GPSUtils {
 		
 		throw new NotFoundException("transect parsing key not found");
 	}
-	
-	public static float metersPerSecondToKnotsPerHour(float metersPerSecond) {
-		// 1 meter/sec = 11811.024 ft/hour = 2.24 mph.
-		// 1 meter/sec = 1.94384 knots
-		return metersPerSecond * M_PER_SEC_TO_KNOTS_PER_HOUR;
+
+    // PREF_UNITS
+	public static Distance2Unit getDistanceUnitForKey(String tpmKey) throws NotFoundException {
+
+		if (tpmKey != null) {
+			if (tpmKey.equalsIgnoreCase("distance_feet"))
+				return Distance2Unit.FEET;
+			else if (tpmKey.equalsIgnoreCase("distance_meters"))
+				return Distance2Unit.METERS;
+			else if (tpmKey.equalsIgnoreCase("distance_kilometers"))
+				return Distance2Unit.KILOMETERS;
+			else if (tpmKey.equalsIgnoreCase("distance_miles"))
+				return Distance2Unit.MILES;
+			else if (tpmKey.equalsIgnoreCase("distance_nautical_miles"))
+				return Distance2Unit.NAUTICAL_MILES;
+		}
+		
+		throw new NotFoundException("distance unit key not found");
 	}
 	
-	public static float metersPerSecondToKilometersPerHour(float metersPerSecond) {
-		return metersPerSecond * M_PER_SEC_TO_KM_PER_HOUR;
+	// PREF_UNITS
+	public static VelocityUnit getVelocityUnitForKey(String tpmKey) throws NotFoundException {
+
+		if (tpmKey != null) {
+			if (tpmKey.equalsIgnoreCase("velocity_meters_per_second"))
+				return VelocityUnit.METERS_PER_SECOND;
+			else if (tpmKey.equalsIgnoreCase("velocity_nautical_miles_per_hour"))
+				return VelocityUnit.KNOTS_AKA_NAUTICAL_MILES_PER_HOUR;
+			else if (tpmKey.equalsIgnoreCase("velocity_kilmeters_per_hour"))
+				return VelocityUnit.KILOMETERS_PER_HOUR;
+			else if (tpmKey.equalsIgnoreCase("velocity_miles_per_hour"))
+				return VelocityUnit.MILES_PER_HOUR;
+		}
+		
+		throw new NotFoundException("speed unit key not found");
 	}
 	
-	public static float metersToFeet(float meters) {
-		return meters * FEET_PER_METER;
+	public static double convertMetersToDistanceUnits(double meters, Distance2Unit units) {
+		double v = 0;
+		
+		switch(units) {
+		
+		case FEET:
+			v = meters * FEET_PER_METER;
+			break;
+			
+		case METERS:
+			v = meters;
+			break;
+			
+		case KILOMETERS:
+			v = meters * KILOMETERS_PER_METER;
+			break;
+			
+		case MILES:
+			v = meters * MILES_PER_METER;
+			break;
+			
+		case NAUTICAL_MILES:
+			v = meters * NAUTICAL_MILES_PER_METER;
+			break;
+			
+		default:
+			// fail
+			Log.e(TAG, "metersToDistanceUnits (units not recognized: " + units + ")");
+			break;
+		}
+		
+		return v;
+	}
+
+	public static double convertMetersPerSecondToVelocityUnits(double metersPerSecond, VelocityUnit units) {
+		double v = 0;
+
+		switch(units) {
+		
+		case METERS_PER_SECOND:
+			v = metersPerSecond;
+			break;
+			
+		case KNOTS_AKA_NAUTICAL_MILES_PER_HOUR:
+			v = metersPerSecond * M_PER_SEC_TO_NAUTICAL_MILES_PER_PER_HOUR;
+			break;
+			
+		case KILOMETERS_PER_HOUR:
+			v = metersPerSecond * M_PER_SEC_TO_KILOMETERS_PER_HOUR;
+			break;
+			
+		case MILES_PER_HOUR:
+			v = metersPerSecond * M_PER_SEC_TO_MILES_PER_HOUR;
+		break;
+		
+		default:
+			// fail
+			Log.e(TAG, "metersPerSecondToVelocityUnits (units not recognized: " + units + ")");
+			break;
+		}
+		
+		return v;
+	}
+
+	public static float feetToMeters(float feet) {
+		return feet / FEET_PER_METER;
 	}
 }
