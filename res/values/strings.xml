@@ -86,6 +86,7 @@
  	<string name="pref_show_debug_title">Show Debugging Info</string>
  	<string name="pref_plus_minus_prefix">±</string>
  	<string name="pref_units_feet_suffix">feet</string>
+ 	<string name="pref_units_meters_suffix">meters</string>
  	<string name="pref_altitude_target_title">Target Altitude</string>
  	<string name="pref_altitude_radius_title">Altitude Scale (distance from center of graph to top or bottom)</string>
  	<string name="pref_navigation_radius_title">Navigation Scale (distance from center of graph to left or right edge)</string>

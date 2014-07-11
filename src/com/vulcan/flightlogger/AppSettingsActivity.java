@@ -46,15 +46,10 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 	}
 
-	protected void setupPreferenceElements() {
-		mSettingsList = (AppSettingsFragment) getFragmentManager().findFragmentById(R.id.prefs_fragment);
-		mAltitudeTargetView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_TARGET_KEY);
-		mAltitudeRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_RADIUS_KEY);
-		mNavigationRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_NAVIGATION_RADIUS_KEY);
-
-		String plusMinusPrefix = getResources().getString(R.string.pref_plus_minus_prefix);
+	protected void updateUnitSuffixes() {
 		
 		// TODO_SCALE_WITH_UNITS
+		String plusMinusPrefix = getResources().getString(R.string.pref_plus_minus_prefix);
 		String unitsSuffix = getResources().getString(R.string.pref_units_feet_suffix);
 		
 		if (mAltitudeTargetView != null)
@@ -69,6 +64,22 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 			mNavigationRadiusView.setSummaryPrefix(plusMinusPrefix);
 			mNavigationRadiusView.setSummarySuffix(unitsSuffix);
 		}
+	}
+
+	protected void doUnitsChanged() {
+		
+		// TODO_SCALE_WITH_UNITS
+
+		updateUnitSuffixes();
+	}
+
+	protected void setupPreferenceElements() {
+		mSettingsList = (AppSettingsFragment) getFragmentManager().findFragmentById(R.id.prefs_fragment);
+		mAltitudeTargetView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_TARGET_KEY);
+		mAltitudeRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_RADIUS_KEY);
+		mNavigationRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_NAVIGATION_RADIUS_KEY);
+
+		updateUnitSuffixes();
 	}
 
 	@Override
@@ -226,12 +237,15 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		}
 		else if (AppSettings.isPrefUseCustomTransectParsingKey(key)) {
 			// TODO_SCALE_WITH_UNITS
+			doUnitsChanged();
 		}
 		else if (AppSettings.isPrefDisplayUnitsSpeedParsingKey(key)) {
 			// TODO_SCALE_WITH_UNITS
+			doUnitsChanged();
 		}
 		else if (AppSettings.isPrefDisplayUnitsAltitudeParsingKey(key)) {
 			// TODO_SCALE_WITH_UNITS
+			doUnitsChanged();
 		}
 	}
 
