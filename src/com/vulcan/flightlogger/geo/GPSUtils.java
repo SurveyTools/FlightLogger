@@ -49,20 +49,8 @@ public class GPSUtils {
 		ANGLES_OVER_30_NO_DUPS,
 	}
 	
-	// todo
-	public enum DistanceUnit { 
-		METRIC,
-		IMPERIAL
-	}
-	
-	// todo
-	public enum AirVelocityUnit { 
-		KM_PER_HOUR,
-		KNOTS_PER_HOUR
-	}
-
 	// PREF_UNITS
-	public enum Distance2Unit { 
+	public enum DistanceUnit { 
 		FEET,
 		METERS,
 		KILOMETERS,
@@ -73,7 +61,7 @@ public class GPSUtils {
 	// PREF_UNITS
 	public enum VelocityUnit { 
 		METERS_PER_SECOND,
-		KNOTS_AKA_NAUTICAL_MILES_PER_HOUR,
+		NAUTICAL_MILES_PER_HOUR,
 		KILOMETERS_PER_HOUR,
 		MILES_PER_HOUR
 	}
@@ -469,19 +457,19 @@ public class GPSUtils {
 	}
 
     // PREF_UNITS
-	public static Distance2Unit getDistanceUnitForKey(String tpmKey) throws NotFoundException {
+	public static DistanceUnit getDistanceUnitForKey(String tpmKey) throws NotFoundException {
 
 		if (tpmKey != null) {
 			if (tpmKey.equalsIgnoreCase("distance_feet"))
-				return Distance2Unit.FEET;
+				return DistanceUnit.FEET;
 			else if (tpmKey.equalsIgnoreCase("distance_meters"))
-				return Distance2Unit.METERS;
+				return DistanceUnit.METERS;
 			else if (tpmKey.equalsIgnoreCase("distance_kilometers"))
-				return Distance2Unit.KILOMETERS;
+				return DistanceUnit.KILOMETERS;
 			else if (tpmKey.equalsIgnoreCase("distance_miles"))
-				return Distance2Unit.MILES;
+				return DistanceUnit.MILES;
 			else if (tpmKey.equalsIgnoreCase("distance_nautical_miles"))
-				return Distance2Unit.NAUTICAL_MILES;
+				return DistanceUnit.NAUTICAL_MILES;
 		}
 		
 		throw new NotFoundException("distance unit key not found");
@@ -494,7 +482,7 @@ public class GPSUtils {
 			if (tpmKey.equalsIgnoreCase("velocity_meters_per_second"))
 				return VelocityUnit.METERS_PER_SECOND;
 			else if (tpmKey.equalsIgnoreCase("velocity_nautical_miles_per_hour"))
-				return VelocityUnit.KNOTS_AKA_NAUTICAL_MILES_PER_HOUR;
+				return VelocityUnit.NAUTICAL_MILES_PER_HOUR;
 			else if (tpmKey.equalsIgnoreCase("velocity_kilmeters_per_hour"))
 				return VelocityUnit.KILOMETERS_PER_HOUR;
 			else if (tpmKey.equalsIgnoreCase("velocity_miles_per_hour"))
@@ -504,7 +492,7 @@ public class GPSUtils {
 		throw new NotFoundException("speed unit key not found");
 	}
 	
-	public static double convertMetersToDistanceUnits(double meters, Distance2Unit units) {
+	public static double convertMetersToDistanceUnits(double meters, DistanceUnit units) {
 		double v = 0;
 		
 		switch(units) {
@@ -547,7 +535,7 @@ public class GPSUtils {
 			v = metersPerSecond;
 			break;
 			
-		case KNOTS_AKA_NAUTICAL_MILES_PER_HOUR:
+		case NAUTICAL_MILES_PER_HOUR:
 			v = metersPerSecond * M_PER_SEC_TO_NAUTICAL_MILES_PER_PER_HOUR;
 			break;
 			

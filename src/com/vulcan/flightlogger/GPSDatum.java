@@ -1,7 +1,7 @@
 package com.vulcan.flightlogger;
 
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.GPSUtils.VelocityUnit;
 
 import android.util.Log;
@@ -58,7 +58,7 @@ public class GPSDatum extends FlightDatum {
 			return mValueToDisplay;
 	}
 
-	public double getTransectDeltaDistanceUnits(Distance2Unit units) {
+	public double getTransectDeltaDistanceUnits(DistanceUnit units) {
 		// TESTING ILS_BAR_DEBUGGING if (true) return 50;
 		return GPSUtils.convertMetersToDistanceUnits(mRawCrossTrackErrorMeters, units);
 	}

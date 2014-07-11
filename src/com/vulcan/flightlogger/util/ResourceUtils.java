@@ -60,8 +60,8 @@ public class ResourceUtils {
 		return value;
 	}
 		
-	public static GPSUtils.Distance2Unit getResourceDistanceUnits(Context context, int rsrcID) {
-		GPSUtils.Distance2Unit value = GPSUtils.Distance2Unit.MILES; // APP_SETTINGS_WIP
+	public static GPSUtils.DistanceUnit getResourceDistanceUnits(Context context, int rsrcID) {
+		GPSUtils.DistanceUnit value = GPSUtils.DistanceUnit.MILES; // APP_SETTINGS_WIP
 
 		try {
 			value = GPSUtils.getDistanceUnitForKey(context.getResources().getString(rsrcID));
@@ -74,7 +74,7 @@ public class ResourceUtils {
 	}
 		
 	public static GPSUtils.VelocityUnit getResourceVelocityUnits(Context context, int rsrcID) {
-		GPSUtils.VelocityUnit value = GPSUtils.VelocityUnit.KNOTS_AKA_NAUTICAL_MILES_PER_HOUR; // APP_SETTINGS_WIP
+		GPSUtils.VelocityUnit value = GPSUtils.VelocityUnit.NAUTICAL_MILES_PER_HOUR; // APP_SETTINGS_WIP
 
 		try {
 			value = GPSUtils.getVelocityUnitForKey(context.getResources().getString(rsrcID));

@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.vulcan.flightlogger.AltitudeDatum;
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -63,7 +63,7 @@ public class TransectILSView extends View {
 	
 	private GraphScaleType mAltitudeGraphType = GraphScaleType.LINEAR;
 	private GraphScaleType mNavigationGraphType = GraphScaleType.LINEAR;
-	private Distance2Unit mDisplayUnits = Distance2Unit.FEET;
+	private DistanceUnit mDisplayUnits = DistanceUnit.FEET;
 	private String mDisplayUnitsString = "";
 
 	// for xml construction
@@ -78,7 +78,7 @@ public class TransectILSView extends View {
 		setupVars();
 	}
 	
-	public void setDisplayUnits(Distance2Unit displayUnits) {
+	public void setDisplayUnits(DistanceUnit displayUnits) {
 		mDisplayUnits = displayUnits;
 		
 		// EVAL_CENTRALIZE?
@@ -454,7 +454,7 @@ public class TransectILSView extends View {
 			canvas.save();
 			canvas.rotate(-90, textX, textY);
 
-			int feet = (int) mCurGpsData.getTransectDeltaDistanceUnits(Distance2Unit.FEET);
+			int feet = (int) mCurGpsData.getTransectDeltaDistanceUnits(DistanceUnit.FEET);
 			String navDeltaString = null;
 
 			if (debugOverrideValues)
@@ -493,7 +493,7 @@ public class TransectILSView extends View {
 			if (altitudeData.mDataIsValid) {
 
 				// physical delta
-				float altitudeInFeet = (float) altitudeData.getAltitudeInDistanceUnits(Distance2Unit.FEET);
+				float altitudeInFeet = (float) altitudeData.getAltitudeInDistanceUnits(DistanceUnit.FEET);
 				mAltitudeDeltaInFeet = altitudeInFeet - mAltitudeTargetFeet;
 
 				// normalized delta
@@ -535,7 +535,7 @@ public class TransectILSView extends View {
 
 				// physical delta
 				// BUG FIX note: the minus is so we show the direction TO instead of AT
-				float pathDeviationInFeet = -(float)gpsData.getTransectDeltaDistanceUnits(Distance2Unit.FEET);
+				float pathDeviationInFeet = -(float)gpsData.getTransectDeltaDistanceUnits(DistanceUnit.FEET);
 
 				// normalized delta
 				mTransectDeltaNormalized = pathDeviationInFeet / mTransectDialRadiusFeet;

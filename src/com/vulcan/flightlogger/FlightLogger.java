@@ -10,7 +10,7 @@ import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
-import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
@@ -116,7 +116,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected BatteryDatum mBatteryData;
 	protected BoxDatum mBoxData;
 	
-	protected Distance2Unit mStatusBarDistanceUnits = Distance2Unit.MILES;
+	protected DistanceUnit mStatusBarDistanceUnits = DistanceUnit.MILES;
 	protected String mStatusBarDistanceUnitsDisplayString = "";
 
 	// STATE
@@ -425,7 +425,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	    
 		// EVAL_CENTRALIZE?
 		switch(AppSettings.getPrefSpeedUnit(this)) {
-		case KNOTS_AKA_NAUTICAL_MILES_PER_HOUR:
+		case NAUTICAL_MILES_PER_HOUR:
 			speedUnitsRsrcID = R.string.nav_speed_units_knots;
 			break;
 			
@@ -755,20 +755,16 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	}
 
 	protected void updateNavigationUI() {
-		// superdevo units?
 		mNavigationDisplay.update(mAltitudeData, mGPSData);
 	}
 
 	protected void updateAltitudeUI() {
 		updateStatusButton(mStatusButtonALT, mAltitudeData);
-		// superdevo
-		
 		mAltitudeValueDisplay.setText(mAltitudeData.getAltitudeDisplayText());
 	}
 
 	protected void updateGPSUI() {
 		updateStatusButton(mStatusButtonGPS, mGPSData);
-		// superdevo
 		mGroundSpeedValueDisplay.setText(mGPSData.getGroundSpeedDisplayText());
 	}
 

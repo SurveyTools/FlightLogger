@@ -17,7 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.AirVelocityUnit;
+import com.vulcan.flightlogger.geo.GPSUtils.VelocityUnit;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
@@ -43,9 +43,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mCurrLogfileName;
 	private LogEntry mCurrLogEntry;
-	// superdevo
 	private DistanceUnit mDistanceUnits;
-	private AirVelocityUnit mVelocityUnits;
+	private VelocityUnit mVelocityUnits;
 
 	protected NavigationService mNavigationService;
 	protected AltimeterService mAltimeterService;
@@ -109,15 +108,14 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 
-	public void startLog(Transect transect, DistanceUnit dUnit, AirVelocityUnit airUnit) {
+	public void startLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
 		mDistanceUnits = dUnit;
 		mVelocityUnits = airUnit;
 		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
 	}
 
 	public void startLog(Transect transect) {
-		// superdevo
-		startLog(transect, DistanceUnit.METRIC, AirVelocityUnit.KNOTS_PER_HOUR);
+		startLog(transect, DistanceUnit.METERS, VelocityUnit.NAUTICAL_MILES_PER_HOUR);
 	}
 	
 

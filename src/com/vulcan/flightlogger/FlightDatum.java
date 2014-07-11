@@ -1,7 +1,7 @@
 package com.vulcan.flightlogger;
 
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 
 public class FlightDatum {
 
@@ -91,6 +91,6 @@ public class FlightDatum {
 
 	// TODO this is a bit of a leftover
 	protected float metersToFeet2(float meters) {
-		return (float) GPSUtils.convertMetersToDistanceUnits(meters, Distance2Unit.FEET);
+		return (float) GPSUtils.convertMetersToDistanceUnits(meters, DistanceUnit.FEET);
 	}
 }

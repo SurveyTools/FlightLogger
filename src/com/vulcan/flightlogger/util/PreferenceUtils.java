@@ -33,8 +33,8 @@ public class PreferenceUtils {
 		return value;
 	}
 	
-	public static Distance2Unit getSharedPrefDistanceUnits(SharedPreferences sharedPref, String key, Distance2Unit defaultValue) {
-		Distance2Unit value = defaultValue;
+	public static DistanceUnit getSharedPrefDistanceUnits(SharedPreferences sharedPref, String key, DistanceUnit defaultValue) {
+		DistanceUnit value = defaultValue;
 		try {
 			value = GPSUtils.getDistanceUnitForKey(sharedPref.getString(key, ""));
 		} catch(Exception e) {

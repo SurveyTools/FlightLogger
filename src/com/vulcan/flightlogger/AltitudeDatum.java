@@ -1,12 +1,12 @@
 package com.vulcan.flightlogger;
 
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.Distance2Unit;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 
 public class AltitudeDatum extends FlightDatum {
 
 	protected float mRawAltitudeInMeters; // raw float value
-	protected Distance2Unit	mDisplayUnits;
+	protected DistanceUnit	mDisplayUnits;
 
 	static final String INVALID_ALTITUDE_STRING = "--";
 	static final String IGNORE_ALTITUDE_STRING = "";
@@ -44,7 +44,7 @@ public class AltitudeDatum extends FlightDatum {
 		setRawAltitudeInMeters(0, false, curDataTimestamp());
 	}
 
-	public void setDisplayUnits(Distance2Unit displayUnits) {
+	public void setDisplayUnits(DistanceUnit displayUnits) {
 		mDisplayUnits = displayUnits;
 		reset();
 	}
@@ -69,7 +69,7 @@ public class AltitudeDatum extends FlightDatum {
 			return mValueToDisplay;
 	}
 
-	public double getAltitudeInDistanceUnits(Distance2Unit units) {
+	public double getAltitudeInDistanceUnits(DistanceUnit units) {
 		// TESTING ILS_BAR_DEBUGGING if (true) return 350f;
 		return GPSUtils.convertMetersToDistanceUnits(mRawAltitudeInMeters, units);
 	}

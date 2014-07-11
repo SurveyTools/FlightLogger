@@ -20,9 +20,9 @@ public class AppSettings {
 	public int mPrefNavigationRadius; // e.g. +/- 200'
 	public boolean mUseCustomParsingMethod;
 	public TransectParsingMethod mPrefTransectParsingMethod; // e.g. TransectParsingMethod.USE_DEFAULT
-	public Distance2Unit mPrefDistanceUnits;
+	public DistanceUnit mPrefDistanceUnits;
 	public VelocityUnit mPrefSpeedUnits;
-	public Distance2Unit mPrefAltitudeUnits;
+	public DistanceUnit mPrefAltitudeUnits;
 
 	private static final String LOGGER_TAG = "AppSettings";
 
@@ -113,7 +113,7 @@ public class AppSettings {
 		return PreferenceUtils.getSharedPrefTransectParsingMethod(sharedPref, PREF_TRANSECT_PARSING_METHOD_KEY, ResourceUtils.getResourceTransectParsingMethod(context, R.string.pref_transect_parsing_method_default_value));
 	}
 	
-	public static Distance2Unit getPrefDistanceUnit(Context context) {
+	public static DistanceUnit getPrefDistanceUnit(Context context) {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_DISTANCE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_distance_units_default_value));
 	}
@@ -123,7 +123,7 @@ public class AppSettings {
 		return PreferenceUtils.getSharedPrefVelocityUnits(sharedPref, PREF_DISPLAY_UNITS_SPEED_KEY, ResourceUtils.getResourceVelocityUnits(context, R.string.pref_speed_units_default_value));
 	}
 	
-	public static Distance2Unit getPrefAltitudeUnit(Context context) {
+	public static DistanceUnit getPrefAltitudeUnit(Context context) {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_ALTITUDE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_altitude_units_default_value));
 	}
