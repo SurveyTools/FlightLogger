@@ -13,6 +13,7 @@ import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
+import com.vulcan.flightlogger.logger.LoggingStatusListener;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.util.SystemUtils;
 import com.vulcan.flightlogger.FlightDatum;
@@ -41,7 +42,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.graphics.drawable.Drawable;
 
-public class FlightLogger extends USBAwareActivity implements AltitudeUpdateListener, TransectUpdateListener, OnMenuItemClickListener {
+public class FlightLogger extends USBAwareActivity 
+	implements AltitudeUpdateListener, TransectUpdateListener, LoggingStatusListener, OnMenuItemClickListener {
 
 	// used for identifying Activities that return results
 	static final int LOAD_FLIGHT_PATH = 10011;
@@ -172,12 +174,12 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			com.vulcan.flightlogger.logger.LoggingService.LocalBinder binder = (com.vulcan.flightlogger.logger.LoggingService.LocalBinder) service;
 			mLogger = (LoggingService) binder.getService();
-			// mLogger.registerListener(FlightLogger.this);
+			mLogger.registerListener(FlightLogger.this);
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			// mLogger.unregisterListener(FlightLogger.this);
+			mLogger.unregisterListener(FlightLogger.this);
 		}
 	};
 
@@ -416,11 +418,18 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			versionString = getResources().getString(R.string.nav_about_version_missing);
 
 		String fullVersionString = getResources().getString(R.string.nav_about_version_base) + " " + versionString;
+		String title = getResources().getString(R.string.nav_about_title);
 		
+		showConfirmDialog(title, fullVersionString);
+	}
+		
+	
+	public void showConfirmDialog(String title, String msg) {
+
 		new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
 	        .setIcon(android.R.drawable.ic_dialog_alert)
 	        .setTitle(R.string.nav_about_title)
-	        .setMessage(fullVersionString)
+	        .setMessage(msg)
 	        .setPositiveButton(R.string.modal_ok, new DialogInterface.OnClickListener() {
 
 		            @Override
@@ -430,6 +439,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		        })
 		    .show();
 	}
+	
 
 	public void showAppSettings() {
 		Intent intent = new Intent(this, AppSettingsActivity.class);
@@ -897,6 +907,17 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);
+	}
+
+	@Override
+	public void onLoggingStatusChangeMessage(String statusMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoggingErrorMessage(String errorMessage) {
+		this.showConfirmDialog("LoggerError", errorMessage);	
 	}
 
 }

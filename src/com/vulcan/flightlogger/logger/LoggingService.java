@@ -43,8 +43,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mCurrLogfileName;
 	private LogEntry mCurrLogEntry;
-	private DistanceUnit mDistanceUnits;
-	private AirspeedUnit mAirspeedUnits;
 
 	protected NavigationService mNavigationService;
 	protected AltimeterService mAltimeterService;
@@ -109,8 +107,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public void startLog(Transect transect, DistanceUnit dUnit, AirspeedUnit airUnit) {
-		mDistanceUnits = dUnit;
-		mAirspeedUnits = airUnit;
 		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
 	}
 
@@ -129,6 +125,14 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			closeCurrentLog();
 		}
 	}
+	
+    public void registerListener(LoggingStatusListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(LoggingStatusListener listener) {
+        mListeners.remove(listener);
+    }
 	
 	// convert contents referenced by an immutable File 
 	public void convertLogToGPXFormat(final File currLog) {
@@ -289,21 +293,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public void onAltitudeUpdate(float altValueInMeters) {
 		// note: we get altitude updates when we're not logging
 		if (mCurrLogEntry != null)
-			this.mCurrLogEntry.mAlt = calcAltitude(altValueInMeters);
+			this.mCurrLogEntry.mAlt = altValueInMeters;
 	}
 	
-	private float calcAltitude(float currAlt)
-	{
-		return (mDistanceUnits == DistanceUnit.IMPERIAL) ? GPSUtils.metersToFeet(currAlt) : currAlt;
-	}
-	
-	private float calcAirSpeed(float airSpeed)
-	{
-		return (mAirspeedUnits == AirspeedUnit.KNOTS_PER_HOUR) ? 
-				GPSUtils.metersPerSecondToKnotsPerHour(airSpeed) : 
-				GPSUtils.metersPerSecondToKilometersPerHour(airSpeed);
-	}
-
 	@Override
 	public void onAltitudeError(String error) {
 		// TODO Auto-generated method stub
