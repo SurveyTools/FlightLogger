@@ -1,6 +1,7 @@
 package com.vulcan.flightlogger;
 
 import java.io.File;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -280,10 +281,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 			mFlightData = new CourseInfoIntent(null, null, null, null, 0);
 		}
 		
+		// TESTING debugging PreferenceUtils.resetSharedPrefsToDefaults(this);
 		// update the prefs
 		if (mAppSettings == null)
 			mAppSettings = new AppSettings(this);
-		mAppSettings.refresh(this);
 		
 		mNavigationDisplay.updateSettings(mAppSettings);
 
@@ -403,7 +404,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		int altitudeUnitsRsrcID = R.string.nav_altitude_units_feet;
 
 		// EVAL_CENTRALIZE?
-		switch(AppSettings.getPrefDistanceUnit(this)) {
+		switch(AppSettings.getPrefDistanceDisplayUnit(this)) {
 		case KILOMETERS:
 			distanceUnitsRsrcID = R.string.nav_distance_units_lowercase_kilometers;
 			break;
@@ -424,7 +425,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		}
 	    
 		// EVAL_CENTRALIZE?
-		switch(AppSettings.getPrefSpeedUnit(this)) {
+		switch(AppSettings.getPrefSpeedDisplayUnit(this)) {
 		case NAUTICAL_MILES_PER_HOUR:
 			speedUnitsRsrcID = R.string.nav_speed_units_knots;
 			break;
@@ -444,7 +445,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		}
 		
 		// EVAL_CENTRALIZE?
-		switch(AppSettings.getPrefAltitudeUnit(this)) {
+		switch(AppSettings.getPrefAltitudeDisplayUnit(this)) {
 		case FEET:
 			altitudeUnitsRsrcID = R.string.nav_altitude_units_feet;
 			break;
@@ -467,10 +468,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		mStatusBarDistanceUnitsDisplayString = getResources().getString(distanceUnitsRsrcID);
 		
 		// PREF_UNITS
-		mAltitudeData.setDisplayUnits(AppSettings.getPrefAltitudeUnit(this));
-		mGPSData.setDisplaySpeedUnits(AppSettings.getPrefSpeedUnit(this));
-		mNavigationDisplay.setDisplayUnits(AppSettings.getPrefAltitudeUnit(this));
-		mStatusBarDistanceUnits = AppSettings.getPrefDistanceUnit(this);
+		mAltitudeData.setDisplayUnits(AppSettings.getPrefAltitudeDisplayUnit(this));
+		mGPSData.setDisplaySpeedUnits(AppSettings.getPrefSpeedDisplayUnit(this));
+		mNavigationDisplay.setDisplayUnits(AppSettings.getPrefAltitudeDisplayUnit(this));
+		mStatusBarDistanceUnits = AppSettings.getPrefDistanceDisplayUnit(this);
 		updateFooterUI(); // "miles to xxx"
 	}
 

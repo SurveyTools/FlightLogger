@@ -34,6 +34,19 @@ public class ResourceUtils {
 		return intValue;
 	}
 	
+	public static float getResourceFloatFromString(Context context, int rsrcID) {
+		float floatValue = -1;
+		try {
+			String str =  context.getResources().getString(rsrcID);
+			floatValue = Float.valueOf(str);
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error loading rsrc int for \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		
+		return floatValue;
+	}
+	
 	public static boolean getResourceBooleanFromString(Context context, int rsrcID) {
 		boolean v = false;
 		try {

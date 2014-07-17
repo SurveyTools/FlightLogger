@@ -88,8 +88,11 @@
  	<string name="pref_units_feet_suffix">feet</string>
  	<string name="pref_units_meters_suffix">meters</string>
  	<string name="pref_altitude_target_title">Target Altitude</string>
+ 	<string name="pref_altitude_target_editor_title">Target Altitude in FEET</string>
  	<string name="pref_altitude_radius_title">Altitude Scale (distance from center of graph to top or bottom)</string>
+ 	<string name="pref_altitude_radius_editor_title">Altitude Scale (distance from center of graph to top or bottom)</string>
  	<string name="pref_navigation_radius_title">Navigation Scale (distance from center of graph to left or right edge)</string>
+ 	<string name="pref_navigation_radius_editor_title">Navigation Scale in FEET (distance from center of graph to left or right edge)</string>
  	<string name="pref_use_custom_transect_parsing_method_title">Use Custom GPX Transect Parsing Method</string>
  	<string name="pref_transect_parsing_method_title">GPX Transect Parsing Method</string>
  		 	
@@ -107,7 +110,7 @@
  	<string name="pref_distance_units_default_value">distance_miles</string>
  	<string name="pref_speed_units_default_value">velocity_nautical_miles_per_hour</string>
  	<string name="pref_altitude_units_default_value">distance_feet</string>
- 	 		
+ 		 		
  	
  					 		     
 </resources>

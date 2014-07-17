@@ -97,7 +97,7 @@ public class TransectILSView extends View {
 		default:
 			mDisplayUnitsString = "";
 			break;
-}
+		}
 		
 		reset();
 	}
@@ -105,9 +105,9 @@ public class TransectILSView extends View {
 	public void updateSettings(AppSettings prefs) {
 		if (prefs != null) {
 			mShowDebugInfo = prefs.mPrefShowDebug;
-			mAltitudeTargetFeet = prefs.mPrefAltitudeTarget;
-			mAltitudeDialRadiusFeet = prefs.mPrefAltitudeRadius;
-			mTransectDialRadiusFeet = prefs.mPrefNavigationRadius;
+			mAltitudeTargetFeet = prefs.mPrefAltitudeTargetFeet;
+			mAltitudeDialRadiusFeet = prefs.mPrefAltitudeRadiusFeet;
+			mTransectDialRadiusFeet = prefs.mPrefNavigationRadiusFeet;
 			
 			// force the dependent variables to update
 			updateAltitude(mCurAltitude);

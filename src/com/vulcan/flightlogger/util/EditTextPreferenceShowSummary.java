@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 
 public class EditTextPreferenceShowSummary extends EditTextPreference {
 
-	private String mSummaryPrefix;
-	private String mSummarySuffix;
+	protected String mSummaryPrefix;
+	protected String mSummarySuffix;
 
 	public EditTextPreferenceShowSummary(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -28,8 +28,12 @@ public class EditTextPreferenceShowSummary extends EditTextPreference {
 		mSummarySuffix = suffix;
 	}
 	
+	public String getDisplayText() {
+		return getText();
+	}
+
 	private String calcSummaryText() {
-		String txt = getText();
+		String txt = getDisplayText();
 		
 		if (txt != null) {
 
@@ -43,7 +47,7 @@ public class EditTextPreferenceShowSummary extends EditTextPreference {
 		return txt;
 	}
 
-	private void init() {
+	protected void init() {
 
 		setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
@@ -59,4 +63,6 @@ public class EditTextPreferenceShowSummary extends EditTextPreference {
 	public CharSequence getSummary() {
 		return calcSummaryText();
 	}
+	
+	// TODO_EVAL onSetInitialValue
 }

@@ -2,7 +2,11 @@ package com.vulcan.flightlogger;
 
 import android.support.v4.app.FragmentActivity;
 
-import com.vulcan.flightlogger.util.EditTextPreferenceShowSummary;
+import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
+import com.vulcan.flightlogger.util.EditDistancePreferenceShowSummary;
+import com.vulcan.flightlogger.util.PreferenceUtils;
+import com.vulcan.flightlogger.util.ResourceUtils;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.util.Log;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -19,18 +24,18 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 public class AppSettingsActivity extends FragmentActivity implements OnSharedPreferenceChangeListener {
 
 	private AppSettingsFragment mSettingsList;
-	
+
 	private Button mResetButton;
 	private Button mOkButton;
-	private EditTextPreferenceShowSummary mAltitudeTargetView;
-	private EditTextPreferenceShowSummary mAltitudeRadiusView;
-	private EditTextPreferenceShowSummary mNavigationRadiusView;
-	
-	private Boolean	mDataChanged;
+	private EditDistancePreferenceShowSummary mAltitudeTargetView;
+	private EditDistancePreferenceShowSummary mAltitudeRadiusView;
+	private EditDistancePreferenceShowSummary mNavigationRadiusView;
+
+	private Boolean mDataChanged;
 
 	private static final String TAG = "AppSettingsActivity";
 	public static final String APP_SETTINGS_CHANGED_KEY = "AppSettingsChanged";
-	
+
 	protected void immerseMe(String caller) {
 
 		// IMMERSIVE_MODE
@@ -46,42 +51,27 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 				| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 	}
 
-	protected void updateUnitSuffixes() {
-		
-		// TODO_SCALE_WITH_UNITS
-		String plusMinusPrefix = getResources().getString(R.string.pref_plus_minus_prefix);
-		String unitsSuffix = getResources().getString(R.string.pref_units_feet_suffix);
-		
-		if (mAltitudeTargetView != null)
-			mAltitudeTargetView.setSummarySuffix(unitsSuffix);
-
-		if (mAltitudeRadiusView != null) {
-			mAltitudeRadiusView.setSummaryPrefix(plusMinusPrefix);
-			mAltitudeRadiusView.setSummarySuffix(unitsSuffix);
-		}
-
-		if (mNavigationRadiusView != null) {
-			mNavigationRadiusView.setSummaryPrefix(plusMinusPrefix);
-			mNavigationRadiusView.setSummarySuffix(unitsSuffix);
-		}
-	}
-
 	protected void doUnitsChanged() {
-		
-		// TODO_SCALE_WITH_UNITS
-
-		updateUnitSuffixes();
+		// nop		
 	}
 
 	protected void setupPreferenceElements() {
 		mSettingsList = (AppSettingsFragment) getFragmentManager().findFragmentById(R.id.prefs_fragment);
-		mAltitudeTargetView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_TARGET_KEY);
-		mAltitudeRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_RADIUS_KEY);
-		mNavigationRadiusView = (EditTextPreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_NAVIGATION_RADIUS_KEY);
+		mAltitudeTargetView = (EditDistancePreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_TARGET_KEY);
+		mAltitudeRadiusView = (EditDistancePreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_ALTITUDE_RADIUS_KEY);
+		mNavigationRadiusView = (EditDistancePreferenceShowSummary) mSettingsList.findPreference(AppSettings.PREF_NAVIGATION_RADIUS_KEY);
+		
+		// e.g. 300 feet (91 meters)
+		mAltitudeTargetView.setUnits(AppSettings.ALT_NAV_STORAGE_UNITS, GPSUtils.DistanceUnit.METERS);
+		mAltitudeRadiusView.setUnits(AppSettings.ALT_NAV_STORAGE_UNITS, GPSUtils.DistanceUnit.METERS);
+		mNavigationRadiusView.setUnits(AppSettings.ALT_NAV_STORAGE_UNITS, GPSUtils.DistanceUnit.METERS);
 
-		updateUnitSuffixes();
+		// +/- on a couple of them
+		String plusMinusPrefix = getResources().getString(R.string.pref_plus_minus_prefix);
+		mAltitudeRadiusView.setSummaryPrefix(plusMinusPrefix);
+		mNavigationRadiusView.setSummaryPrefix(plusMinusPrefix);
 	}
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,7 +81,7 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		// IMMERSIVE_MODE note: setting the theme here didn't help setTheme(android.R.style.Theme_NoTitleBar);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+		
 		mResetButton = (Button) findViewById(R.id.as_reset_button);
 		mOkButton = (Button) findViewById(R.id.as_ok_button);
 
@@ -101,7 +91,7 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		} else {
 			mDataChanged = false;
 		}
-		
+
 		setupPreferenceElements();
 		setupButtons();
 		setupColors();
@@ -116,50 +106,37 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 	// SAVE_RESTORE_STATE
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean (APP_SETTINGS_CHANGED_KEY, mDataChanged);
+		outState.putBoolean(APP_SETTINGS_CHANGED_KEY, mDataChanged);
 	}
 
 	protected void reloadSettingsList() {
 		mSettingsList.fakeInvalidate();
 		setupPreferenceElements();
 	}
-	
-	protected void resetAllToDefaults() {
-		// wacky
-		// note: stored in /data/user/0/com.vulcan.flightlogger/shared_prefs/com.vulcan.flightlogger_preferences.xml
-		
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.clear();
-		editor.commit();
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
+	protected void resetAllToDefaults() {
+
+		PreferenceUtils.resetSharedPrefsToDefaults(this);
 		reloadSettingsList();
-		
+
 		mDataChanged = true;
 
 	}
-	
+
 	protected void confirmResetAll() {
-        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK)
-        .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle(R.string.as_confirm_reset_title)
-        .setMessage(R.string.as_confirm_reset_message)
-        .setPositiveButton(R.string.as_confirm_reset_ok, new DialogInterface.OnClickListener() {
+		new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.as_confirm_reset_title).setMessage(R.string.as_confirm_reset_message).setPositiveButton(R.string.as_confirm_reset_ok, new DialogInterface.OnClickListener() {
 
-	            @Override
-	            public void onClick(DialogInterface dialog, int which) {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-	                // CONFIRMED
-	            	resetAllToDefaults();
+				// CONFIRMED
+				resetAllToDefaults();
 
-                    dialog.cancel();
-	            }
-	        })
-	    .setNegativeButton(R.string.as_confirm_reset_cancel, null)
-	    .show();
+				dialog.cancel();
+			}
+		}).setNegativeButton(R.string.as_confirm_reset_cancel, null).show();
 	}
-	
+
 	protected void setupButtons() {
 
 		mResetButton.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +156,7 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		// APP_SETTINGS_WIP
 		mOkButton.setEnabled(true);
 	}
-	
+
 	private void finishWithDone() {
 		this.setResult(mDataChanged ? RESULT_OK : RESULT_CANCELED, getIntent());
 		finish();
@@ -234,18 +211,12 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 					reloadSettingsList();
 				}
 			}
-		}
-		else if (AppSettings.isPrefUseCustomTransectParsingKey(key)) {
-			// TODO_SCALE_WITH_UNITS
-			doUnitsChanged();
-		}
-		else if (AppSettings.isPrefDisplayUnitsSpeedParsingKey(key)) {
-			// TODO_SCALE_WITH_UNITS
-			doUnitsChanged();
-		}
-		else if (AppSettings.isPrefDisplayUnitsAltitudeParsingKey(key)) {
-			// TODO_SCALE_WITH_UNITS
-			doUnitsChanged();
+		} else if (AppSettings.isPrefDisplayUnitsDistanceParsingKey(key)) {
+			// no effect on other settings
+		} else if (AppSettings.isPrefDisplayUnitsSpeedParsingKey(key)) {
+			// no effect on other settings
+		} else if (AppSettings.isPrefDisplayUnitsAltitudeParsingKey(key)) {
+			// no effect on other settings
 		}
 	}
 

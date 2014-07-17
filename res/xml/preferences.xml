@@ -5,19 +5,22 @@
 
 		<!--  PREF_UNITS -->
  
-    	<com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+    	<com.vulcan.flightlogger.util.EditDistancePreferenceShowSummary
         android:key="PREF_ALTITUDE_TARGET_KEY"
         android:title="@string/pref_altitude_target_title"
+        android:dialogTitle="@string/pref_altitude_target_editor_title"
         android:defaultValue="@string/pref_altitude_target_default_value" />
      
-      <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+    	<com.vulcan.flightlogger.util.EditDistancePreferenceShowSummary
         android:key="PREF_ALTITUDE_RADIUS_KEY"
         android:title="@string/pref_altitude_radius_title"
+        android:dialogTitle="@string/pref_altitude_radius_editor_title"
         android:defaultValue="@string/pref_altitude_radius_default_value" />
      
-  	   <com.vulcan.flightlogger.util.EditTextPreferenceShowSummary
+  	   <com.vulcan.flightlogger.util.EditDistancePreferenceShowSummary
         android:key="PREF_NAVIGATION_RADIUS_KEY"
         android:title="@string/pref_navigation_radius_title"
+        android:dialogTitle="@string/pref_navigation_radius_editor_title"
         android:defaultValue="@string/pref_navigation_radius_default_value" />
      
    	   <com.vulcan.flightlogger.util.ListPreferenceShowSummary
