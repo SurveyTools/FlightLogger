@@ -43,8 +43,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mCurrLogfileName;
 	private LogEntry mCurrLogEntry;
-	private DistanceUnit mDistanceUnits;
-	private VelocityUnit mVelocityUnits;
 
 	protected NavigationService mNavigationService;
 	protected AltimeterService mAltimeterService;
@@ -109,8 +107,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public void startLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
-		mDistanceUnits = dUnit;
-		mVelocityUnits = airUnit;
 		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
 	}
 
@@ -129,6 +125,14 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			closeCurrentLog();
 		}
 	}
+	
+    public void registerListener(LoggingStatusListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(LoggingStatusListener listener) {
+        mListeners.remove(listener);
+    }
 	
 	// convert contents referenced by an immutable File 
 	public void convertLogToGPXFormat(final File currLog) {
@@ -289,7 +293,11 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public void onAltitudeUpdate(float altValueInMeters) {
 		// note: we get altitude updates when we're not logging
 		if (mCurrLogEntry != null)
+<<<<<<< HEAD
 			this.mCurrLogEntry.mAlt  =altValueInMeters;
+=======
+			this.mCurrLogEntry.mAlt = altValueInMeters;
+>>>>>>> e0aed8f4b16d2379ab5aaf415fdadf842211e224
 	}
 	
 	@Override
