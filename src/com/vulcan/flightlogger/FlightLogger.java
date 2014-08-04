@@ -712,9 +712,11 @@ public class FlightLogger extends USBAwareActivity
 			case FlightDatum.FLIGHT_STATUS_RED:
 				buttonBG = mStatusButtonBackgroundRed;
 				textColor = mStatusButtonTextColorOnRed;
-				//COLOR_UPDATE_WIP
-				buttonBG = mStatusButtonBackgroundGreen;
-				textColor = mStatusButtonTextColorOnGreen;
+				
+				// COLOR_UPDATE_WIP
+				// Force the lights to green
+				// TESTING buttonBG = mStatusButtonBackgroundGreen;
+				// TESTING textColor = mStatusButtonTextColorOnGreen;
 				break;
 
 			case FlightDatum.FLIGHT_STATUS_YELLOW:
