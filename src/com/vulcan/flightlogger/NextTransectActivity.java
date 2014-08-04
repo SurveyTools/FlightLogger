@@ -220,7 +220,9 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 		// disable things as need be
 		if (mNextTransect == null) {
-			mNextTransectBigButton.setEnabled(false);
+			mNextTransectBigButton.setEnabled(true);
+			// alt, disable at end (problematic when jumping around)  mNextTransectBigButton.setEnabled(false);
+			
 			mNextTransectIcon.setImageAlpha((int) (.6f * 255));
 			mNextTransectView.setText("None");
 			mNextTransectView.setEnabled(false);
