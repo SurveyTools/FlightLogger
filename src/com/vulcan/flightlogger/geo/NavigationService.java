@@ -32,7 +32,7 @@ public class NavigationService extends Service implements LocationListener {
 	
 	// need to revisit this guy, to see if we need more accuracy. Currently we
 	// sample at 3 seconds
-	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 3;
+	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 1;
 	
 	// how many track mock samples to create from a transect path
 	private final int NUM_MOCK_TRACKS = 1000;
