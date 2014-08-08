@@ -11,6 +11,11 @@ import android.location.Location;
 // approach if we need multiple formats, but for now, let's keep it simple-ish...
 
 public class LogWriter {
+	
+	// what do we log for log entries 
+	public enum LogFields {
+		TIMESTAMP, LAT, LON, ALTITUDE, SPEED
+	}
 
 	private static final NumberFormat ELEVATION_FORMAT = NumberFormat
 			.getInstance(Locale.US);
@@ -43,12 +48,12 @@ public class LogWriter {
 		return builder.toString();
 	}
 	
-	public String writeCSVTrackRecord(Location currLoc, float altitude, float airSpeed) {
+	public String writeCSVTrackRecord(Location currLoc, float laserAlt, float gpsAlt,  float airSpeed) {
 		return writeGenericCSVRecord(
 				ISO_8601_DATE_TIME_FORMAT.format(currLoc.getTime()),
 				String.valueOf(currLoc.getLatitude()),
 				String.valueOf(currLoc.getLongitude()),
-				ELEVATION_FORMAT.format(altitude),
+				ELEVATION_FORMAT.format(laserAlt),
 				ELEVATION_FORMAT.format(airSpeed));
 	}
 

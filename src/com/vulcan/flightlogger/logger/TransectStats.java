@@ -1,11 +1,18 @@
 package com.vulcan.flightlogger.logger;
 
+import java.util.ArrayList;
+
 public class TransectStats { 
+	
+	private ArrayList<TransectStat> mTransectStats;
+	
+	// what do we log for log entries 
+	public enum LogFields {
+		TIMESTAMP, LAT, LON, LASER_ALT, GPS_ALT, SPEED
+	}
 
 	public String mTransectName;
-	public float mAvgAirspeed;
-	public float mAvgAltitude;
-	
+
 	private TransectStats()
 	{
 		// force the object to have a name
@@ -15,5 +22,41 @@ public class TransectStats {
 	{
 		mTransectName = name;
 	}
+	
+	public void addTransectStat(TransectStat stat)
+	{
+		mTransectStats.add(stat);
+		
+	}
+	
+	public TransectStatSummary getTransectSummary()
+	{
+		double laserAlt = 0.0f;
+		double gpsAlt = 0.0f;
+		double speed = 0.0f;
+		
+		for (TransectStat stat : mTransectStats)
+		{
+			laserAlt += stat.mLaserAlt;
+			gpsAlt += stat.mGpsAlt;
+			speed += stat.mAirspeed;
+		}
+		
+		if(mTransectStats.size() > 0)
+		{
+			int size = mTransectStats.size();
+			laserAlt = laserAlt/size;
+			gpsAlt = gpsAlt/size;
+			speed = speed/size;
+		}
+		
+		TransectStatSummary summary = new TransectStatSummary(mTransectName, (float)speed, (float)gpsAlt, (float)laserAlt);
+
+		return summary;
+	}
+	
+	
+
+
 	
 }
