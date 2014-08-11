@@ -54,6 +54,16 @@ public class GPSUtils {
 		METERS_PER_SECOND, NAUTICAL_MILES_PER_HOUR, KILOMETERS_PER_HOUR, MILES_PER_HOUR
 	}
 
+	public enum DataAveragingMethod {
+		// note: immutable since these are stored as prefs
+		MEDIAN, MEAN
+	}
+
+	public enum DataAveragingWindow {
+		// note: immutable since these are stored as prefs
+		N_3_SAMPLES, N_5_SAMPLES, N_7_SAMPLES, N_9_SAMPLES
+	}
+
 	/**
 	 * Parses GPX routes for use in navigation. Expected format of the form: <rte><name>Session 1</name> <rtept lat="-3.4985590" lon="38.9554692"><ele> -32768.000</ele><name>T01_S</name><sym>Waypoint</sym></rtept> <rtept lat="-3.0642325" lon="39.2115345"><ele>-32768.000</ele><name>T01_N</name>< sym>Waypoint</sym></rtept> <rtept lat="-3.0546140" lon="39.1860712"><ele>- 32768.000</ele><name>T02_N</name><sym>Waypoint</sym></rtept> <rtept lat="-3.5290935"
 	 * lon="38.9157593"><ele>-32768.000</ele><name>T02_S</name>< sym>Waypoint</sym></rtept> <rtept lat="-3.5115202" lon="38.8969005"><ele>- 32768.000</ele><name>T03_S</name><sym>Waypoint</sym></rtept> <rtept lat="-3.0044045" lon="39.1936147"><ele>-32768.000</ele><name>T03_N</name>< sym>Waypoint</sym></rtept> </rte>
@@ -463,6 +473,55 @@ public class GPSUtils {
 		throw new NotFoundException("speed unit key not found");
 	}
 
+
+	// PREF_UNITS
+	public static DataAveragingMethod getDataAveragingMethodForKey(String tpmKey) throws NotFoundException {
+
+		if (tpmKey != null) {
+			if (tpmKey.equalsIgnoreCase("dam_median"))
+				return DataAveragingMethod.MEDIAN;
+			else if (tpmKey.equalsIgnoreCase("dam_mean"))
+				return DataAveragingMethod.MEAN;
+		}
+
+		throw new NotFoundException("dam unit key not found");
+	}
+
+	// PREF_UNITS
+	public static DataAveragingWindow getDataAveragingWindowForKey(String tpmKey) throws NotFoundException {
+
+		if (tpmKey != null) {
+			if (tpmKey.equalsIgnoreCase("daw_3"))
+				return DataAveragingWindow.N_3_SAMPLES;
+			else if (tpmKey.equalsIgnoreCase("daw_5"))
+				return DataAveragingWindow.N_5_SAMPLES;
+			else if (tpmKey.equalsIgnoreCase("daw_7"))
+				return DataAveragingWindow.N_7_SAMPLES;
+			else if (tpmKey.equalsIgnoreCase("daw_9"))
+				return DataAveragingWindow.N_9_SAMPLES;
+		}
+
+		throw new NotFoundException("distance unit key not found");
+	}
+
+	public static int convertDataAveragingWindowToInteger(DataAveragingWindow v) {
+		switch (v) {
+
+		case N_3_SAMPLES: return 3; 
+		case N_5_SAMPLES: return 5; 
+		case N_7_SAMPLES: return 7; 
+		case N_9_SAMPLES: return 9; 
+
+		default:
+			// fail
+			Log.e(TAG, "convertDataAveragingWindowToInteger (value not recognized: " + v + ")");
+			break;
+		}
+
+		return 1;
+	}
+
+	
 	public static double convertMetersToDistanceUnits(double meters, DistanceUnit units) {
 		double v = 0;
 

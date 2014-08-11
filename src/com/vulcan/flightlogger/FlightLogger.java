@@ -3,6 +3,7 @@ package com.vulcan.flightlogger;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
@@ -11,6 +12,9 @@ import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
+import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingMethod;
+import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingWindow;
+import com.vulcan.flightlogger.geo.data.FlightStatus;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
@@ -25,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.usb.UsbDevice;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -119,6 +124,13 @@ public class FlightLogger extends USBAwareActivity
 	protected BatteryDatum mBatteryData;
 	protected BoxDatum mBoxData;
 	
+	// data averaging
+	protected ArrayList<TransectStatus> mTransectStatusHistory;
+	protected ArrayList<TransectStatus> mTransectStatusSorted;
+	protected ArrayList<Float> mAltitudeHistory;
+	protected ArrayList<Float> mAltitudeSorted;
+
+	
 	protected DistanceUnit mStatusBarDistanceUnits = DistanceUnit.MILES;
 	protected String mStatusBarDistanceUnitsDisplayString = "";
 
@@ -202,13 +214,21 @@ public class FlightLogger extends USBAwareActivity
 		this.bindService(intent3, mLoggerConnection, 0);
 	}
 
+	protected void resetAverages() {
+		mTransectStatusHistory = new ArrayList<TransectStatus>(); 
+		mTransectStatusSorted = new ArrayList<TransectStatus>(); 
+		mAltitudeHistory = new ArrayList<Float>(); 
+		mAltitudeSorted = new ArrayList<Float>(); 
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
 		bindServices();
-
+		resetAverages();
+		
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
@@ -499,6 +519,7 @@ public class FlightLogger extends USBAwareActivity
 		mGPSData.reset();
 		mBatteryData.reset();
 		mBoxData.reset();
+		resetAverages();
 		// note: might want to update the ui (last param) depending on use
 	}
 
@@ -644,6 +665,7 @@ public class FlightLogger extends USBAwareActivity
 				// SETTINGS_OK_MEANS_REFRESH
 				updateUnitsUI();
 				mAppSettings.refresh(this);
+				resetAverages();
 				// TESTING mAppSettings.debugDump();
 				// TODO - event this
 				mNavigationDisplay.updateSettings(mAppSettings);
@@ -795,6 +817,7 @@ public class FlightLogger extends USBAwareActivity
 	protected void updateGPSUI() {
 		updateStatusButton(mStatusButtonGPS, mGPSData);
 		mGroundSpeedValueDisplay.setText(mGPSData.getGroundSpeedDisplayText());
+		// todo - average rate of climb
 	}
 
 	protected void updateBatteryUI() {
@@ -950,9 +973,159 @@ public class FlightLogger extends USBAwareActivity
 		return System.currentTimeMillis();
 	}
 
-	public void onAltitudeUpdate(float altitudeInMeters) {
+	protected float calcCurAverageAltitude(float curAltitude) {
+		if (mAppSettings.mDataAveragingEnabled) {
+			int maxHistoryItems = GPSUtils.convertDataAveragingWindowToInteger(mAppSettings.mDataAveragingWindow);
+			// add the cur status to the list
+			
+			// trim the history if need be
+			if (mAltitudeHistory.size() >= maxHistoryItems) {
+				Float oldestItem = mAltitudeHistory.get(mAltitudeHistory.size()-1);
+				
+				// remove the oldest from both arrays
+				mAltitudeHistory.remove(oldestItem);
+				mAltitudeSorted.remove(oldestItem);
+			}
+			Float curAltitudeFloatObj = Float.valueOf(curAltitude);
+			
+			// add the new item to the history (at the front)
+			mAltitudeHistory.add(0, curAltitudeFloatObj);
+				
+			int n = mAltitudeHistory.size();
+			int ns = mAltitudeSorted.size();
+
+			// merge the new item into the sorted list
+			boolean inserted = false;
+			
+			for(int i=0;i<ns;i++) {
+				Float obj = mAltitudeSorted.get(i);
+				
+				if (curAltitude < obj.floatValue()) {
+					// winner!
+					inserted = true;
+					mAltitudeSorted.add(i, curAltitudeFloatObj);
+					break;
+				}
+			}
+			
+			if (!inserted) {
+				// value was larger than everything in the list... add it to the end
+				mAltitudeSorted.add(curAltitudeFloatObj);
+			}
+			
+			switch(mAppSettings.mDataAveragingMethod) {
+			case MEDIAN:
+				// take the middle one
+				return mAltitudeSorted.get(n/2).floatValue();
+				
+			case MEAN:
+			{
+				float avg = 0;
+				
+				// sum up the values
+				for(int i=0;i<n;i++) {
+					avg +=  mAltitudeHistory.get(i).floatValue();
+				}
+				
+				// calc the average
+				return avg / (float)n;
+			}
+			}
+			
+		}
+		
+		// default
+		return curAltitude;
+	}
+	
+	protected TransectStatus calcCurAverageTransectStatus(TransectStatus curStatus) {
+		if (mAppSettings.mDataAveragingEnabled) {
+			int maxHistoryItems = GPSUtils.convertDataAveragingWindowToInteger(mAppSettings.mDataAveragingWindow);
+			// add the cur status to the list
+			
+			// trim the history if need be
+			if (mTransectStatusHistory.size() >= maxHistoryItems) {
+				TransectStatus oldestItem = mTransectStatusHistory.get(mTransectStatusHistory.size()-1);
+				
+				// remove the oldest from both arrays
+				mTransectStatusHistory.remove(oldestItem);
+				mTransectStatusSorted.remove(oldestItem);
+			}
+			
+			// add the new item to the history (at the front)
+			mTransectStatusHistory.add(0, curStatus);
+				
+			int n = mTransectStatusHistory.size();
+			int ns = mTransectStatusSorted.size();
+
+			// merge the new item into the sorted list
+			boolean inserted = false;
+			
+			for(int i=0;i<ns;i++) {
+				TransectStatus obj = mTransectStatusSorted.get(i);
+				
+				if (curStatus.mGroundSpeed < obj.mGroundSpeed) {
+					// winner!
+					inserted = true;
+					mTransectStatusSorted.add(i, curStatus);
+					break;
+				}
+			}
+			
+			if (!inserted) {
+				// value was larger than everything in the list... add it to the end
+				mTransectStatusSorted.add(curStatus);
+			}
+			
+			switch(mAppSettings.mDataAveragingMethod) {
+			case MEDIAN:
+				// take the middle one
+				// TESTING TransectStatus winnerGS = mTransectStatusSorted.get(n/2);
+				// TESTING Log.d(LOG_CLASSNAME, "median gs " + winnerGS.mGroundSpeed + "cur gs " + curStatus.mGroundSpeed + ", n " + n + ", n/2 " + (int)(n/2) + ", value " + mTransectStatusSorted.get(n/2));
+				return mTransectStatusSorted.get(n/2);
+				
+			case MEAN:
+			{
+				TransectStatus avgStatus = new TransectStatus(curStatus.mTransect, 0, 0, 0, 0);
+				
+				// sum up the values
+				for(int i=0;i<n;i++) {
+					TransectStatus obj = mTransectStatusHistory.get(i);
+					
+					avgStatus.mCrossTrackError += obj.mCrossTrackError;
+					avgStatus.mDistanceToEnd += obj.mDistanceToEnd;
+					avgStatus.mBearing += obj.mBearing;
+					avgStatus.mGroundSpeed += obj.mGroundSpeed;
+					avgStatus.mCurrGpsLat += obj.mCurrGpsLat;
+					avgStatus.mCurrGpsLon += obj.mCurrGpsLon;
+					avgStatus.mCurrGpsAlt += obj.mCurrGpsAlt;
+				}
+				
+				// calc the averages
+				avgStatus.mCrossTrackError /= n;
+				avgStatus.mDistanceToEnd /= n;
+				avgStatus.mBearing /= n;
+				avgStatus.mGroundSpeed /= n;
+				avgStatus.mCurrGpsLat /= n;
+				avgStatus.mCurrGpsLon /= n;
+				avgStatus.mCurrGpsAlt /= n;
+
+				// TESTING Log.d(LOG_CLASSNAME, "average gs " + avgStatus.mGroundSpeed + ", cur gs " + curStatus.mGroundSpeed + ", n " + n);
+
+				return avgStatus;
+			}
+			}
+		}
+		
+		// default
+		return curStatus;
+	}
+
+
+	public void onAltitudeUpdate(float xaltitudeInMeters) {
 		// rough validation
-		final float currAltitudeInMeters = altitudeInMeters;
+		final float curAverageAltitude = calcCurAverageAltitude(xaltitudeInMeters);
+		final float currAltitudeInMeters = curAverageAltitude;
 		final long timestamp = curDataTimestamp();
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -992,16 +1165,16 @@ public class FlightLogger extends USBAwareActivity
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	@Override
 	public void onRouteUpdate(TransectStatus status) {
-
-		// ground speed update
-		if (status != null) {
-			final float groundSpeed = status.mGroundSpeed;
-			final double crossTrackErrorMeters = status.mCrossTrackError;
+		TransectStatus avgStatus = calcCurAverageTransectStatus(status);
+		
+		if (avgStatus != null) {
+			final float groundSpeed = avgStatus.mGroundSpeed;
+			final double crossTrackErrorMeters = avgStatus.mCrossTrackError;
 			final long timestamp = curDataTimestamp();
-			final boolean crosstrackValid = status.isTransectValid();
+			final boolean crosstrackValid = avgStatus.isTransectValid();
 			runOnUiThread(new Runnable() {
 				public void run() {
 					// update the altitude data (and ui if something changed)

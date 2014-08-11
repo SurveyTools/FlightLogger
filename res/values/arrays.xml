@@ -51,6 +51,30 @@
 	    <item>distance_nautical_miles</item>
 	</string-array>
 	
-	<string-array name="empty_array"/>
+   	<string-array name="pref_data_averaging_method_names">
+	    <item>Median</item>
+		<item>Average (Arithmetic Mean)</item>
+	</string-array>
+
+	<string-array name="pref_data_averaging_method_values">
+	    <item>dam_median</item>
+	   <item>dam_mean</item>
+	</string-array>
+
+	<string-array name="pref_data_averaging_window_names">
+		 <item>3 samples</item>
+	    <item>5 samples</item>
+	    <item>7 samples</item>
+	    <item>9 samples</item>
+	 </string-array>
+
+	<string-array name="pref_data_averaging_window_values">
+	    <item>daw_3</item>
+	    <item>daw_5</item>
+	    <item>daw_7</item>
+	    <item>daw_9</item>
+	</string-array>
+	
+		<string-array name="empty_array"/>
 
 </resources>
