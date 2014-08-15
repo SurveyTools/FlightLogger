@@ -99,7 +99,7 @@
  	<string name="pref_show_debug_default_value">false</string>
  	<string name="pref_altitude_target_default_value">300</string>
  	<string name="pref_altitude_radius_default_value">100</string>
- 	<string name="pref_navigation_radius_default_value">200</string>
+ 	<string name="pref_navigation_radius_default_value">1000</string>
  	<string name="pref_use_custom_transect_parsing_method_default_value">false</string>
  	<string name="pref_transect_parsing_method_default_value">tpm_angles_15</string>
 
