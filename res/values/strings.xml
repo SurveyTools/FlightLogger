@@ -61,7 +61,7 @@
     <string name="nt_label_cur_transect">Current Transect:</string>
     <string name="nt_label_next_transect">Next Transect:</string>
     <string name="nt_stop_button_text">OK</string>
-    <string name="nt_next_button_text">USE NEXT TRANSECT</string>
+    <string name="nt_next_button_text">NEXT</string>
     
     <string name="settings_label_title">Settings</string>
     <string name="as_reset_button_text">Reset To Defaults</string>

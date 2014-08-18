@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx version="1.1" creator="GPS Utility 5.20 - http://www.gpsu.co.uk"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/CreationTimeExtensions/v1 http://www.garmin.com/xmlschemas/CreationTimeExtensionsv1.xsd"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1"
+  xmlns:gpxtrx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
+  xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:ctx="http://www.garmin.com/xmlschemas/CreationTimeExtension/v1">
+
+<wpt lat="-3.0818876" lon="36.8022497"><name>T1-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1443456" lon="36.9024612"><name>T7-E</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.0688069" lon="36.8988588"><name>T7-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.0688069" lon="36.8824844"><name>T6-E</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1433646" lon="36.8824844"><name>T6-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1430376" lon="36.8664374"><name>T5-E</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.0688069" lon="36.8641450"><name>T5-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.0691339" lon="36.8497355"><name>T4-E</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1463075" lon="36.8520279"><name>T4-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1456535" lon="36.8359810"><name>T3-E</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.0809065" lon="36.8349985"><name>T3-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.0809065" lon="36.8212440"><name>T2-E</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1302847" lon="36.8202615"><name>T2-S</name><sym>Waypoint</sym></wpt>
+<wpt lat="-3.1299577" lon="36.8022497"><name>T1-E</name><sym>Waypoint</sym></wpt>
+
+<rte><name>WKili01</name>
+<rtept lat="-3.0818876" lon="36.8022497"><name>T1-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1299577" lon="36.8022497"><name>T1-E</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1302847" lon="36.8202615"><name>T2-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.0809065" lon="36.8212440"><name>T2-E</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.0809065" lon="36.8349985"><name>T3-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1456535" lon="36.8359810"><name>T3-E</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1463075" lon="36.8520279"><name>T4-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.0691339" lon="36.8497355"><name>T4-E</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.0688069" lon="36.8641450"><name>T5-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1430376" lon="36.8664374"><name>T5-E</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1433646" lon="36.8824844"><name>T6-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.0688069" lon="36.8824844"><name>T6-E</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.0688069" lon="36.8988588"><name>T7-S</name><sym>Waypoint</sym></rtept>
+<rtept lat="-3.1443456" lon="36.9024612"><name>T7-E</name><sym>Waypoint</sym></rtept>
+</rte>
+
+</gpx>

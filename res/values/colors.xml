@@ -35,6 +35,7 @@
     <color name="nav_header_status_text_over_grey">#cc000000</color>
     <color name="nav_header_status_text_over_ignore">#ccaaaaaa</color>
     <color name="nav_header_file_message_text_color">#ffFC0017</color>
+    <color name="nav_footer_red">#ffcc0000</color>
     
     <color name="nav_footer_status_recording">#ff44dd44</color>
     <color name="nav_footer_status">#ff888888</color>

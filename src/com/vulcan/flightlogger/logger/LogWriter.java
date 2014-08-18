@@ -14,7 +14,7 @@ public class LogWriter {
 	
 	// what do we log for log entries 
 	public enum LogFields {
-		TIMESTAMP, LAT, LON, ALTITUDE, SPEED
+		TIMESTAMP, LAT, LON, ALTITUDE, SPEED, GPS_ALT
 	}
 
 	private static final NumberFormat ELEVATION_FORMAT = NumberFormat
@@ -28,7 +28,8 @@ public class LogWriter {
 		ISO_8601_DATE_TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
-	public String writeGenericCSVRecord(String... values) {
+	public String writeGenericCSVRecord(String... values) 
+	{
 		StringBuilder builder = new StringBuilder();
 		boolean isFirst = true;
 		for (String value : values) {
@@ -38,9 +39,11 @@ public class LogWriter {
 			isFirst = false;
 
 			builder.append('"');
-			if (value != null) {
+			if (value != null) 
+			{
 				builder.append(value.replaceAll("\"", "\"\""));
 			}
+			
 			builder.append('"');
 		}
 		// XXX for now, assuming Windows (CRLF) as terminator
@@ -48,18 +51,22 @@ public class LogWriter {
 		return builder.toString();
 	}
 	
-	public String writeCSVTrackRecord(Location currLoc, float laserAlt, float gpsAlt,  float airSpeed) {
+	public String writeCSVTrackTitle() 
+	{
+		final String[] titles = {"Title", "Timestamp", "Lat", "Lon", "Alt", "Airspeed", "GPS Alt"};
+		return writeGenericCSVRecord(titles);
+	}
+	
+	public String writeCSVTrackRecord(String transectName, Location currLoc, float laserAlt, float airSpeed, double gpsAlt) 
+	{
 		return writeGenericCSVRecord(
+				transectName,
 				ISO_8601_DATE_TIME_FORMAT.format(currLoc.getTime()),
 				String.valueOf(currLoc.getLatitude()),
 				String.valueOf(currLoc.getLongitude()),
 				ELEVATION_FORMAT.format(laserAlt),
-				ELEVATION_FORMAT.format(airSpeed));
-	}
-
-	private String formatGeoLocation(Location location) {
-		return "lat=\"" + String.valueOf(location.getLatitude()) + "\" lon=\""
-				+ String.valueOf(location.getLongitude()) + "\"";
+				ELEVATION_FORMAT.format(airSpeed),
+				ELEVATION_FORMAT.format(gpsAlt));
 	}
 
 }

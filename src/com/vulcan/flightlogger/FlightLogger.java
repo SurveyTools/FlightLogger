@@ -1,7 +1,6 @@
 package com.vulcan.flightlogger;
 
 import java.io.File;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -41,6 +40,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 public class FlightLogger extends USBAwareActivity 
@@ -243,6 +243,7 @@ public class FlightLogger extends USBAwareActivity
 		mStatusDisplayRight = (TextView) findViewById(R.id.nav_footer_status_right);
 
 		// backgrounds for status lights
+		// COLOR_UPDATE_WIP
 		mStatusButtonBackgroundRed = getResources().getDrawable(R.drawable.nav_status_red);
 		mStatusButtonBackgroundYellow = getResources().getDrawable(R.drawable.nav_status_yellow);
 		mStatusButtonBackgroundGreen = getResources().getDrawable(R.drawable.nav_status_green);
@@ -343,7 +344,20 @@ public class FlightLogger extends USBAwareActivity
 	}
 
 	private void setFooterColorforViewWithID(int groupID) {
+		// COLOR_UPDATE_WIP
 		setColorforViewWithID(groupID, R.color.nav_footer_bg);
+	}
+
+	private void setFooterBackgroundColor(int colorID) {
+		// COLOR_UPDATE_WIP
+		setColorforViewWithID(R.id.nav_footer, colorID);
+	}
+
+	private void setFooterBackgroundColor2(int colorRsrc) {
+		// COLOR_UPDATE_WIP
+		View v = findViewById(R.id.nav_footer);
+		if (v != null)
+			v.setBackgroundColor(colorRsrc);
 	}
 
 	protected void setupColors() {
@@ -567,7 +581,7 @@ public class FlightLogger extends USBAwareActivity
 			if (mLogger != null) {
 				if (on) {
 					// note: this also stops the currrent log
-					mLogger.startLog(mCurTransect);
+					mLogger.startTransectLog(mCurTransect);
 				} else {
 					mLogger.stopLog();
 				}
@@ -698,6 +712,11 @@ public class FlightLogger extends USBAwareActivity
 			case FlightDatum.FLIGHT_STATUS_RED:
 				buttonBG = mStatusButtonBackgroundRed;
 				textColor = mStatusButtonTextColorOnRed;
+				
+				// COLOR_UPDATE_WIP
+				// Force the lights to green
+				// TESTING buttonBG = mStatusButtonBackgroundGreen;
+				// TESTING textColor = mStatusButtonTextColorOnGreen;
 				break;
 
 			case FlightDatum.FLIGHT_STATUS_YELLOW:
@@ -728,7 +747,6 @@ public class FlightLogger extends USBAwareActivity
 	}
 
 	protected void updateRouteUI() {
-
 		if ((mFlightData == null) || !mFlightData.hasFile()) {
 			// RED - just show the message
 			mFileIconButton.setBackground(mFileIconBackgroundRed);
@@ -838,6 +856,52 @@ public class FlightLogger extends USBAwareActivity
 
 		// START/STOP button only reflects the logging state
 
+
+		if (isLogging()) {
+			// background
+	    	//COLOR_UPDATE_WIP
+			setFooterBackgroundColor2(getResources().getColor(R.color.nav_footer_bg));
+
+			// left status
+			mStatusDisplayLeft.setText(R.string.nav_msg_recording_text);
+			mStatusDisplayLeft.setTextColor(mStatusTextColorGreen);
+
+			// mode button
+			mStartStopButton.setText(isTransectReady() ? R.string.nav_action_stop_transect : R.string.nav_action_stop_logging);
+			// EVAL_RED_VS_BLACK mStartStopButton.setBackground(mModeButtonBorderGreen);
+			// EVAL_RED_VS_BLACK mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
+			mStartStopButton.setBackground(mModeButtonBorderRed);
+			mStartStopButton.setEnabled(true);
+
+			// right status
+			updateStatusRight(false);
+		} else {
+			// background
+	    	//COLOR_UPDATE_WIP
+			setFooterBackgroundColor2(getResources().getColor(R.color.nav_footer_red));
+
+			// left status
+			mStatusDisplayLeft.setText("Waiting to Start");
+			mStatusDisplayLeft.setTextColor(mStatusTextColorRed);
+			mStatusDisplayLeft.setTextColor(Color.WHITE);
+
+			// mode button
+			mStartStopButton.setText(isTransectReady() ? R.string.nav_action_start_transect : R.string.nav_action_start_logging);
+
+			mStartStopButton.setBackground(mModeButtonBorderGreen);
+			mStartStopButton.setTextColor(mModeButtonTextColorOnGreen);
+			mStartStopButton.setTextColor(Color.WHITE);
+			// EVAL_RED_VS_BLACK mStartStopButton.setBackground(mModeButtonBorderRed);
+			// EVAL_RED_VS_BLACK mStartStopButton.setTextColor(mModeButtonTextColorOnRed);
+			mStartStopButton.setEnabled(true);
+
+			// right status
+			updateStatusRight(true);
+			mStatusDisplayRight.setTextColor(Color.WHITE);
+
+		}
+
+	/*
 		if (isLogging()) {
 			// left status
 			mStatusDisplayLeft.setText(R.string.nav_msg_recording_text);
@@ -869,6 +933,7 @@ public class FlightLogger extends USBAwareActivity
 			// right status
 			updateStatusRight(true);
 		}
+		*/
 	}
 
 	protected void updateUI() {

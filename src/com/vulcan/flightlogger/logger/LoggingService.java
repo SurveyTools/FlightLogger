@@ -41,18 +41,20 @@ import android.util.Log;
 public class LoggingService extends Service implements AltitudeUpdateListener,
 		TransectUpdateListener, SensorEventListener {
 	private static final long LOGGING_FREQUENCY_SECS = 1;
-	private static final long LOGGING_BUFFER_SIZE = 10;
 	private final String mLoggingDirName = "flightlogs";
-	private final String mGlobalLogname = "flightlog";
+	private final String mGlobalLogname = "flightlog.csv";
+	private final String mTransectLogname = "transects.csv";
 	private LogWriter mLogFormatter;
 	private File mLogDir = null;
 	protected final String TAG = this.getClass().getSimpleName();
-	private File mCurrLogfileName;
+	private File mTransectLogfileName;
 	private File mGlobalFlightLog;
 	private LogEntry mCurrLogEntry;
 	private boolean mLogTransectData;
-	private boolean mLogFlightLogData;
-	
+	private boolean mLogFlightData;
+	private String mCurrTransectName;
+	//private Timer mLoggingTimer;
+
 	//sensor data
 	private SensorManager mSensorManager;
 	Sensor mAccelerometer;
@@ -117,8 +119,16 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			this.bindService(intent2, mNavigationConnection, 0);
 		}
 	}
+	
+	
 
 	private final IBinder mBinder = new LocalBinder();
+	
+	@Override
+    public void onCreate() {
+		Log.d(this.getClass().getName(), "logging service started");
+        // code to execute when the service is first created
+    }
 
 	@Override
 	// called when bound to an activity
@@ -132,21 +142,20 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 
-	public void startLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
+	public void startTransectLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
 		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
 	}
 
-	public void startLog(Transect transect) {
-		startLog(transect, DistanceUnit.METERS, VelocityUnit.NAUTICAL_MILES_PER_HOUR);
+	public void startTransectLog(Transect transect) {
+		startTransectLog(transect, DistanceUnit.METERS, VelocityUnit.NAUTICAL_MILES_PER_HOUR);
 	}
 	
-
 	public void stopLog() 
 	{
 		// clone the File object so we can run it in a separate thread
-		if (mCurrLogfileName != null)
+		if (mTransectLogfileName != null)
 		{
-			File currLog = new File(mCurrLogfileName.getAbsolutePath());
+			File currLog = new File(mTransectLogfileName.getAbsolutePath());
 			convertLogToGPXFormat(currLog);
 			closeCurrentLog();
 		}
@@ -183,30 +192,25 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public boolean isLogging() {
-		return mLogTransectData && (mCurrLogfileName != null);
+		return mLogTransectData && (mTransectLogfileName != null);
 	}
 
 	public void startLog(String transectName, float logFrequency) {
-		if (mLogTransectData == false)
-		{
-			stopLog();
-			mCurrLogEntry = new LogEntry();
-			mCurrLogfileName = createTransectCSVLogFile(transectName);
-			mLogTransectData = true;
-			logTransectData((long) logFrequency);
-		}
+		mLogTransectData = true;
+		this.mCurrTransectName = transectName;
 	}
 
 	public void closeCurrentLog() {
 		mLogTransectData = false;
+		this.mCurrTransectName = "";
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (mLogFormatter == null)
 			mLogFormatter = new LogWriter();
 		Log.d(TAG, "starting logging service");
-		createFlightLogDirectory();
 		bindServices();
+		logFlightData(LOGGING_FREQUENCY_SECS);
 		return START_STICKY;
 	}
 
@@ -215,42 +219,21 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		return super.stopService(intent);
 	}
 	
-//	// TODO - If needed, consider write into a buffer, and flush it every 20 entries or so.
-//	private void logGlobalData(long logFrequencySecs) {
-//		final long logFrequencyMillis = logFrequencySecs * 1000;
-//		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-//				Locale.US);
-//
-//		new Thread() {
-//			public void run() {
-//				while (mLogData) {
-//					try {
-//						LogEntry entry;
-//						synchronized (mCurrLogEntry) {
-//							// synchronized copy constructor to keep it atomic
-//							entry = new LogEntry(mCurrLogEntry);
-//						}
-//						String entryTime = df.format(new Date());
-//						writeLogEntries(entry, entryTime);
-//						Thread.sleep(logFrequencyMillis);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//		}.start();
-//	}
-	
 	// TODO - If needed, consider write into a buffer, and flush it every 20 entries or so.
-	private void logTransectData(long logFrequencySecs) {
+	private void logFlightData(long logFrequencySecs) {
 		final long logFrequencyMillis = logFrequencySecs * 1000;
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
 				Locale.US);
+		
+		mLogFlightData = true;			
+		mCurrLogEntry = new LogEntry();
+		
+		createGlobalFlightLog();
+		createTransectCSVLog();
 
 		new Thread() {
 			public void run() {
-				while (mLogTransectData) {
+				while (mLogFlightData) {
 					try {
 						LogEntry entry;
 						synchronized (mCurrLogEntry) {
@@ -263,6 +246,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						// mLogFightData = false;
 					}
 				}
 			}
@@ -276,11 +260,13 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 				Double.toString(entry.mLon), 
 				Float.toString(entry.mAlt),
 				Float.toString(entry.mSpeed));
-		writeLogEntry(this.mCurrLogfileName, csvEntry);
+		if (this.mLogTransectData == true)
+			writeLogEntry(this.mTransectLogfileName, csvEntry);
 		writeLogEntry(this.mGlobalFlightLog, csvEntry);
 	}
 	
-	private void writeLogEntry(File logName, String entry) {
+	private void writeLogEntry(File logName, String entry) 
+	{
 		try {
 		        FileOutputStream fos = new FileOutputStream(logName, true);
 		        PrintStream writer = new PrintStream(fos);
@@ -292,24 +278,19 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		    }
 	}
 	
-	private File createTransectCSVLogFile(String transectName) {
-		File logFile = null;
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
-		String osFriendlyName = (transectName == null) ? "no-transect" : transectName.replaceAll(" ", "_").toLowerCase(
-				Locale.US);
-		String logName = String.format("%s-%s.csv", sdf.format(cal.getTime()),osFriendlyName);
-		
-		logFile = createLogFile(logName);
-		
+	private File createTransectCSVLog() 
+	{
+		File logFile = createLogFile(this.mTransectLogname);	
 		return logFile;
 	}
 	
-	private File createGlobalFlightLogFile() {
+	private File createGlobalFlightLog() 
+	{
 		return createLogFile(mGlobalLogname);	
 	}
 
-	private File createLogFile(String logName) {
+	private File createLogFile(String logName) 
+	{
 		File logFile = null;
 		logName = FilenameUtils.normalize(logName);
 
@@ -347,6 +328,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			this.mCurrLogEntry.mLat =  status.mCurrGpsLat;
 			this.mCurrLogEntry.mLon = status.mCurrGpsLon;
 			this.mCurrLogEntry.mSpeed = status.mGroundSpeed;
+			this.mCurrLogEntry.mGpsAlt = status.mCurrGpsAlt;
 		}
 	}
 
@@ -382,11 +364,13 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			mGravityData = event.values;
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
 			mGeomagneticData = event.values;
-		if (mGravityData != null && mGeomagneticData != null) {
+		if (mGravityData != null && mGeomagneticData != null) 
+		{
 			float R[] = new float[9];
 			float I[] = new float[9];
 			boolean success = SensorManager.getRotationMatrix(R, I, mGravityData, mGeomagneticData);
-			if (success) {
+			if (success) 
+			{
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
 				float azimuth = orientation[0]; // orientation contains: azimut, pitch and roll
