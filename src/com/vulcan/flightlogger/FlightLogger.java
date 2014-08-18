@@ -621,7 +621,7 @@ public class FlightLogger extends USBAwareActivity
 			if (mLogger != null) {
 				if (on) {
 					// note: this also stops the currrent log
-					mLogger.startLog(mCurTransect);
+					mLogger.startTransectLog(mCurTransect);
 				} else {
 					mLogger.stopLog();
 				}

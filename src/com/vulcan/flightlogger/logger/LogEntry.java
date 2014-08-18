@@ -5,17 +5,24 @@ public class LogEntry {
 	double mLon; 
 	float mAlt;
 	float mSpeed;
+	double mGpsAlt;
 	
-	public LogEntry() {
-		
+	public LogEntry() 
+	{
+		this.mLat = 0;
+		this.mLon = 0;
+		this.mAlt = 0;
+		this.mSpeed = 0;
+		this.mGpsAlt = 0;
 	}
 
-	public LogEntry(double currLat, double currLon, float currAlt, float currSpeed)
+	public LogEntry(double currLat, double currLon, float currAlt, float currSpeed, float gpsAlt)
 	{
 		this.mLat = currLat;
 		this.mLon = currLon;
 		this.mAlt = currAlt;
 		this.mSpeed = currSpeed;
+		this.mGpsAlt = gpsAlt;
 	}
 	
 	// copy constructor to keep sampled data atomic
@@ -24,6 +31,7 @@ public class LogEntry {
 		this.mLon = cloned.mLon;
 		this.mAlt = cloned.mAlt;
 		this.mSpeed = cloned.mSpeed;
+		this.mGpsAlt = cloned.mGpsAlt;
 	  }
 
 }
