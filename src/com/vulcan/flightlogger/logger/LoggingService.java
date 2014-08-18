@@ -39,9 +39,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class LoggingService extends Service implements AltitudeUpdateListener,
-		TransectUpdateListener, SensorEventListener {
+		TransectUpdateListener {
 	private static final long LOGGING_FREQUENCY_SECS = 1;
-	private static final long LOGGING_BUFFER_SIZE = 10;
 	private final String mLoggingDirName = "flightlogs";
 	private final String mGlobalLogname = "flightlog";
 	private LogWriter mLogFormatter;
@@ -353,8 +352,10 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	@Override
 	public void onAltitudeUpdate(float altValueInMeters) {
 		// note: we get altitude updates when we're not logging
-		if (mCurrLogEntry != null)
-			this.mCurrLogEntry.mAlt = altValueInMeters;
+		if (mCurrLogEntry != null) {
+			if (!AltimeterService.valueIsOutOfRange(altValueInMeters))
+				this.mCurrLogEntry.mAlt = altValueInMeters;
+		}
 	}
 	
 	@Override

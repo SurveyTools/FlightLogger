@@ -38,6 +38,7 @@ public class TransectILSView extends View {
 
 	// render snapshot to check for diffs
 	private boolean mRenderedAtitudeDataIsValid;
+	private boolean mRenderedAtitudeDataIsOutOfRange;
 	private boolean mRenderedAtitudeDataIsOld;
 	private boolean mRenderedAtitudeDataIsExpired;
 	private float mRenderedAltitudeDeltaNormalized;
@@ -355,19 +356,22 @@ public class TransectILSView extends View {
 		// snapshot for alter diffs
 		if (mCurAltitude != null) {
 			mRenderedAtitudeDataIsValid = mCurAltitude.mDataIsValid;
+			mRenderedAtitudeDataIsOutOfRange = mCurAltitude.dataIsOutOfRange();
 			mRenderedAtitudeDataIsOld = mCurAltitude.dataIsOld();
 			mRenderedAtitudeDataIsExpired = mCurAltitude.dataIsExpired();
 			mRenderedAltitudeDeltaNormalized = mAltitudeDeltaNormalized;
 
 		} else {
 			mRenderedAtitudeDataIsValid = false;
+			mRenderedAtitudeDataIsOutOfRange = false;
 			mRenderedAtitudeDataIsOld = false;
 			mRenderedAtitudeDataIsExpired = false;
 			mRenderedAltitudeDeltaNormalized = 0;
 
 		}
 
-		if (debugAlwaysShowBars || ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired())) {
+		// OUT_OF_RANGE_METRICS note: dataIsOutOfRangeAndBeenThatWayForAwhile not useful, which means this isn't getting called with the update.
+		if (debugAlwaysShowBars || ((mCurAltitude != null) && mCurAltitude.mDataIsValid && !mCurAltitude.mIgnore && !mCurAltitude.dataIsExpired() && !mCurAltitude.dataIsOutOfRangeAndBeenThatWayForAwhile())) {
 
 			float altitudeDeltaNormalized = debugOverrideValues ? debugNormalizedValue : mAltitudeDeltaNormalized;
 			float pixelVDelta = pixelRadius * altitudeDeltaNormalized;
@@ -513,6 +517,7 @@ public class TransectILSView extends View {
 
 		if (mCurAltitude != null) {
 			somethingChanged |= mRenderedAtitudeDataIsValid != mCurAltitude.mDataIsValid;
+			somethingChanged |= mRenderedAtitudeDataIsOutOfRange != mCurAltitude.dataIsOutOfRange();
 			somethingChanged |= mRenderedAtitudeDataIsOld != mCurAltitude.dataIsOld();
 			somethingChanged |= mRenderedAtitudeDataIsExpired != mCurAltitude.dataIsExpired();
 			somethingChanged |= mRenderedAltitudeDeltaNormalized != mAltitudeDeltaNormalized;

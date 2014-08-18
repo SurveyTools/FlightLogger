@@ -24,6 +24,10 @@ public class AppSettings {
 	public DistanceUnit mPrefDistanceDisplayUnits;
 	public VelocityUnit mPrefSpeedDisplayUnits;
 	public DistanceUnit mPrefAltitudeDisplayUnits; // display
+
+	public boolean mDataAveragingEnabled;
+	public DataAveragingMethod mDataAveragingMethod;
+	public DataAveragingWindow mDataAveragingWindow;
 	
 	public static final DistanceUnit ALT_NAV_STORAGE_UNITS = DistanceUnit.FEET;
 
@@ -36,12 +40,15 @@ public class AppSettings {
 	public static final String PREF_USE_CUSTOM_PARSING_METHOD_KEY = "PREF_USE_CUSTOM_PARSING_METHOD_KEY";
 	public static final String PREF_TRANSECT_PARSING_METHOD_KEY = "PREF_TRANSECT_PARSING_METHOD_KEY";
 	
+	public static final String PREF_DATA_AVERAGING_ENABLED_KEY = "PREF_DATA_AVERAGING_ENABLED_KEY";
+	public static final String PREF_DATA_AVERAGING_METHOD_KEY = "PREF_DATA_AVERAGING_METHOD_KEY";
+	public static final String PREF_DATA_AVERAGING_WINDOW_KEY = "PREF_DATA_AVERAGING_WINDOW_KEY";
+	
 	// PREF_UNITS
 	public static final String PREF_DISPLAY_UNITS_DISTANCE_KEY = "PREF_DISPLAY_UNITS_DISTANCE_KEY";
 	public static final String PREF_DISPLAY_UNITS_SPEED_KEY = "PREF_DISPLAY_UNITS_SPEED_KEY";
 	public static final String PREF_DISPLAY_UNITS_ALTITUDE_KEY = "PREF_DISPLAY_UNITS_ALTITUDE_KEY";
 	public static final String PREF_ALT_NAV_UNITS_STORAGE_KEY = "PREF_ALT_NAV_UNITS_STORAGE_KEY";
-
 
 	public AppSettings(ContextWrapper contextWrapper) {
 		mContextWrapper = contextWrapper;
@@ -61,6 +68,9 @@ public class AppSettings {
 			mPrefDistanceDisplayUnits = srcData.mPrefDistanceDisplayUnits;
 			mPrefSpeedDisplayUnits = srcData.mPrefSpeedDisplayUnits;
 			mPrefAltitudeDisplayUnits = srcData.mPrefAltitudeDisplayUnits;
+			mDataAveragingEnabled = srcData.mDataAveragingEnabled;
+			mDataAveragingMethod = srcData.mDataAveragingMethod;
+			mDataAveragingWindow = srcData.mDataAveragingWindow;
 
 			mContextWrapper = srcData.mContextWrapper;
 		} else {
@@ -78,6 +88,9 @@ public class AppSettings {
 		Log.d(LOGGER_TAG, "mPrefDistanceDisplayUnits: " + mPrefDistanceDisplayUnits);
 		Log.d(LOGGER_TAG, "mPrefSpeedDisplayUnits: " + mPrefSpeedDisplayUnits);
 		Log.d(LOGGER_TAG, "mPrefAltitudeDisplayUnits: " + mPrefAltitudeDisplayUnits);
+		Log.d(LOGGER_TAG, "mDataAveragingEnabled: " + mDataAveragingEnabled);
+		Log.d(LOGGER_TAG, "mDataAveragingMethod: " + mDataAveragingMethod);
+		Log.d(LOGGER_TAG, "mDataAveragingWindow: " + mDataAveragingWindow);
 	}
 
 	public void refresh(Context context) {
@@ -97,6 +110,10 @@ public class AppSettings {
 		mPrefSpeedDisplayUnits = PreferenceUtils.getSharedPrefVelocityUnits(sharedPref, PREF_DISPLAY_UNITS_SPEED_KEY, ResourceUtils.getResourceVelocityUnits(context, R.string.pref_speed_units_default_value));
 		mPrefAltitudeDisplayUnits = PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_ALTITUDE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_altitude_units_default_value));
 
+		mDataAveragingEnabled = sharedPref.getBoolean(PREF_DATA_AVERAGING_ENABLED_KEY, ResourceUtils.getResourceBooleanFromString(context, R.string.pref_use_custom_transect_parsing_method_default_value));
+		mDataAveragingMethod = PreferenceUtils.getSharedPrefDataAveragingMethod(sharedPref, PREF_DATA_AVERAGING_METHOD_KEY, ResourceUtils.getResourceDataAveragingMethod(context, R.string.pref_data_averaging_method_default_value));
+		mDataAveragingWindow = PreferenceUtils.getSharedPrefDataAveragingWindow(sharedPref, PREF_DATA_AVERAGING_WINDOW_KEY, ResourceUtils.getResourceDataAveragingWindow(context, R.string.pref_data_averaging_window_default_value));
+
 		// TESTING debugDump();
 	}
 
@@ -114,6 +131,9 @@ public class AppSettings {
 		mPrefDistanceDisplayUnits = ResourceUtils.getResourceDistanceUnits(mContextWrapper, R.string.pref_distance_units_default_value);
 		mPrefSpeedDisplayUnits = ResourceUtils.getResourceVelocityUnits(mContextWrapper, R.string.pref_speed_units_default_value);
 		mPrefAltitudeDisplayUnits = ResourceUtils.getResourceDistanceUnits(mContextWrapper, R.string.pref_altitude_units_default_value);
+
+		mDataAveragingMethod = ResourceUtils.getResourceDataAveragingMethod(mContextWrapper, R.string.pref_data_averaging_method_default_value);
+		mDataAveragingWindow = ResourceUtils.getResourceDataAveragingWindow(mContextWrapper, R.string.pref_data_averaging_window_default_value);
 	}
 	
 	public static TransectParsingMethod getPrefTransectParsingMethod(Context context) {
@@ -137,6 +157,11 @@ public class AppSettings {
 		return PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_ALTITUDE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_altitude_units_default_value));
 	}
 	
+	public static boolean getPrefDataAveragingEnabled(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		return prefs.getBoolean(PREF_DATA_AVERAGING_ENABLED_KEY, ResourceUtils.getResourceBooleanFromString(context, R.string.pref_data_averaging_enabled_default_value));
+	}
+
 	public static boolean isPrefUseCustomTransectParsingKey(String key) {
 		return PREF_USE_CUSTOM_PARSING_METHOD_KEY.equalsIgnoreCase(key);
 	}
@@ -151,6 +176,10 @@ public class AppSettings {
 	
 	public static boolean isPrefDisplayUnitsAltitudeParsingKey(String key) {
 		return PREF_DISPLAY_UNITS_ALTITUDE_KEY.equalsIgnoreCase(key);
+	}
+	
+	public static boolean isPrefDataAveragingEnabledKey(String key) {
+		return PREF_DATA_AVERAGING_ENABLED_KEY.equalsIgnoreCase(key);
 	}
 	
 	public static boolean getPrefUseCustomTransectParsing(Context context) {
@@ -171,5 +200,23 @@ public class AppSettings {
 		
 		// return true if something changed
 		return oldMethod != newMethod;
+	}
+	
+	public static boolean resetDataAveragingDependencies(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		DataAveragingMethod oldDataAveragingMethod = PreferenceUtils.getSharedPrefDataAveragingMethod(prefs, PREF_DATA_AVERAGING_METHOD_KEY, ResourceUtils.getResourceDataAveragingMethod(context, R.string.pref_data_averaging_method_default_value));
+		DataAveragingWindow oldDataAveragingWindow = PreferenceUtils.getSharedPrefDataAveragingWindow(prefs, PREF_DATA_AVERAGING_WINDOW_KEY, ResourceUtils.getResourceDataAveragingWindow(context, R.string.pref_data_averaging_window_default_value));
+	
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(PREF_DATA_AVERAGING_METHOD_KEY, context.getResources().getString(R.string.pref_data_averaging_method_default_value));
+		editor.putString(PREF_DATA_AVERAGING_WINDOW_KEY, context.getResources().getString(R.string.pref_data_averaging_window_default_value));
+		editor.commit();
+
+		DataAveragingMethod newDataAveragingMethod = PreferenceUtils.getSharedPrefDataAveragingMethod(prefs, PREF_DATA_AVERAGING_METHOD_KEY, ResourceUtils.getResourceDataAveragingMethod(context, R.string.pref_data_averaging_method_default_value));
+		DataAveragingWindow newDataAveragingWindow = PreferenceUtils.getSharedPrefDataAveragingWindow(prefs, PREF_DATA_AVERAGING_WINDOW_KEY, ResourceUtils.getResourceDataAveragingWindow(context, R.string.pref_data_averaging_window_default_value));
+		
+		// return true if something changed
+		return (oldDataAveragingMethod != newDataAveragingMethod) || (oldDataAveragingWindow != newDataAveragingWindow);
 	}
 }

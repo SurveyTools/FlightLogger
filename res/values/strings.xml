@@ -61,7 +61,7 @@
     <string name="nt_label_cur_transect">Current Transect:</string>
     <string name="nt_label_next_transect">Next Transect:</string>
     <string name="nt_stop_button_text">OK</string>
-    <string name="nt_next_button_text">USE NEXT TRANSECT</string>
+    <string name="nt_next_button_text">NEXT</string>
     
     <string name="settings_label_title">Settings</string>
     <string name="as_reset_button_text">Reset To Defaults</string>
@@ -99,7 +99,7 @@
  	<string name="pref_show_debug_default_value">false</string>
  	<string name="pref_altitude_target_default_value">300</string>
  	<string name="pref_altitude_radius_default_value">100</string>
- 	<string name="pref_navigation_radius_default_value">200</string>
+ 	<string name="pref_navigation_radius_default_value">1000</string>
  	<string name="pref_use_custom_transect_parsing_method_default_value">false</string>
  	<string name="pref_transect_parsing_method_default_value">tpm_angles_15</string>
 
@@ -111,6 +111,12 @@
  	<string name="pref_speed_units_default_value">velocity_nautical_miles_per_hour</string>
  	<string name="pref_altitude_units_default_value">distance_feet</string>
  		 		
- 	
+ 	<string name="pref_data_averaging_enabled_title">Use Data Averaging On Main Screen</string>
+ 	<string name="pref_data_averaging_method_title">Data Averaging Method</string>
+ 	<string name="pref_data_averaging_window_title">Data Averaging Window</string>
+ 	<string name="pref_data_averaging_enabled_default_value">false</string>
+ 	<string name="pref_data_averaging_method_default_value">dam_median</string>
+ 	<string name="pref_data_averaging_window_default_value">daw_3</string>
+ 			
  					 		     
 </resources>

@@ -25,6 +25,7 @@ public class AltimeterService extends Service implements
 	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.FEET_PER_METER;
 	public final float MOCK_DELTA_ALT = 2/GPSUtils.FEET_PER_METER;
 	public final float MOCK_TARGET_ALT = 300/GPSUtils.FEET_PER_METER;
+	public static final float ALTIMETER_OUT_OF_RANGE_THRESHOLD = 99999f; // AgLaser uses 99999.99.  SEE ALTIMETER_PASSES_99999_FOR_OUT_OF_RANGE_DATA
 
 	// how many samples for an alt avg.
 	public static final String USE_MOCK_DATA = "useMockData";
@@ -144,21 +145,32 @@ public class AltimeterService extends Service implements
 		return mIsConnected;
 	}
 
+	public static boolean valueIsOutOfRange(float v) {
+		return v >= ALTIMETER_OUT_OF_RANGE_THRESHOLD;
+	}
+	
 	private boolean validateDataPayload(byte[] data) {
 		// verify that the carriage return is the terminating character
+		int ll = data.length;
 		boolean isValid = ((int) data[data.length - 1] == 13)
 				&& (data.length == 10);
 		if (isValid) {
 			byte[] stripMeters = Arrays.copyOfRange(data, 0, data.length - 2);
 			float meters = Float.parseFloat(new String(stripMeters));
 			
-			// validate
-			if (meters > 99999) {
-				// out of range data (99999.99)
-				isValid = false;
-			} else {
-				mCurrentAltitudeInMeters = meters;
-			}
+			// ALTIMETER_PASSES_99999_FOR_OUT_OF_RANGE_DATA
+			// We used to capture this condition and not save
+			// (or notify) the bad data.  We needed to show
+			// that data was still coming in however, so we've
+			// moved the validation checks to the recipients.
+			// See valueIsOutOfRange()
+
+			mCurrentAltitudeInMeters = meters;
+}
+		else {
+			// note: the serial adapter buffers 256 bytes.  
+			// if it gets backed up you end up here (with a 258 byte buffer typically)
+			// TESTING Log.e("Altimeter Service", "invalid data: len " + data.length + ", value = " + (data.length > 0 ? data[0] : "--"));
 		}
 
 		return isValid;

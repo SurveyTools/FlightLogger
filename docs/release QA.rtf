@@ -1,0 +1,143 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red255\green39\blue18;}
+\margl1440\margr1440\vieww15960\viewh22700\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 Check the following:\
+\
+
+\b DEVICE\
+
+\b0 * Screen: top level settings (swipe down from upper right corner)\
+	Brightness  
+\b 100%
+\b0 \
+	AIRPLANE MODE 
+\b OFF
+\b0 \
+	BLUETOOTH 
+\b OFF
+\b0 \
+	device name: VULCAN EWB\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 * Android version:  Settings/SYSTEM/About tablet\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 	 Android version 4.4.2\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 * Sleep time:  
+\b Settings/Device/Display/Sleep
+\b0 \
+	30 seconds\
+\
+* Unknown sources: 
+\b Settings/Security/DEVICE ADMINISTRATION/Unknown Sources
+\b0 \
+	
+\b [CHECKED]\
+
+\b0 \
+* Dev options:  
+\b Settings/Developer Options/
+\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 	Stay Awake 
+\b [CHECKED]
+\b0 \
+	USB debugging 
+\b [CHECKED]
+\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 * Disable system update notifications: \
+	Find app Disable Service\
+		System Apps (upper right-ish)\
+			Google Services Framework
+\b \
+
+\b0 				SystemUpdateService [
+\b UN
+\b0 -CHECKED]\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+
+\b HOME SCREEN APPS\
+
+\b0 \
+* FlightLogger (version xxx)\
+	
+\i\b Settings TBD\
+
+\i0\b0 \
+* Link to the releases page\
+	
+\b verify
+\b0 \
+\
+
+\i * nothing else on the home screen\
+\
+
+\i0 \
+OTHER APPS\
+* PowerEventManager\
+	Fixed Installation mode 
+\b [UN-
+\b0 CHECKED
+\b ]
+\b0 \
+	FastCharge in Host Mode  
+\b [CHECKED]\
+
+\b0 	Firm Sleep  
+\b [UN-
+\b0 CHECKED
+\b ]
+\b0 \
+
+\b 	Confirm when plugged in with laser attached\
+
+\b0 		USB Host mode: 
+\b Active\
+		
+\b0 External Power
+\b : Available\
+		
+\b0 Charging tablet
+\b : (some kind of yes)\
+		
+\b0 Charging slaves
+\b : No\cf2  (IMPORTANT!!!!)\
+
+\b0 \cf0 	\
+* Superuser\
+	verify that PowerEventManager is under the ALLOW column on left\
+\
+* Verify power slaves setting\
+	1. launch Android Terminal Emulator\
+	2. cd /sys/kernel/usbhost/\
+	3. more usbhost_power_slaves\
+	verify that this is zero "0"\
+\
+* Verify userinit.sh\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 	1. launch Android Terminal Emulator\
+	2. su (become super user)\
+	3. cat /data/local/userinit.sh\
+	verify something like "echo 0 > /sys/kernel/usbhost/usbhost_power_slaves" (instead of blank or not found or whatever)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+\
+HOWARD NOTES\
+* download latest version\
+* verify date and time (Settings/SYSTEM/
+\b Date & Time
+\b0 .  
+\b Automatic
+\b0  setting will only work if your'e on a WiFi network)}

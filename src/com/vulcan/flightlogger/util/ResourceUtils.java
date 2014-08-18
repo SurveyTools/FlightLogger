@@ -98,4 +98,30 @@ public class ResourceUtils {
 		
 		return value;
 	}
+
+	public static GPSUtils.DataAveragingMethod getResourceDataAveragingMethod(Context context, int rsrcID) {
+		GPSUtils.DataAveragingMethod value = GPSUtils.DataAveragingMethod.MEDIAN; // APP_SETTINGS_WIP
+
+		try {
+			value = GPSUtils.getDataAveragingMethodForKey(context.getResources().getString(rsrcID));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error loading dam rsrc \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		
+		return value;
+	}
+		
+	public static GPSUtils.DataAveragingWindow getResourceDataAveragingWindow(Context context, int rsrcID) {
+		GPSUtils.DataAveragingWindow value = GPSUtils.DataAveragingWindow.N_3_SAMPLES; // APP_SETTINGS_WIP
+
+		try {
+			value = GPSUtils.getDataAveragingWindowForKey(context.getResources().getString(rsrcID));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error loading daw  rsrc \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		
+		return value;
+	}
 }
