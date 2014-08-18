@@ -60,7 +60,30 @@
         android:entries="@array/pref_transect_parsing_method_default_names"
         android:entryValues="@array/pref_transect_parsing_method_default_values"
         android:defaultValue="@string/pref_transect_parsing_method_default_value" />
+  	   
+  	   <CheckBoxPreference
+        android:key="PREF_DATA_AVERAGING_ENABLED_KEY"
+        android:title="@string/pref_data_averaging_enabled_title"
+        android:defaultValue="@string/pref_data_averaging_enabled_default_value" />
     
+   	   <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:dependency="PREF_DATA_AVERAGING_ENABLED_KEY"
+        android:key="PREF_DATA_AVERAGING_METHOD_KEY"
+        android:title="@string/pref_data_averaging_method_title"
+        android:dialogTitle="@string/pref_data_averaging_method_title"
+        android:entries="@array/pref_data_averaging_method_names"
+        android:entryValues="@array/pref_data_averaging_method_values"
+        android:defaultValue="@string/pref_data_averaging_method_default_value" />
+    
+  	   <com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:dependency="PREF_DATA_AVERAGING_ENABLED_KEY"
+        android:key="PREF_DATA_AVERAGING_WINDOW_KEY"
+        android:title="@string/pref_data_averaging_window_title"
+        android:dialogTitle="@string/pref_data_averaging_window_title"
+        android:entries="@array/pref_data_averaging_window_names"
+        android:entryValues="@array/pref_data_averaging_window_values"
+        android:defaultValue="@string/pref_data_averaging_window_default_value" />
+  	   	   
      <SwitchPreference
         android:key="PREF_SHOW_DEBUG_KEY"
         android:title="@string/pref_show_debug_title"

@@ -67,6 +67,29 @@ public class PreferenceUtils {
 		}
 		return value;
 	}
+
+	public static DataAveragingMethod getSharedPrefDataAveragingMethod(SharedPreferences sharedPref, String key, DataAveragingMethod defaultValue) {
+		DataAveragingMethod value = defaultValue;
+		try {
+			value = GPSUtils.getDataAveragingMethodForKey(sharedPref.getString(key, ""));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error parsing dam pref for \"" + key + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		return value;
+	}
+	
+	public static DataAveragingWindow getSharedPrefDataAveragingWindow(SharedPreferences sharedPref, String key, DataAveragingWindow defaultValue) {
+		DataAveragingWindow value = defaultValue;
+		try {
+			value = GPSUtils.getDataAveragingWindowForKey(sharedPref.getString(key, ""));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error parsing daw pref for \"" + key + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		return value;
+	}
+	
 	
 	public static boolean setSharedPrefDistanceUnits(SharedPreferences sharedPrefs, String key, DistanceUnit units) {
 		boolean worked = false;

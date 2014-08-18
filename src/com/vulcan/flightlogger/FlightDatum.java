@@ -12,8 +12,8 @@ public class FlightDatum {
 	public static final short FLIGHT_STATUS_IGNORE = 4;
 
 	// todo - probably want this to be different for different data types
-	static final long DATA_IS_EXPIRED_THRESHOLD_MILLIS = 8000;
-	static final long DATA_IS_OLD_THRESHOLD_MILLIS = 4000;
+	public static final long DATA_IS_EXPIRED_THRESHOLD_MILLIS = 8000;
+	public static final long DATA_IS_OLD_THRESHOLD_MILLIS = 4000;
 
 	public boolean mIgnore;
 	public boolean mDemoMode;

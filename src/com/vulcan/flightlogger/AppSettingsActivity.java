@@ -204,7 +204,14 @@ public class AppSettingsActivity extends FragmentActivity implements OnSharedPre
 		// APP_SETTINGS_WIP - we get notified or each key
 		// TESTING Log.d(TAG, "onSharedPreferenceChanged: " + key);
 		mDataChanged = true;
-		if (AppSettings.isPrefUseCustomTransectParsingKey(key)) {
+		if (AppSettings.isPrefDataAveragingEnabledKey(key)) {
+			if (AppSettings.getPrefDataAveragingEnabled(this) == false) {
+				if (AppSettings.resetDataAveragingDependencies(this)) {
+					// changed to false!
+					reloadSettingsList();
+				}
+			}
+		} else if (AppSettings.isPrefUseCustomTransectParsingKey(key)) {
 			if (AppSettings.getPrefUseCustomTransectParsing(this) == false) {
 				if (AppSettings.resetCustomTransectParsingMethodToDefault(this)) {
 					// changed to false!

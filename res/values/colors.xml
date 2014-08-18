@@ -20,6 +20,7 @@
     <color name="nav_ips_guides_error">#ffff0000</color>
     
     <color name="nav_altitude_value">#ffffffff</color>
+    <color name="nav_altitude_yellow">#ffffff00</color>
     <color name="nav_altitude_label">#ffcccccc</color>
     <color name="nav_altitude_units">#ff888888</color>
     
@@ -73,8 +74,6 @@
     <color name="as_transect_list_item_state_active_color">#ffaaaaaa</color>
 
     <!--  transect graph -->
- 	<color name="xtransect_graph_normal">#bbffffff</color>
- 	<color name="xtransect_graph_active">#ff0B66FF</color>
  	<color name="transect_graph_normal">#99BEC19C</color>
  	<color name="transect_graph_active">#ffDDDDDD</color>
  	<color name="transect_graph_next">#ff00DE00</color>
@@ -89,6 +88,5 @@
     <color name="nav_footer_mode_text_over_red">#ffcccccc</color>
     <color name="nav_footer_mode_text_over_grey">#ff555555</color>
     <color name="nav_footer_mode_text_over_green">#ffcccccc</color>
-
     
 </resources>
