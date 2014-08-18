@@ -233,7 +233,7 @@
 
                     <!-- MEC_TODO problem - texts wraps and disappears! -->
 
-                    <com.vulcan.flightlogger.util.SquishyTextView
+                    <TextView
                         android:id="@+id/nav_altitude_value"
                         android:layout_width="0dp"
                         android:layout_height="220dp"
@@ -242,10 +242,10 @@
                         android:layout_weight="1"
                         android:background="@color/debug3"
                         android:bufferType="spannable"
-                        android:gravity="right"
+                        android:gravity="right|center_vertical"
                         android:includeFontPadding="false"
-                        android:lines="1"
-                        android:text="313"
+                        android:lines="2"
+                        android:text="RNG"
                         android:textAllCaps="true"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/nav_altitude_value"

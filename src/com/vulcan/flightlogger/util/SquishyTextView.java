@@ -65,6 +65,7 @@ public class SquishyTextView extends TextView {
 	 * Re size the font so the specified text fits in the text box assuming the text box is the specified width.
 	 */
 	private void refitText(String text, int textWidth, int textHeight) {
+		
 		if (textWidth <= 0)
 			return;
 
@@ -135,6 +136,7 @@ public class SquishyTextView extends TextView {
 	@Override
 	protected void onTextChanged(final CharSequence text, final int start, final int before, final int after) {
 		// TESTING Log.d("onTextChanged", "blah");
+		// OUT_OF_RANGE_METRICS note:, this doesn't actually work
 		refitText(text.toString(), this.getWidth(), this.getHeight());
 	}
 

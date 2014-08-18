@@ -33,6 +33,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.content.res.ColorStateList;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -57,6 +58,7 @@ public class FlightLogger extends USBAwareActivity
 	static final int CHOOSE_NEXT_TRANSECT = 10012;
 	static final int CHANGE_APP_SETTINGS = 10013;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
+	static final int SHOW_OUT_OF_RANGE_AFTER_MILLIS = 12000;
 	static final boolean DEMO_MODE = false;
 	public static final int UPDATE_IMAGE = 666;
 	public static final String LOG_CLASSNAME = "FlightLogger";
@@ -93,6 +95,9 @@ public class FlightLogger extends USBAwareActivity
 	private Drawable mModeButtonBorderGrey;
 	private Drawable mModeButtonBorderGreen;
 
+	private int mAltitudeTextWhite;
+	private int mAltitudeTextYellow;
+
 	private int mModeButtonTextColorOnRed;
 	private int mModeButtonTextColorOnGrey;
 	private int mModeButtonTextColorOnGreen;
@@ -120,6 +125,8 @@ public class FlightLogger extends USBAwareActivity
 	protected AppSettings mAppSettings;
 	protected CourseInfoIntent mFlightData;
 	protected AltitudeDatum mAltitudeData;
+	protected long mLastGoodAltitudeTimestamp;
+	protected float mLastGoodAltitudeDatum;
 	protected GPSDatum mGPSData;
 	protected BatteryDatum mBatteryData;
 	protected BoxDatum mBoxData;
@@ -240,6 +247,8 @@ public class FlightLogger extends USBAwareActivity
 		mGPSData = new GPSDatum(false, demoMode);
 		mBatteryData = new BatteryDatum(false, demoMode);
 		mBoxData = new BoxDatum(false, demoMode);
+		mLastGoodAltitudeTimestamp = 0;
+		mLastGoodAltitudeDatum = 0;
 
 		mFileIconButton = (Button) findViewById(R.id.nav_header_file_button);
 		mFileAndRouteDisplay = (TextView) findViewById(R.id.nav_header_route_text);
@@ -287,7 +296,7 @@ public class FlightLogger extends USBAwareActivity
 		tv.setLayoutParams(lp);
 		layout.addView(tv);
 
-		setupSquishyFontView(R.id.nav_altitude_value, 190, 20);
+		// ALTITUDE_NON_SQUISHY_TEXT_VIEW setupSquishyFontView(R.id.nav_altitude_value, 190, 20);
 		setupSquishyFontView(R.id.nav_speed_value, 130, 20);
 
 		resetData();
@@ -432,6 +441,10 @@ public class FlightLogger extends USBAwareActivity
 		mModeButtonTextColorOnRed = getResources().getColor(R.color.nav_footer_mode_text_over_red);
 		mModeButtonTextColorOnGrey = getResources().getColor(R.color.nav_footer_mode_text_over_grey);
 		mModeButtonTextColorOnGreen = getResources().getColor(R.color.nav_footer_mode_text_over_green);
+		
+		// altitude button
+		mAltitudeTextWhite = getResources().getColor(R.color.nav_altitude_value);
+		mAltitudeTextYellow = getResources().getColor(R.color.nav_altitude_yellow);
 	}
 	
 	protected void updateUnitsUI() {
@@ -519,6 +532,8 @@ public class FlightLogger extends USBAwareActivity
 		mGPSData.reset();
 		mBatteryData.reset();
 		mBoxData.reset();
+		mLastGoodAltitudeTimestamp = 0;
+		mLastGoodAltitudeDatum = 0;
 		resetAverages();
 		// note: might want to update the ui (last param) depending on use
 	}
@@ -810,8 +825,31 @@ public class FlightLogger extends USBAwareActivity
 	}
 
 	protected void updateAltitudeUI() {
+		
 		updateStatusButton(mStatusButtonALT, mAltitudeData);
 		mAltitudeValueDisplay.setText(mAltitudeData.getAltitudeDisplayText());
+		
+		// ALTITUDE_NON_SQUISHY_TEXT_VIEW
+		// SquishyTextView doesn't work fully so we'll do
+		// it manually here
+		if (mAltitudeData.showOutOfRangeText()) {
+			mAltitudeValueDisplay.setTextSize(160);
+			mAltitudeValueDisplay.setTextColor(mAltitudeTextYellow);
+		}
+		else if (mAltitudeData.showWarningTextColor()) {
+			// OUT_OF_RANGE_METRICS
+			mAltitudeValueDisplay.setTextSize(190);
+			mAltitudeValueDisplay.setTextColor(mAltitudeTextYellow);
+			// ALT mAltitudeValueDisplay.setText("OUT OF RANGE");
+			// ALT mAltitudeValueDisplay.setTextSize(60);
+			// ALT mAltitudeValueDisplay.setLines(2);
+			
+		} else {
+			mAltitudeValueDisplay.setTextSize(190);
+			mAltitudeValueDisplay.setTextColor(mAltitudeTextWhite);
+			// ALT mAltitudeValueDisplay.setLines(1);
+			// TESTING mAltitudeValueDisplay.setText("666");
+		}
 	}
 
 	protected void updateGPSUI() {
@@ -1121,16 +1159,26 @@ public class FlightLogger extends USBAwareActivity
 		return curStatus;
 	}
 
-
-	public void onAltitudeUpdate(float xaltitudeInMeters) {
+	public void onAltitudeUpdate(float rawAltitudeInMeters) {
 		// rough validation
-		final float curAverageAltitude = calcCurAverageAltitude(xaltitudeInMeters);
-		final float currAltitudeInMeters = curAverageAltitude;
 		final long timestamp = curDataTimestamp();
+		final boolean outOfRange = AltimeterService.valueIsOutOfRange(rawAltitudeInMeters);
+		final boolean showOutOfRange = outOfRange && (mLastGoodAltitudeTimestamp != 0)  && ((timestamp - mLastGoodAltitudeTimestamp) > SHOW_OUT_OF_RANGE_AFTER_MILLIS);
+		final float curAverageAltitude = outOfRange ? mLastGoodAltitudeDatum : calcCurAverageAltitude(rawAltitudeInMeters); // don't average invalid data
+		final float currAltitudeInMeters = curAverageAltitude;
+
+		if (!outOfRange) {
+			mLastGoodAltitudeDatum = currAltitudeInMeters;
+			mLastGoodAltitudeTimestamp = timestamp;
+		}
+			
 		runOnUiThread(new Runnable() {
 			public void run() {
 				// update the altitude data (and ui if something changed)
-				if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, timestamp)) {
+				// note that there's another timer running, so updates 
+				// will happen even if we don't push them here.
+				
+				if (mAltitudeData.setRawAltitudeInMeters(currAltitudeInMeters, true, outOfRange, timestamp, mLastGoodAltitudeDatum, mLastGoodAltitudeTimestamp)) {
 					updateAltitudeUI();
 					updateNavigationUI();
 				}
