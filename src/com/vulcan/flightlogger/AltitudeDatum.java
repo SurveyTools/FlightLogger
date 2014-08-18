@@ -123,7 +123,6 @@ public class AltitudeDatum extends FlightDatum {
 		return GPSUtils.convertMetersToDistanceUnits(mRawAltitudeInMeters, units);
 	}
 
-	// superdevo 
 	public boolean setRawAltitudeInMeters(float rawAltitudeInMeters, boolean validData, boolean outOfRange, long timestamp, float lastGoodAltitudeDatum, long lastGoodAltitudeTimestamp) {
 
 		// snapshot cur data

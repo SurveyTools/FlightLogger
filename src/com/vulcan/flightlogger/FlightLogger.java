@@ -145,7 +145,9 @@ public class FlightLogger extends USBAwareActivity
 	protected Transect mCurTransect;
 
 	private Handler mUpdateUIHandler;
-	private NumberFormat mDistanceStatusFormatter;
+	private NumberFormat mDistanceStatusFormatterDot2;
+	private NumberFormat mDistanceStatusFormatterDot1;
+	private NumberFormat mDistanceStatusFormatterDot0;
 
 	/**
 	 * Defines callbacks for local service binding, ie bindService() For local binds, this is where we will attach assign instance references, and add and remove listeners, since we have inprocess access to the class interface
@@ -291,7 +293,9 @@ public class FlightLogger extends USBAwareActivity
 		mFileIconBackgroundGreen = getResources().getDrawable(R.drawable.fileicon_green);
 
 		// formatters
-		mDistanceStatusFormatter = new DecimalFormat("#0.00");
+		mDistanceStatusFormatterDot2 = new DecimalFormat("#0.00");
+		mDistanceStatusFormatterDot1 = new DecimalFormat("#0.0");
+		mDistanceStatusFormatterDot0 = new DecimalFormat("#0");
 
 		tv.setLayoutParams(lp);
 		layout.addView(tv);
@@ -892,7 +896,31 @@ public class FlightLogger extends USBAwareActivity
 				
 				// PREF_UNITS
 				if (metersToNext != NavigationService.METERS_NOT_AVAILABLE) {
-					distanceString = mDistanceStatusFormatter.format(GPSUtils.convertMetersToDistanceUnits(metersToNext, mStatusBarDistanceUnits));
+
+					// metersToNext = 3000000.12538491; // 1864
+					// metersToNext = 30000.12538491; // 18.6
+					// TESTING metersToNext = 3000.12538491; // 18.6
+					// TESTING metersToNext = 1619.344; // 1.0 miles
+					// TESTING metersToNext = 1699.344; // 1.1 miles
+					// TESTING metersToNext = 9656.064; // 6 miles
+					// TESTING metersToNext = 1519.344; // 0.94 miles
+					// TESTING metersToNext = 15.344; // 0.94 miles
+					
+					double distance = GPSUtils.convertMetersToDistanceUnits(metersToNext, mStatusBarDistanceUnits);
+					
+					// figure out the decimals for any given unit
+					// FEET, METERS, KILOMETERS, MILES, NAUTICAL_MILES
+					if (distance >= 5) {
+						// 5 and up: no decimals
+						distanceString = mDistanceStatusFormatterDot0.format(distance);
+					} else if (distance >= 1) {
+						// 1-4: 1 decimal
+						distanceString = mDistanceStatusFormatterDot1.format(distance);
+					} else {
+						// 0-1: 2 decimals
+						distanceString = mDistanceStatusFormatterDot2.format(distance);
+					}
+
 					unitsString = mStatusBarDistanceUnitsDisplayString;
 				}
 
