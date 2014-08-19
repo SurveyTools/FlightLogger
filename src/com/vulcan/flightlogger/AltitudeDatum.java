@@ -76,6 +76,8 @@ public class AltitudeDatum extends FlightDatum {
 			return FLIGHT_STATUS_GREEN; // DEMO_MODE
 		else if (mIgnore)
 			return FLIGHT_STATUS_IGNORE;
+		else if (!mDataIsValid)
+			return FLIGHT_STATUS_RED;
 		else if (dataIsExpired())
 			return FLIGHT_STATUS_RED;// ALT_RED_ONLY_WHEN_DISCONNECTED (expired)
 		else if (dataIsOld())
