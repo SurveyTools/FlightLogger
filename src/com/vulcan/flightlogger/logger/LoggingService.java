@@ -14,8 +14,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
-import com.vulcan.flightlogger.geo.GPSUtils.VelocityUnit;
-import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.data.Transect;
