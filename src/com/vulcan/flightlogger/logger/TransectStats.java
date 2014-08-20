@@ -13,6 +13,7 @@ public class TransectStats {
 
 	public String mTransectName;
 
+	@SuppressWarnings("unused")
 	private TransectStats()
 	{
 		// force the object to have a name
@@ -21,15 +22,16 @@ public class TransectStats {
 	public TransectStats(String name)
 	{
 		mTransectName = name;
+		mTransectStats = new ArrayList<TransectStat>();
 	}
 	
-	public void addTransectStat(TransectStat stat)
+	public void addTransectStat(LogEntry entry)
 	{
+		TransectStat stat = new TransectStat(entry);
 		mTransectStats.add(stat);
-		
 	}
 	
-	public TransectStatSummary getTransectSummary()
+	public TransectSummary getTransectSummary()
 	{
 		double laserAlt = 0.0f;
 		double gpsAlt = 0.0f;
@@ -50,13 +52,9 @@ public class TransectStats {
 			speed = speed/size;
 		}
 		
-		TransectStatSummary summary = new TransectStatSummary(mTransectName, (float)speed, (float)gpsAlt, (float)laserAlt);
+		TransectSummary summary = new TransectSummary(mTransectName, (float)speed, (float)gpsAlt, (float)laserAlt);
 
 		return summary;
 	}
-	
-	
 
-
-	
 }

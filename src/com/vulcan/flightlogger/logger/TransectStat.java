@@ -5,11 +5,14 @@ public class TransectStat {
 	public float mAirspeed;
 	public float mLaserAlt;
 	public float mGpsAlt;
-	public float mLat;	
-	public float mLon;	
 	
-	public String toCSVRecord()
+	@SuppressWarnings("unused")
+	private TransectStat() { }
+	
+	public TransectStat(LogEntry entry)
 	{
-		return "";
+		mAirspeed = entry.mSpeed;
+		mLaserAlt = entry.mAlt;
+		mGpsAlt = (float)entry.mGpsAlt;
 	}
 }

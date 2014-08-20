@@ -76,7 +76,7 @@ public class LogWriter {
 	
 	public String writeCSVTrackTitle() 
 	{
-		final String[] titles = {"Transect", "Timestamp", "Lat", "Lon", "Alt (m)",  "GPS Alt (m)", "Airspeed (m/s)"};
+		final String[] titles = {"Transect", "Timestamp", "Lat", "Lon", "Laser Alt (m)",  "GPS Alt (m)", "Speed (m/s)"};
 		return writeGenericCSVRecord(titles);
 	}
 

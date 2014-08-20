@@ -1,18 +1,18 @@
 package com.vulcan.flightlogger.logger;
 // value class for stats
-public class TransectStatSummary 
+public class TransectSummary 
 {
 	public String mTransectName;
 	public float mAvgSpeed;
 	public float mAvgGpsAlt;
 	public double mAvgLaserAlt;	
 	
-	private TransectStatSummary()
+	private TransectSummary()
 	{
 		
 	}
 	
-	public TransectStatSummary(String name, float avgSpeed, float avgGpsAltitude, float avgLaserAlt)
+	public TransectSummary(String name, float avgSpeed, float avgGpsAltitude, float avgLaserAlt)
 	{
 		mTransectName = name;
 		mAvgSpeed = avgSpeed;

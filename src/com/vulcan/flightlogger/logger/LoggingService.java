@@ -48,6 +48,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	private boolean mLogTransectData;
 	private boolean mLogFlightData;
 	private String mCurrTransectName;
+	private TransectStats mCurrStats;
 
 	//sensor data
 	private SensorManager mSensorManager;
@@ -114,8 +115,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 	
-	
-
 	private final IBinder mBinder = new LocalBinder();
 	
 	@Override
@@ -136,24 +135,28 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 
-//	public void startTransectLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
-//		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
-//	}
-
 	public void startTransectLog(Transect transect) {
 		String transectName = (transect == null) ? "no-transect-specified" : transect.calcBaseFilename();
 		mLogTransectData = true;
-		this.mCurrTransectName = transectName;
+		mCurrTransectName = transectName;
+		mCurrStats = new TransectStats(mCurrTransectName);
+		
 	}
 	
-	public void stopTransectLog() 
+	public TransectSummary stopTransectLog() 
 	{
-		// clone the File object so we can run it in a separate thread
+		TransectSummary summary = null;
+				
 		if (mTransectLogfile != null)
 		{
 			mLogTransectData = false;
 			this.mCurrTransectName = "";
+			if (mCurrStats != null)
+			{
+				summary = mCurrStats.getTransectSummary();
+			}
 		}
+		return summary;
 	}
 	
     public void registerListener(LoggingStatusListener listener) {
@@ -189,11 +192,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public boolean isLogging() {
 		return mLogTransectData && (mTransectLogfile != null);
 	}
-
-//	public void startLog(String transectName, float logFrequency) {
-//		mLogTransectData = true;
-//		this.mCurrTransectName = transectName;
-//	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (mLogFormatter == null)
@@ -253,6 +251,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		writeLogEntry(this.mGlobalFlightLog, flightlogEntry);
 		if (this.mLogTransectData == true)
 		{
+			mCurrStats.addTransectStat(entry);
 			String transectEntry = mLogFormatter.writeGenericCSVRecord(
 					mCurrTransectName,
 					timestamp,

@@ -19,7 +19,7 @@ import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
 import com.vulcan.flightlogger.logger.LoggingStatusListener;
-import com.vulcan.flightlogger.logger.TransectStatSummary;
+import com.vulcan.flightlogger.logger.TransectSummary;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.util.SystemUtils;
 import com.vulcan.flightlogger.FlightDatum;
@@ -1330,7 +1330,7 @@ public class FlightLogger extends USBAwareActivity
 	}
 
 	@Override
-	public void onTransectLogSummary(TransectStatSummary summary) {
+	public void onTransectLogSummary(TransectSummary summary) {
 		// TODO Auto-generated method stub
 		
 	}
