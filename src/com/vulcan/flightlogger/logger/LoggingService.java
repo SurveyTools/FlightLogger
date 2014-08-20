@@ -2,13 +2,11 @@ package com.vulcan.flightlogger.logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,7 +14,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
-import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.GPSUtils.VelocityUnit;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.NavigationService;
@@ -39,21 +36,20 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class LoggingService extends Service implements AltitudeUpdateListener,
-		TransectUpdateListener {
+		TransectUpdateListener, SensorEventListener {
 	private static final long LOGGING_FREQUENCY_SECS = 1;
 	private final String mLoggingDirName = "flightlogs";
 	private final String mGlobalLogname = "flightlog.csv";
-	private final String mTransectLogname = "transects.csv";
+	private final String mTransectLogname = "transectlog.csv";
 	private LogWriter mLogFormatter;
 	private File mLogDir = null;
 	protected final String TAG = this.getClass().getSimpleName();
-	private File mTransectLogfileName;
+	private File mTransectLogfile;
 	private File mGlobalFlightLog;
 	private LogEntry mCurrLogEntry;
 	private boolean mLogTransectData;
 	private boolean mLogFlightData;
 	private String mCurrTransectName;
-	//private Timer mLoggingTimer;
 
 	//sensor data
 	private SensorManager mSensorManager;
@@ -77,12 +73,12 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			mNavigationService.registerListener(LoggingService.this);
 			
 			// Register the sensor listeners here, as we always need GPS service
-		    mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-		    mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		    mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		    // mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		    // mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		    // mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		    
-		    mSensorManager.registerListener(LoggingService.this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-		    mSensorManager.registerListener(LoggingService.this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+		   // mSensorManager.registerListener(LoggingService.this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+		   // mSensorManager.registerListener(LoggingService.this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
 		 
 		}
 
@@ -142,22 +138,23 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		}
 	}
 
-	public void startTransectLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
-		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
-	}
+//	public void startTransectLog(Transect transect, DistanceUnit dUnit, VelocityUnit airUnit) {
+//		startLog((transect == null) ? null : transect.calcBaseFilename(), LOGGING_FREQUENCY_SECS);
+//	}
 
 	public void startTransectLog(Transect transect) {
-		startTransectLog(transect, DistanceUnit.METERS, VelocityUnit.NAUTICAL_MILES_PER_HOUR);
+		String transectName = (transect == null) ? "no-transect-specified" : transect.calcBaseFilename();
+		mLogTransectData = true;
+		this.mCurrTransectName = transectName;
 	}
 	
-	public void stopLog() 
+	public void stopTransectLog() 
 	{
 		// clone the File object so we can run it in a separate thread
-		if (mTransectLogfileName != null)
+		if (mTransectLogfile != null)
 		{
-			File currLog = new File(mTransectLogfileName.getAbsolutePath());
-			convertLogToGPXFormat(currLog);
-			closeCurrentLog();
+			mLogTransectData = false;
+			this.mCurrTransectName = "";
 		}
 	}
 	
@@ -192,18 +189,13 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public boolean isLogging() {
-		return mLogTransectData && (mTransectLogfileName != null);
+		return mLogTransectData && (mTransectLogfile != null);
 	}
 
-	public void startLog(String transectName, float logFrequency) {
-		mLogTransectData = true;
-		this.mCurrTransectName = transectName;
-	}
-
-	public void closeCurrentLog() {
-		mLogTransectData = false;
-		this.mCurrTransectName = "";
-	}
+//	public void startLog(String transectName, float logFrequency) {
+//		mLogTransectData = true;
+//		this.mCurrTransectName = transectName;
+//	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (mLogFormatter == null)
@@ -215,7 +207,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public boolean stopService(Intent intent) {
-		closeCurrentLog();
 		return super.stopService(intent);
 	}
 	
@@ -228,8 +219,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		mLogFlightData = true;			
 		mCurrLogEntry = new LogEntry();
 		
-		createGlobalFlightLog();
-		createTransectCSVLog();
+		createFlightLog();
+		createTransectLog();
 
 		new Thread() {
 			public void run() {
@@ -254,15 +245,26 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 	
 	private void writeLogEntries(LogEntry entry, String timestamp) {
-		String csvEntry = mLogFormatter.writeGenericCSVRecord(
+		String flightlogEntry = mLogFormatter.writeGenericCSVRecord(
 				timestamp,
 				Double.toString(entry.mLat),
 				Double.toString(entry.mLon), 
-				Float.toString(entry.mAlt),
+				Float.toString(entry.mAlt),					
+				Double.toString(entry.mGpsAlt),
 				Float.toString(entry.mSpeed));
+		writeLogEntry(this.mGlobalFlightLog, flightlogEntry);
 		if (this.mLogTransectData == true)
-			writeLogEntry(this.mTransectLogfileName, csvEntry);
-		writeLogEntry(this.mGlobalFlightLog, csvEntry);
+		{
+			String transectEntry = mLogFormatter.writeGenericCSVRecord(
+					mCurrTransectName,
+					timestamp,
+					Double.toString(entry.mLat),
+					Double.toString(entry.mLon), 
+					Float.toString(entry.mAlt),
+					Double.toString(entry.mGpsAlt),
+					Float.toString(entry.mSpeed));
+			writeLogEntry(this.mTransectLogfile, transectEntry);
+		}
 	}
 	
 	private void writeLogEntry(File logName, String entry) 
@@ -278,15 +280,22 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		    }
 	}
 	
-	private File createTransectCSVLog() 
+	private void createTransectLog() 
 	{
-		File logFile = createLogFile(this.mTransectLogname);	
-		return logFile;
+		// hack to prevent titles from being written multiple times - 
+		// we have a couple of points in the lifecycle where startLog 
+		// can be re-called
+		if (mTransectLogfile == null || mTransectLogfile.canWrite() == false)
+		{
+			mTransectLogfile = createLogFile(mTransectLogname);	
+			String title = mLogFormatter.writeCSVTrackTitle();
+			writeLogEntry(mTransectLogfile, title);
+		}
 	}
 	
-	private File createGlobalFlightLog() 
+	private void createFlightLog() 
 	{
-		return createLogFile(mGlobalLogname);	
+		mGlobalFlightLog = createLogFile(mGlobalLogname);	
 	}
 
 	private File createLogFile(String logName) 
