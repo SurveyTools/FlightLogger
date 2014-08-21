@@ -21,6 +21,7 @@ import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
 import com.vulcan.flightlogger.logger.LoggingStatusListener;
+import com.vulcan.flightlogger.logger.TransectSummary;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.util.SystemUtils;
 import com.vulcan.flightlogger.FlightDatum;
@@ -620,16 +621,18 @@ public class FlightLogger extends USBAwareActivity
 		this.startActivityForResult(intent, CHOOSE_NEXT_TRANSECT);
 	}
 
-	protected void setLogging(boolean on) {
+	protected TransectSummary setLogging(boolean on) {
+		TransectSummary summary = null;
+		
 		try {
 			if (mLogger != null) {
 				if (on) {
 					// note: this also stops the currrent log
-					mLogger.startLog(mCurTransect);
+					mLogger.startTransectLog(mCurTransect);
 				} else {
 					// TRANSECT_SUMMARY_POI 4, execute the stop logging here
 					// TODO_TRANSECT_SUMMARY_STUFF, if mCurTransect is not null, expect a summary
-					mLogger.stopLog();
+					summary = mLogger.stopTransectLog();
 				}
 			}
 		} catch (Exception e) {
@@ -637,9 +640,12 @@ public class FlightLogger extends USBAwareActivity
 		}
 
 		updateUI();
+		
+		return summary;
 	}
 
-	protected void setFlightData(CourseInfoIntent data) {
+	protected TransectSummary setFlightData(CourseInfoIntent data) {
+		TransectSummary summary = null;
 		mFlightData = data;
 		mCurTransect = Transect.newTransect(data, mAppSettings.mPrefTransectParsingMethod);
 
@@ -654,10 +660,12 @@ public class FlightLogger extends USBAwareActivity
 			}
 
 			// TRANSECT_SUMMARY_POI 4, key the stop
-			setLogging(false);
+			summary = setLogging(false);
 
 			updateRouteUI();
 		}
+		
+		return summary;
 	}
 
 	// FRAGMENTS_BAD_IN_ACTIVITY_RESULTS
@@ -665,11 +673,11 @@ public class FlightLogger extends USBAwareActivity
 	// which happens to THIS fragment (before its state is fully set up)
 	// since we are pushing another fragment.
 
-	protected void doTransectSummaryDialog() {
+	protected void doTransectSummaryDialog(TransectSummary summary) {
 		
 		// TRANSECT_SUMMARY_POI 6, ready to show
-		//
-		TransectSummaryAlert.showSummary(this);
+		if (summary != null)
+			TransectSummaryAlert.showSummary(this, summary);
 	}
 	
 	/**
@@ -686,6 +694,8 @@ public class FlightLogger extends USBAwareActivity
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		TransectSummary summary = null;
+
 		// Check which request we're responding to
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
@@ -693,7 +703,10 @@ public class FlightLogger extends USBAwareActivity
 				CourseInfoIntent fData = data.getParcelableExtra(CourseSettingsActivity.FS_COURSE_DATA_KEY);
 				if (fData != null) {
 					// TRANSECT_SUMMARY_POI note, doesn't stop
-					setFlightData(fData);
+					summary = setFlightData(fData);
+					
+					// superdevo, implicit stop?
+					doTransectSummaryDialog(summary);
 				}
 				break;
 			case CHOOSE_NEXT_TRANSECT:
@@ -702,14 +715,15 @@ public class FlightLogger extends USBAwareActivity
 				if (ntData != null) {
 					// "NEXT" aka "USE NEXT TRANSECT"
 					// TRANSECT_SUMMARY_POI 3a, setFlightData calls setLogging(false)
-					setFlightData(ntData);
+					summary = setFlightData(ntData);
 				} else {
 					// "OK" aka "BREAK"
 					// NO_TRANSDATA_MEANS_DONT_CHANGE
 					// TRANSECT_SUMMARY_POI 3b - still want the summary though
 					// TODO_TRANSECT_SUMMARY_STUFF bug, "OK" doesn't stop logging as of 0.5.5
+					summary = setLogging(false);
 				}
-				doTransectSummaryDialog();
+				doTransectSummaryDialog(summary);
 				break;
 			case LOAD_CSV_LOGFILE:
 				String filePath = data.getStringExtra(FileBrowser.FILE_NAME_STRING_KEY);
@@ -1330,10 +1344,12 @@ public class FlightLogger extends USBAwareActivity
 					            public void onClick(DialogInterface dialog, int which) {
 		
 					                // CONFIRMED
-									setLogging(false);
+									TransectSummary summary = setLogging(false);
 
 				                    dialog.cancel();
 					    			updateUI();
+					    			
+					    			doTransectSummaryDialog(summary);
 					            }
 					        })
 					    .setNegativeButton(R.string.fs_confirm_stop_logging_cancel, null)
@@ -1362,6 +1378,12 @@ public class FlightLogger extends USBAwareActivity
 	@Override
 	public void onLoggingErrorMessage(String errorMessage) {
 		this.showConfirmDialog("LoggerError", errorMessage);	
+	}
+
+	@Override
+	public void onTransectLogSummary(TransectSummary summary) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

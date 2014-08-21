@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import com.vulcan.flightlogger.SummaryRowItem;
 import com.vulcan.flightlogger.SummaryArrayAdapter;
+import com.vulcan.flightlogger.logger.TransectSummary;
 
 // FRAGMENTS_BAD_IN_ACTIVITY_RESULTS
 // Note: this was not done as a Fragment due to the state
@@ -20,7 +21,7 @@ import com.vulcan.flightlogger.SummaryArrayAdapter;
 
 public class TransectSummaryAlert {
 	
-	public static void showSummary(Context context) {
+	public static void showSummary(Context context, TransectSummary summary) {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_LIGHT);
 
