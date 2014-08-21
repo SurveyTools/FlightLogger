@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -36,10 +37,10 @@ import android.util.Log;
 public class LoggingService extends Service implements AltitudeUpdateListener,
 		TransectUpdateListener, SensorEventListener {
 	private static final long LOGGING_FREQUENCY_SECS = 1;
-	private final String mLoggingDirName = "flightlogs";
+	private final String mLoggingBaseDirName = "flightlog";
 	private final String mGlobalLogname = "flightlog.csv";
 	private final String mTransectLogname = "transectlog.csv";
-	private LogWriter mLogFormatter;
+	private LogFormatter mLogFormatter;
 	private File mLogDir = null;
 	protected final String TAG = this.getClass().getSimpleName();
 	private File mTransectLogfile;
@@ -195,7 +196,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (mLogFormatter == null)
-			mLogFormatter = new LogWriter();
+			mLogFormatter = new LogFormatter();
 		Log.d(TAG, "starting logging service");
 		bindServices();
 		logFlightData(LOGGING_FREQUENCY_SECS);
@@ -319,11 +320,14 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	private boolean createFlightLogDirectory() {
-		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + mLoggingDirName;
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
+		String logName = String.format("%s-%s", mLoggingBaseDirName, sdf.format(cal.getTime()));
+		
+		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + logName;
 		File flightLogDir = new File(dirPath);
 		flightLogDir.mkdirs();
 		mLogDir = flightLogDir;
-		// hack to make directory visible
 		return flightLogDir.exists();
 	}
 

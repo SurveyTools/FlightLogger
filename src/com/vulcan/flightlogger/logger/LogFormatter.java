@@ -10,7 +10,7 @@ import android.location.Location;
 // OK, OK, in OO this would typically by a 'Visitor' object. We may visit that
 // approach if we need multiple formats, but for now, let's keep it simple-ish...
 
-public class LogWriter {
+public class LogFormatter {
 	
 	// what do we log for log entries 
 	public enum LogFields {
