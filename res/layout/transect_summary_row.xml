@@ -11,25 +11,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:text="Average Speed"
+        android:layout_weight="0"
+        android:text="Avg Spd"
          android:layout_marginLeft="24dp"
+         android:layout_marginRight="0dp"
         android:textColor="@color/transect_summary_item_label_color"
-        android:textSize="32sp" >
+        android:textSize="28sp" >
 
     </TextView>
 
+    <!--  SUMMARY_HEADER_LAYOUT -->
     <TextView
         android:id="@+id/transect_summary_item_value_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginRight="24dp"
         android:layout_weight="1"
-        android:gravity="right"
+        android:gravity="left"
         android:text="30 kph"
         android:textColor="@color/transect_summary_item_value_color"
-        android:textSize="36sp" />
+        android:textSize="32sp" />
 
 </LinearLayout> 

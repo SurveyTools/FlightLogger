@@ -63,6 +63,8 @@
     <color name="fs_transect_list_item_text_color">#ffDDDDDD</color>
     <color name="fs_transect_list_item_state_active_color">#ffaaaaaa</color>
 
+    <color name="transect_summary_item_header_bg_color">#ff0000ff</color>
+    <color name="transect_summary_item_header_txt_color">#ffeeeeee</color>
     <color name="transect_summary_item_label_color">#ff777777</color>
     <color name="transect_summary_item_value_color">#ff000000</color>
     

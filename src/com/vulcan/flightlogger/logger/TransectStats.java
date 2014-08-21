@@ -1,6 +1,7 @@
 package com.vulcan.flightlogger.logger;
 
 import java.util.ArrayList;
+import com.vulcan.flightlogger.geo.data.Transect;
 
 public class TransectStats { 
 	
@@ -12,6 +13,7 @@ public class TransectStats {
 	}
 
 	public String mTransectName;
+	public Transect mTransect;
 
 	@SuppressWarnings("unused")
 	private TransectStats()
@@ -19,9 +21,10 @@ public class TransectStats {
 		// force the object to have a name
 	}
 	
-	public TransectStats(String name)
+	public TransectStats(String name, Transect transect)
 	{
 		mTransectName = name;
+		mTransect = transect;
 		mTransectStats = new ArrayList<TransectStat>();
 	}
 	
@@ -52,7 +55,7 @@ public class TransectStats {
 			speed = speed/size;
 		}
 		
-		TransectSummary summary = new TransectSummary(mTransectName, (float)speed, (float)gpsAlt, (float)laserAlt);
+		TransectSummary summary = new TransectSummary(mTransect, mTransectName, (float)speed, (float)gpsAlt, (float)laserAlt);
 
 		return summary;
 	}

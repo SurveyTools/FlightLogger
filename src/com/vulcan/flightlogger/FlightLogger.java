@@ -676,8 +676,12 @@ public class FlightLogger extends USBAwareActivity
 	protected void doTransectSummaryDialog(TransectSummary summary) {
 		
 		// TRANSECT_SUMMARY_POI 6, ready to show
-		if (summary != null)
+		if (summary != null) {
+			
+			// quick validity check to keep this from coming up when
+			// you're jumping around in the ui
 			TransectSummaryAlert.showSummary(this, summary);
+		}
 	}
 	
 	/**
@@ -706,7 +710,8 @@ public class FlightLogger extends USBAwareActivity
 					summary = setFlightData(fData);
 					
 					// superdevo, implicit stop?
-					doTransectSummaryDialog(summary);
+					// TODO-EVAL, auto-stop and show summary?
+					// doTransectSummaryDialog(summary);
 				}
 				break;
 			case CHOOSE_NEXT_TRANSECT:

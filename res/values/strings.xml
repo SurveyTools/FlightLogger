@@ -83,8 +83,11 @@
      <string name="modal_cancel">Cancel</string>
      
      <string name="transectsummary_title">Transect Summary</string>
+     <string name="transectsummary_notransct_title">Summary</string>
+     <string name="transectsummary_name_label"></string>
      <string name="transectsummary_average_speed_label">Average Speed:</string>
-     <string name="transectsummary_average_altitude_label">Average Height:</string>
+     <string name="transectsummary_average_altitude_label">Average Altitude:</string>
+     <string name="transectsummary_total_distance_label">Distance:</string>
      <string name="transectsummary_total_duration_label">Duration:</string>
      
      <!-- ref: http://myhandbook.info/codes_htmlchr.html  -->

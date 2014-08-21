@@ -51,6 +51,11 @@ public class SummaryArrayAdapter extends ArrayAdapter<SummaryRowItem> {
         holder.txtLabel.setText(summary.mLabelText);
         holder.txtValue.setText(summary.mDetailsText);
         
+        // SUMMARY_HEADER_LAYOUT
+        // special formatting for the header item
+        holder.txtValue.setTextSize(summary.mIsHeader ? 26 : 32);
+        // alt holder.txtValue.setTextAlignment(...);
+        
         return row;
     }
     
@@ -58,5 +63,6 @@ public class SummaryArrayAdapter extends ArrayAdapter<SummaryRowItem> {
     {
         TextView txtLabel;
         TextView txtValue;
+        boolean isHeader;
     }
 }

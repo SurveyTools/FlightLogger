@@ -6,11 +6,13 @@ package com.vulcan.flightlogger;
 public class SummaryRowItem {
 	public String mLabelText;
 	public String mDetailsText;
+	public boolean mIsHeader;
 
-	public SummaryRowItem(String label, String details) {
+	public SummaryRowItem(String label, String details, boolean isHeader) {
 		super();
 		mLabelText = label;
 		mDetailsText = details;
+		mIsHeader = isHeader;
 	}
 
 	// copy constructor
@@ -19,6 +21,7 @@ public class SummaryRowItem {
 		if (srcData != null) {
 			mLabelText = srcData.mLabelText;
 			mDetailsText = srcData.mDetailsText;
+			mIsHeader = srcData.mIsHeader;
 		}
 	}
 

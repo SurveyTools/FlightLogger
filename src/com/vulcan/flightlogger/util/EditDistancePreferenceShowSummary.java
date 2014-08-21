@@ -52,9 +52,9 @@ public class EditDistancePreferenceShowSummary extends EditTextPreferenceShowSum
 		switch (units) {
 			case FEET: return "feet";
 			case METERS:return "meters";
-			case KILOMETERS:return "meters";
-			case MILES:return "meters";
-			case NAUTICAL_MILES:return "meters";
+			case KILOMETERS:return "kilometers";
+			case MILES:return "miles";
+			case NAUTICAL_MILES:return "nautical miles";
 		}
 		
 		Log.e(TAG, "unrecognized unit (" + units + ")");

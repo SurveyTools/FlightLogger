@@ -140,7 +140,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		String transectName = (transect == null) ? "no-transect-specified" : transect.calcBaseFilename();
 		mLogTransectData = true;
 		mCurrTransectName = transectName;
-		mCurrStats = new TransectStats(mCurrTransectName);
+		mCurrStats = new TransectStats(mCurrTransectName, transect);
 		
 	}
 	
