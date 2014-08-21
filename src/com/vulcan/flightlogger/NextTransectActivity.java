@@ -244,12 +244,14 @@ public class NextTransectActivity extends FragmentActivity implements OnClickLis
 
 	private void finishWithOk() {
 		// NO_TRANSDATA_MEANS_DONT_CHANGE
+		// TRANSECT_SUMMARY_POI 2a
 		this.setResult(RESULT_OK, getIntent());
 		finish();
 	}
 
 	private void finishWithUseNextTransect() {
 		Intent intent = getIntent();
+		// TRANSECT_SUMMARY_POI 2b
 		intent.putExtra(NT_CUR_TRANSECT_DATA_KEY, mNextTransectData);
 		this.setResult(RESULT_OK, intent);
 		finish();

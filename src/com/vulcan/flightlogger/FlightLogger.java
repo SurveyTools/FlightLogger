@@ -4,12 +4,14 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
 import com.vulcan.flightlogger.geo.GPSDebugActivity;
 import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
+import com.vulcan.flightlogger.geo.TransectChooserDialog;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
 import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingMethod;
@@ -22,6 +24,7 @@ import com.vulcan.flightlogger.logger.LoggingStatusListener;
 import com.vulcan.flightlogger.util.SquishyTextView;
 import com.vulcan.flightlogger.util.SystemUtils;
 import com.vulcan.flightlogger.FlightDatum;
+import com.vulcan.flightlogger.TransectSummaryAlert;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -42,6 +45,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Button;
@@ -623,6 +627,8 @@ public class FlightLogger extends USBAwareActivity
 					// note: this also stops the currrent log
 					mLogger.startLog(mCurTransect);
 				} else {
+					// TRANSECT_SUMMARY_POI 4, execute the stop logging here
+					// TODO_TRANSECT_SUMMARY_STUFF, if mCurTransect is not null, expect a summary
 					mLogger.stopLog();
 				}
 			}
@@ -647,14 +653,36 @@ public class FlightLogger extends USBAwareActivity
 				showError(e.getLocalizedMessage());
 			}
 
+			// TRANSECT_SUMMARY_POI 4, key the stop
 			setLogging(false);
 
 			updateRouteUI();
 		}
 	}
 
+	// FRAGMENTS_BAD_IN_ACTIVITY_RESULTS
+	// avoid committing transactions in asynchronous callback methods, 
+	// which happens to THIS fragment (before its state is fully set up)
+	// since we are pushing another fragment.
+
+	protected void doTransectSummaryDialog() {
+		
+		// TRANSECT_SUMMARY_POI 6, ready to show
+		//
+		TransectSummaryAlert.showSummary(this);
+	}
+	
 	/**
 	 * Callbacks from activities that return results
+	 * 
+	 * FRAGMENTS_BAD_IN_ACTIVITY_RESULTS
+	 * 
+	 * WARNING - you can't launch another fragment-based window from here
+	 * (since it affects our state and we're not up and running such
+	 * that we can save again).
+	 * 
+	 * you can: throw up alerts (non-fragment based)
+	 * you can: startActivityForResult (by testing - havne't checked docs)
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -664,16 +692,24 @@ public class FlightLogger extends USBAwareActivity
 			case LOAD_FLIGHT_PATH:
 				CourseInfoIntent fData = data.getParcelableExtra(CourseSettingsActivity.FS_COURSE_DATA_KEY);
 				if (fData != null) {
+					// TRANSECT_SUMMARY_POI note, doesn't stop
 					setFlightData(fData);
 				}
 				break;
 			case CHOOSE_NEXT_TRANSECT:
+				// TRANSECT_SUMMARY_POI 3a
 				CourseInfoIntent ntData = data.getParcelableExtra(NextTransectActivity.NT_CUR_TRANSECT_DATA_KEY);
 				if (ntData != null) {
+					// "NEXT" aka "USE NEXT TRANSECT"
+					// TRANSECT_SUMMARY_POI 3a, setFlightData calls setLogging(false)
 					setFlightData(ntData);
 				} else {
+					// "OK" aka "BREAK"
 					// NO_TRANSDATA_MEANS_DONT_CHANGE
+					// TRANSECT_SUMMARY_POI 3b - still want the summary though
+					// TODO_TRANSECT_SUMMARY_STUFF bug, "OK" doesn't stop logging as of 0.5.5
 				}
+				doTransectSummaryDialog();
 				break;
 			case LOAD_CSV_LOGFILE:
 				String filePath = data.getStringExtra(FileBrowser.FILE_NAME_STRING_KEY);
@@ -1274,13 +1310,13 @@ public class FlightLogger extends USBAwareActivity
 	}
 
 	public void onToggleStartStop(View v) {
-	
 		if (mLogger != null) {
 			if (mLogger.isLogging()) {
 				// STOP LOGGING... 
 				
 				if (isTransectReady()) {
-					// CONFIRM / NEXT
+					// stopping the transect -- put up the Cancel/Next/OK dialog
+					// TRANSECT_SUMMARY_POI 1
 					doAdvanceTransectActivity();
 				} else {
 					// CONFIRM STOP
@@ -1305,7 +1341,7 @@ public class FlightLogger extends USBAwareActivity
 						}
 
 			} else {
-				// START LOGGING
+				// not currently logging -- START LOGGING
 				setLogging(true);
 			}
 		}

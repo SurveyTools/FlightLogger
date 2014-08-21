@@ -60,7 +60,7 @@
     <string name="nt_label_title">Stopping Transect...</string>
     <string name="nt_label_cur_transect">Current Transect:</string>
     <string name="nt_label_next_transect">Next Transect:</string>
-    <string name="nt_stop_button_text">OK</string>
+    <string name="nt_stop_button_text">BREAK</string>
     <string name="nt_next_button_text">NEXT</string>
     
     <string name="settings_label_title">Settings</string>
@@ -81,6 +81,11 @@
       <string name="fs_confirm_stop_logging_cancel">Cancel</string>
      <string name="modal_ok">OK</string>
      <string name="modal_cancel">Cancel</string>
+     
+     <string name="transectsummary_title">Transect Summary</string>
+     <string name="transectsummary_average_speed_label">Average Speed:</string>
+     <string name="transectsummary_average_altitude_label">Average Height:</string>
+     <string name="transectsummary_total_duration_label">Duration:</string>
      
      <!-- ref: http://myhandbook.info/codes_htmlchr.html  -->
  	<string name="pref_show_debug_title">Show Debugging Info</string>
