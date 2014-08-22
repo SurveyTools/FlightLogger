@@ -16,6 +16,7 @@
     <string name="crosstrack_label">Cross Track</string>
     <string name="distance_label">Distance</string>
     <string name="action_show_about_menu_item">About</string>
+    <string name="action_reset_logfile_menu_item">Reset Logs</string>
     <string name="action_show_settings_menu_item">Settings</string>
     <string name="action_show_serial_console">Serial Debug Console</string>
     <string name="action_load_gpx">Load GPX File</string>

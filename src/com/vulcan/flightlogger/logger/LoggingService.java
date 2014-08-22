@@ -144,7 +144,30 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		
 	}
 	
+	public void stopLogging()
+	{
+		stopTransectLog(false);
+		stopFlightLog();	
+	}
+	
+	public void resetLogging()
+	{
+		stopLogging();
+		logFlightData(LOGGING_FREQUENCY_SECS);
+	}
+	
+	public void stopFlightLog() 
+	{
+		mLogFlightData = false;
+		mLogDir = null;	
+	}
+	
 	public TransectSummary stopTransectLog() 
+	{
+		return stopTransectLog(true);
+	}
+	
+	public TransectSummary stopTransectLog(boolean doSummary) 
 	{
 		TransectSummary summary = null;
 				
@@ -152,7 +175,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		{
 			mLogTransectData = false;
 			this.mCurrTransectName = "";
-			if (mCurrStats != null)
+			if (doSummary && mCurrStats != null)
 			{
 				summary = mCurrStats.getTransectSummary();
 			}
@@ -286,14 +309,16 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		if (mTransectLogfile == null || mTransectLogfile.canWrite() == false)
 		{
 			mTransectLogfile = createLogFile(mTransectLogname);	
-			String title = mLogFormatter.writeCSVTrackTitle();
+			String title = mLogFormatter.writeTransectColumnTitles();
 			writeLogEntry(mTransectLogfile, title);
 		}
 	}
 	
 	private void createFlightLog() 
 	{
-		mGlobalFlightLog = createLogFile(mGlobalLogname);	
+		mGlobalFlightLog = createLogFile(mGlobalLogname);
+		String title = mLogFormatter.writeFlightLogColumnTitles();
+		writeLogEntry(mGlobalFlightLog, title);
 	}
 
 	private File createLogFile(String logName) 

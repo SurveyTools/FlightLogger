@@ -603,11 +603,21 @@ public class FlightLogger extends USBAwareActivity
 			intent = new Intent(this, GPSDebugActivity.class);
 			startActivity(intent);
 			break;
+		case R.id.action_reset_logfile:
+			resetLogfiles();
+			break;
 		case R.id.action_convert_cvs_logfile:
 			intent = new Intent(this, FileBrowser.class);
 			startActivityForResult(intent, LOAD_CSV_LOGFILE);
 		}
 		return true;
+	}
+	
+	private void resetLogfiles() {
+		if(mLogger != null)
+		{
+			mLogger.resetLogging();
+		}	
 	}
 
 	protected void showError(String message) {
