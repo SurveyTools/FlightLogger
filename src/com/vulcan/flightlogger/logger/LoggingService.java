@@ -307,16 +307,10 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 	
 	private void createTransectLog() 
-	{
-		// hack to prevent titles from being written multiple times - 
-		// we have a couple of points in the lifecycle where startLog 
-		// can be re-called
-		if (mTransectLogfile == null || mTransectLogfile.canWrite() == false)
-		{
-			mTransectLogfile = createLogFile(mTransectLogname);	
-			String title = mLogFormatter.writeTransectColumnTitles();
-			writeLogEntry(mTransectLogfile, title);
-		}
+	{		
+		mTransectLogfile = createLogFile(mTransectLogname);	
+		String title = mLogFormatter.writeTransectColumnTitles();
+		writeLogEntry(mTransectLogfile, title);
 	}
 	
 	private void createFlightLog() 
