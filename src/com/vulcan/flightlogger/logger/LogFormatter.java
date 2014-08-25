@@ -87,7 +87,7 @@ public class LogFormatter {
 	
 	public String writeTransectColumnTitles() 
 	{
-		final String[] titles = {"Transect", "Timestamp", "Lat", "Lon", "Laser Alt (m)",  "GPS Alt (m)", "Speed (m/s)"};
+		final String[] titles = {"Timestamp", "Transect", "Lat", "Lon", "Laser Alt (m)",  "GPS Alt (m)", "Speed (m/s)"};
 		return writeGenericCSVRecord(titles);
 	}
 

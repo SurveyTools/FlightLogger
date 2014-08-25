@@ -67,17 +67,20 @@ public class NavigationService extends Service implements LocationListener {
 	}
 	
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// generate mock data if the intent calls for it
-		boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
-		setUseMockData(useMockData);
-		if(useMockData)
+		if(intent != null)
 		{
-			mCurrTransect = buildMockTransect();
-			initMockGps();
-		}
-		else
-		{
-			initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
+			// generate mock data if the intent calls for it
+			boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
+			setUseMockData(useMockData);
+			if(useMockData)
+			{
+				mCurrTransect = buildMockTransect();
+				initMockGps();
+			}
+			else
+			{
+				initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
+			}
 		}
 		Log.d(LOGGER_TAG, "starting navigation service");
 		return START_STICKY;

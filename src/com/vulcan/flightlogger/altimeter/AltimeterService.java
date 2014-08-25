@@ -59,14 +59,17 @@ public class AltimeterService extends Service implements
 	// TODO - this can be called multiple times (service may be wacked by OS
 	// add guards for that scenario
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// generate mock data if the intent calls for it
-		boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
-		if (useMockData) {
-			mGenMockData = true;
-			mCurrentAltitudeInMeters = MOCK_TARGET_ALT;
-			generateMockData();
-		} else {
-			mAltSample = new int[ALT_SAMPLE_COUNT];
+		if(intent != null)
+		{
+			// generate mock data if the intent calls for it
+			boolean useMockData = intent.getBooleanExtra(USE_MOCK_DATA, false);
+			if (useMockData) {
+				mGenMockData = true;
+				mCurrentAltitudeInMeters = MOCK_TARGET_ALT;
+				generateMockData();
+			} else {
+				mAltSample = new int[ALT_SAMPLE_COUNT];
+			}
 		}
 		Log.d(LOGGER_TAG, "starting altimeter service");
 		return START_STICKY;
@@ -109,7 +112,7 @@ public class AltimeterService extends Service implements
 
 	// called once at instantiation
 	public void onCreate() {
-
+		super.onCreate();
 	}
 
 	// TODO Since we have generics support, we should refactor all the 
