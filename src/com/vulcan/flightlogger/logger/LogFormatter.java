@@ -90,11 +90,5 @@ public class LogFormatter {
 		final String[] titles = {"Transect", "Timestamp", "Lat", "Lon", "Laser Alt (m)",  "GPS Alt (m)", "Speed (m/s)"};
 		return writeGenericCSVRecord(titles);
 	}
-	
-	public String writeFlightLogColumnTitles() 
-	{
-		final String[] titles = {"Timestamp", "Lat", "Lon", "Laser Alt (m)",  "GPS Alt (m)", "Speed (m/s)"};
-		return writeGenericCSVRecord(titles);
-	}
 
 }
