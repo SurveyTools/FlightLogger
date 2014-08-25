@@ -38,7 +38,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		TransectUpdateListener, SensorEventListener {
 	private static final long LOGGING_FREQUENCY_SECS = 1;
 	private final String mLoggingBaseDirName = "flightlog";
-	private final String mGlobalLogname = "flightlog.csv";
+	private final String mGlobalLogname = "flightlog.gpx";
 	private final String mTransectLogname = "transectlog.csv";
 	private LogFormatter mLogFormatter;
 	private File mLogDir = null;
@@ -141,7 +141,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		mLogTransectData = true;
 		mCurrTransectName = transectName;
 		mCurrStats = new TransectStats(mCurrTransectName, transect);
-		
 	}
 	
 	public void stopLogging()
@@ -152,8 +151,15 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	public void resetLogging()
 	{
-		stopLogging();
-		logFlightData(LOGGING_FREQUENCY_SECS);
+		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
+		setupLogs();
+	}
+	
+	private void setupLogs() 
+	{
+		createFlightLogDirectory();
+		createFlightLog();
+		createTransectLog();
 	}
 	
 	public void stopFlightLog() 
@@ -212,6 +218,11 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			}.start();
 		}
 	}
+	
+	public boolean isLogStarted()
+	{
+		return mLogFlightData;
+	}
 
 	public boolean isLogging() {
 		return mLogTransectData && (mTransectLogfile != null);
@@ -222,7 +233,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			mLogFormatter = new LogFormatter();
 		Log.d(TAG, "starting logging service");
 		bindServices();
-		logFlightData(LOGGING_FREQUENCY_SECS);
+		if (isLogStarted() == false)
+			logFlightData(LOGGING_FREQUENCY_SECS);
 		return START_STICKY;
 	}
 
@@ -239,8 +251,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		mLogFlightData = true;			
 		mCurrLogEntry = new LogEntry();
 		
-		createFlightLog();
-		createTransectLog();
+		setupLogs();
 
 		new Thread() {
 			public void run() {
@@ -265,23 +276,17 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 	
 	private void writeLogEntries(LogEntry entry, String timestamp) {
-		String flightlogEntry = mLogFormatter.writeGenericCSVRecord(
-				timestamp,
-				Double.toString(entry.mLat),
-				Double.toString(entry.mLon), 
-				Float.toString(entry.mAlt),					
-				Double.toString(entry.mGpsAlt),
-				Float.toString(entry.mSpeed));
+		String flightlogEntry = mLogFormatter.writeGPXFlightlogRecord(timestamp, entry);
 		writeLogEntry(this.mGlobalFlightLog, flightlogEntry);
-		if (this.mLogTransectData == true)
+		if (isLogging() == true)
 		{
 			mCurrStats.addTransectStat(entry);
 			String transectEntry = mLogFormatter.writeGenericCSVRecord(
-					mCurrTransectName,
 					timestamp,
+					mCurrTransectName,
 					Double.toString(entry.mLat),
 					Double.toString(entry.mLon), 
-					Float.toString(entry.mAlt),
+					Float.toString(entry.mAlt),					
 					Double.toString(entry.mGpsAlt),
 					Float.toString(entry.mSpeed));
 			writeLogEntry(this.mTransectLogfile, transectEntry);
@@ -317,8 +322,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	private void createFlightLog() 
 	{
 		mGlobalFlightLog = createLogFile(mGlobalLogname);
-		String title = mLogFormatter.writeFlightLogColumnTitles();
-		writeLogEntry(mGlobalFlightLog, title);
+		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_HEADER);
 	}
 
 	private File createLogFile(String logName) 
@@ -326,10 +330,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		File logFile = null;
 		logName = FilenameUtils.normalize(logName);
 
-		if (mLogDir == null || (mLogDir.exists() == false))
-		{
-			createFlightLogDirectory();
-		}
 		if (mLogDir.isDirectory() && mLogDir.canWrite()) {
 			logFile = new File(mLogDir, logName);
 			if (!logFile.exists()) {

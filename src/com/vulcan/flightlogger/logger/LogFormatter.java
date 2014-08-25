@@ -74,6 +74,17 @@ public class LogFormatter {
 		return builder.toString();
 	}
 	
+	public String writeGPXFlightlogRecord(String timestamp, LogEntry entry)
+	{
+		StringBuilder builder = new StringBuilder();
+			builder.append("<trkpt lat=").append(entry.mLat).append(" lon=").append(entry.mLon).append(">");
+			builder.append("<ele>").append(ELEVATION_FORMAT.format(entry.mGpsAlt)).append("</ele>");
+			builder.append("<speed>").append(entry.mSpeed).append("</speed>");
+			builder.append("<time>").append(timestamp).append("</time>");
+			builder.append("</trkpt>").append("\n");
+			return builder.toString();
+	}
+	
 	public String writeTransectColumnTitles() 
 	{
 		final String[] titles = {"Transect", "Timestamp", "Lat", "Lon", "Laser Alt (m)",  "GPS Alt (m)", "Speed (m/s)"};
