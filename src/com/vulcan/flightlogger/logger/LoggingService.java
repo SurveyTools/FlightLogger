@@ -166,6 +166,10 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	public void stopFlightLog() 
 	{
+		if (mGlobalFlightLog != null)
+		{
+			writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
+		}
 		mLogFlightData = false;
 		mLogDir = null;	
 	}

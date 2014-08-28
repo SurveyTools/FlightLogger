@@ -90,8 +90,8 @@ public class TransectSummaryAlert {
 		String avgSpeedLabel = getSpeedUnitsLabel(context, speedUnits);
 		 
 		// full strings
-		String avgAltStr = " " + avgLaserAlt + " " + avgAltLabel;
-		String speedStr = " " + avgSpeed + " " + avgSpeedLabel;
+		String avgAltStr = " " + String.format("%.2f", avgLaserAlt) + " " + avgAltLabel;
+		String speedStr = " " + String.format("%.2f", avgSpeed) + " " + avgSpeedLabel;
 		String transName = (summary.mTransect == null) ? "<No Transect>" : summary.mTransect.getFullName();
 
 		// TODO_TRANSECT_SUMMARY_STUFF - real data

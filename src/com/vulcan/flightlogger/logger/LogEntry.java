@@ -25,6 +25,15 @@ public class LogEntry {
 		this.mGpsAlt = gpsAlt;
 	}
 	
+	public void clearEntry()
+	{
+		this.mLat = 0;
+		this.mLon = 0;
+		this.mAlt = 0;
+		this.mSpeed = 0;
+		this.mGpsAlt = 0;		
+	}
+	
 	// copy constructor to keep sampled data atomic
 	public LogEntry(LogEntry cloned) {
 		this.mLat = cloned.mLat;
