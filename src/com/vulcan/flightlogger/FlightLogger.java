@@ -599,16 +599,16 @@ public class FlightLogger extends USBAwareActivity
 		case R.id.action_show_settings:
 			showAppSettings();
 			break;
-		case R.id.action_show_gps_debug:
-			intent = new Intent(this, GPSDebugActivity.class);
-			startActivity(intent);
-			break;
 		case R.id.action_reset_logfile:
 			resetLogfiles();
 			break;
-		case R.id.action_convert_cvs_logfile:
-			intent = new Intent(this, FileBrowser.class);
-			startActivityForResult(intent, LOAD_CSV_LOGFILE);
+//		case R.id.action_show_gps_debug:
+//			intent = new Intent(this, GPSDebugActivity.class);
+//			startActivity(intent);
+//			break;
+//		case R.id.action_convert_cvs_logfile:
+//			intent = new Intent(this, FileBrowser.class);
+//			startActivityForResult(intent, LOAD_CSV_LOGFILE);
 		}
 		return true;
 	}

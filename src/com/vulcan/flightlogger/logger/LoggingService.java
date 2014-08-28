@@ -157,6 +157,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	private void setupLogs() 
 	{
+		Log.d(TAG, " **** creating new logs");
+		
 		createFlightLogDirectory();
 		createFlightLog();
 		createTransectLog();
@@ -229,16 +231,23 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (mLogFormatter == null)
-			mLogFormatter = new LogFormatter();
-		Log.d(TAG, "starting logging service");
-		bindServices();
-		if (isLogStarted() == false)
-			logFlightData(LOGGING_FREQUENCY_SECS);
+		if (intent!= null)
+		{
+			if (mLogFormatter == null)
+				mLogFormatter = new LogFormatter();
+			Log.d(TAG, "starting logging service");
+			bindServices();
+			if (isLogStarted() == false)
+			{
+				setupLogs();
+				logFlightData(LOGGING_FREQUENCY_SECS);
+			}
+		}
 		return START_STICKY;
 	}
 
 	public boolean stopService(Intent intent) {
+		Log.d(TAG, "stopping logging service");
 		return super.stopService(intent);
 	}
 	
@@ -251,8 +260,6 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		mLogFlightData = true;			
 		mCurrLogEntry = new LogEntry();
 		
-		setupLogs();
-
 		new Thread() {
 			public void run() {
 				while (mLogFlightData) {
