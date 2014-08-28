@@ -152,6 +152,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	public void resetLogging()
 	{
 		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
+		makeFilesVisible(new String[] {mGlobalFlightLog.getAbsolutePath(), mTransectLogfile.getAbsolutePath()});
 		setupLogs();
 	}
 	
@@ -272,6 +273,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 						synchronized (mCurrLogEntry) {
 							// synchronized copy constructor to keep it atomic
 							entry = new LogEntry(mCurrLogEntry);
+							mCurrLogEntry.clearEntry();
 						}
 						String entryTime = df.format(new Date());
 						writeLogEntries(entry, entryTime);
@@ -344,7 +346,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 					Log.e(TAG, e.getLocalizedMessage());
 				}
 			}
-			MediaScannerConnection.scanFile(this, new String[] {logFile.toString()}, null, null);
+			makeFilesVisible(new String[] {logFile.toString()});
 		}
 		return logFile;
 	}
@@ -421,6 +423,11 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			}
 		}
 		// work on data
+	}
+	
+	private void makeFilesVisible(String[] filePaths)
+	{
+		MediaScannerConnection.scanFile(this, filePaths, null, null);
 	}
 
 }
