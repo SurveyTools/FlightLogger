@@ -572,7 +572,7 @@ public class FlightLogger extends USBAwareActivity
 
 		new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
 	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle(R.string.nav_about_title)
+	        .setTitle(title)
 	        .setMessage(msg)
 	        .setPositiveButton(R.string.modal_ok, new DialogInterface.OnClickListener() {
 
@@ -600,7 +600,8 @@ public class FlightLogger extends USBAwareActivity
 			showAppSettings();
 			break;
 		case R.id.action_reset_logfile:
-			resetLogfiles();
+			if ( mLogger.resetLogging() == true )
+				showConfirmDialog("Flight Summary", "The summary was created successfully");
 			break;
 //		case R.id.action_show_gps_debug:
 //			intent = new Intent(this, GPSDebugActivity.class);
@@ -764,6 +765,15 @@ public class FlightLogger extends USBAwareActivity
 			unbindService(mAltimeterConnection);
 		if (mNavigationConnection != null)
 			unbindService(mNavigationConnection);
+		if (this.mLoggerConnection != null)
+		{
+			// hack to prevent unterminated gpx files - if someone truly 
+			// wacks the app, we'll close the current GPX log, and then
+			// reopen the log when the app is reopen.
+			if (mLogger != null)
+				mLogger.stopLogging();
+			unbindService(mLoggerConnection);
+		}
 
 		super.onDestroy();
 		// TODO eval for teardown?

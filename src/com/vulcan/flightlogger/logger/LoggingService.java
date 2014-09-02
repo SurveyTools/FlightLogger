@@ -147,18 +147,20 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	{
 		stopTransectLog(false);
 		stopFlightLog();	
+		makeFilesVisible(new String[] {mGlobalFlightLog.getAbsolutePath(), mTransectLogfile.getAbsolutePath()});
 	}
 	
-	public void resetLogging()
+	public boolean resetLogging()
 	{
 		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
 		makeFilesVisible(new String[] {mGlobalFlightLog.getAbsolutePath(), mTransectLogfile.getAbsolutePath()});
 		setupLogs();
+		return (mGlobalFlightLog != null);
 	}
 	
 	private void setupLogs() 
 	{
-		Log.d(TAG, " **** creating new logs");
+		Log.d(TAG, "creating new flightlogs");
 		
 		createFlightLogDirectory();
 		createFlightLog();
@@ -169,6 +171,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	{
 		if (mGlobalFlightLog != null)
 		{
+			Log.d(TAG, "closing flightlog");
 			writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
 		}
 		mLogFlightData = false;
