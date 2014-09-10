@@ -71,7 +71,9 @@ public class USBAwareActivity extends Activity {
 	protected void initUsbDevice(UsbDevice device) {
 		Log.d(LOGGER_TAG, "init USB device: " + device);
 		String deviceInfo = String.format(Locale.US, "Connecting device: %s vendor id: %d prod id: %d", device.getDeviceName(), device.getVendorId(), device.getProductId());
-		showToast(deviceInfo);
+		Log.d("USBAwareActivity", deviceInfo);
+		showToast("Connecting usb device");
+		initUsbDriver();
 	}
 
 	public void showToast(String message) {
@@ -82,6 +84,11 @@ public class USBAwareActivity extends Activity {
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
 	}
+	
+	// overide in subclasses
+	protected void initUsbDriver()
+    {
+    }
 	
 	@Override
     protected void onDestroy()

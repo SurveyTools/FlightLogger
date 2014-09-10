@@ -145,6 +145,8 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	public void stopLogging()
 	{
+		Log.d(TAG, "stop logging");
+		
 		stopTransectLog(false);
 		stopFlightLog();	
 		makeFilesVisible(new String[] {mGlobalFlightLog.getAbsolutePath(), mTransectLogfile.getAbsolutePath()});
@@ -152,10 +154,23 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	public boolean resetLogging()
 	{
+		Log.d(TAG, "reset logging");
 		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
-		makeFilesVisible(new String[] {mGlobalFlightLog.getAbsolutePath(), mTransectLogfile.getAbsolutePath()});
+		makeFilesVisible(new String[] {mGlobalFlightLog.getAbsolutePath(), this.mTransectLogfile.getAbsolutePath()});
 		setupLogs();
 		return (mGlobalFlightLog != null);
+	}
+	
+	public File rotateLogs()
+	{
+		Log.d(TAG, "rotate logs");
+		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_FOOTER);
+		File rotated = rotateFlightlogs();
+		File[] logFiles = rotated.listFiles();
+		if (logFiles.length == 2)
+			makeFilesVisible(new String[] {logFiles[0].getAbsolutePath(), logFiles[1].getAbsolutePath()});
+		setupLogs();
+		return rotated;
 	}
 	
 	private void setupLogs() 
@@ -169,6 +184,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	public void stopFlightLog() 
 	{
+		Log.d(TAG, "stop flightlog");
 		if (mGlobalFlightLog != null)
 		{
 			Log.d(TAG, "closing flightlog");
@@ -185,6 +201,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	public TransectSummary stopTransectLog(boolean doSummary) 
 	{
+		Log.d(TAG, "stop transect log");
 		TransectSummary summary = null;
 				
 		if (mTransectLogfile != null)
@@ -214,7 +231,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			new Thread() {
 				public void run() {
 					String gpxLog = FilenameUtils.removeExtension(currLog.getName()) + ".gpx";
-					File gpxFile = createLogFile(gpxLog);
+					File gpxFile = createLogFile(gpxLog, "");
 					try {
 						final FileInputStream fis = new FileInputStream(currLog);
 						final FileOutputStream fos = new FileOutputStream(gpxFile);
@@ -322,20 +339,38 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		    }
 	}
 	
+	private File rotateFlightlogs()
+	{
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
+		String logName = String.format("%s-%s", mLoggingBaseDirName, sdf.format(cal.getTime()));
+		
+		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + logName;
+		File rotateDir = new File(dirPath);
+		rotateDir.mkdirs();
+		File[] logs = mLogDir.listFiles();
+		if (logs != null)
+		{
+			for (File log:logs)
+			{
+				log.renameTo(new File(rotateDir, log.getName()));
+			}
+		}
+		return rotateDir;	
+	}
+	
 	private void createTransectLog() 
-	{		
-		mTransectLogfile = createLogFile(mTransectLogname);	
-		String title = mLogFormatter.writeTransectColumnTitles();
-		writeLogEntry(mTransectLogfile, title);
+	{
+		String csvHeader = mLogFormatter.writeTransectColumnTitles();
+		mTransectLogfile = createLogFile(mTransectLogname, csvHeader);	
 	}
 	
 	private void createFlightLog() 
 	{
-		mGlobalFlightLog = createLogFile(mGlobalLogname);
-		writeLogEntry(mGlobalFlightLog, GPXLogConverter.GPX_HEADER);
+		mGlobalFlightLog = createLogFile(mGlobalLogname, GPXLogConverter.GPX_HEADER);
 	}
 
-	private File createLogFile(String logName) 
+	private File createLogFile(String logName, String header) 
 	{
 		File logFile = null;
 		logName = FilenameUtils.normalize(logName);
@@ -345,6 +380,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			if (!logFile.exists()) {
 				try {
 					logFile.createNewFile();
+					writeLogEntry(logFile, header);
 				} catch (IOException e) {
 					Log.e(TAG, e.getLocalizedMessage());
 				}
@@ -355,11 +391,11 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	private boolean createFlightLogDirectory() {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
-		String logName = String.format("%s-%s", mLoggingBaseDirName, sdf.format(cal.getTime()));
+//		Calendar cal = Calendar.getInstance();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-k.m.s", Locale.US);
+//		String logName = String.format("%s-%s", mLoggingBaseDirName, sdf.format(cal.getTime()));
 		
-		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + logName;
+		String dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + mLoggingBaseDirName;
 		File flightLogDir = new File(dirPath);
 		flightLogDir.mkdirs();
 		mLogDir = flightLogDir;

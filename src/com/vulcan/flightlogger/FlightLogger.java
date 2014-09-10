@@ -4,19 +4,14 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.vulcan.flightlogger.altimeter.AltimeterService;
 import com.vulcan.flightlogger.altimeter.AltitudeUpdateListener;
-import com.vulcan.flightlogger.geo.GPSDebugActivity;
+import com.vulcan.flightlogger.altimeter.SerialConsole;
 import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
-import com.vulcan.flightlogger.geo.TransectChooserDialog;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
-import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingMethod;
-import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingWindow;
-import com.vulcan.flightlogger.geo.data.FlightStatus;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
@@ -33,11 +28,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.usb.UsbDevice;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.content.res.ColorStateList;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -46,7 +39,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Button;
@@ -189,7 +181,7 @@ public class FlightLogger extends USBAwareActivity
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder binder = (com.vulcan.flightlogger.altimeter.AltimeterService.LocalBinder) service;
 			mAltimeterService = (AltimeterService) binder.getService();
-			mAltimeterService.initSerialCommunication();
+			initUsbDriver();
 			mAltimeterService.registerListener(FlightLogger.this);
 		}
 
@@ -600,9 +592,17 @@ public class FlightLogger extends USBAwareActivity
 			showAppSettings();
 			break;
 		case R.id.action_reset_logfile:
-			if ( mLogger.resetLogging() == true )
-				showConfirmDialog("Flight Summary", "The summary was created successfully");
+			File rotate = mLogger.rotateLogs();
+				showConfirmDialog("Flight Summary Created", "The flight summary is located in " + rotate.getAbsolutePath());
 			break;
+//		case R.id.action_show_serial_console:
+// 			intent = new Intent(this, SerialConsole.class);
+// 			startActivity(intent);
+//			break;
+//		case R.id.action_reset_logfile:
+//			if ( mLogger.resetLogging() == true )
+//				showConfirmDialog("Flight Summary", "The summary was created successfully");
+//			break;
 //		case R.id.action_show_gps_debug:
 //			intent = new Intent(this, GPSDebugActivity.class);
 //			startActivity(intent);
@@ -614,13 +614,6 @@ public class FlightLogger extends USBAwareActivity
 		return true;
 	}
 	
-	private void resetLogfiles() {
-		if(mLogger != null)
-		{
-			mLogger.resetLogging();
-		}	
-	}
-
 	protected void showError(String message) {
 		Log.e(LOG_CLASSNAME, "Error: " + message);
 		Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
@@ -767,11 +760,6 @@ public class FlightLogger extends USBAwareActivity
 			unbindService(mNavigationConnection);
 		if (this.mLoggerConnection != null)
 		{
-			// hack to prevent unterminated gpx files - if someone truly 
-			// wacks the app, we'll close the current GPX log, and then
-			// reopen the log when the app is reopen.
-			if (mLogger != null)
-				mLogger.stopLogging();
 			unbindService(mLoggerConnection);
 		}
 
@@ -793,6 +781,7 @@ public class FlightLogger extends USBAwareActivity
 	@Override
 	public void onResume() {
 		super.onResume();
+		
 		updateUI();
 
 		mUpdateUIHandler.postDelayed(mUpdateUIRunnable, UI_UPDATE_TIMER_MILLIS);
@@ -1392,6 +1381,15 @@ public class FlightLogger extends USBAwareActivity
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(SAVED_FLIGHT_DATA_KEY, mFlightData);
+	}
+	
+	@Override
+    protected void initUsbDriver()
+	{
+		if (mAltimeterService != null)
+		{
+			mAltimeterService.initSerialCommunication();
+		}
 	}
 
 	@Override
