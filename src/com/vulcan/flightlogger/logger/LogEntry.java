@@ -11,7 +11,7 @@ public class LogEntry {
 	{
 		this.mLat = 0;
 		this.mLon = 0;
-		this.mAlt = -1; // need to know the difference between true 0 and no response.
+		this.mAlt = 0; // need to know the difference between true 0 and no response.
 		this.mSpeed = 0;
 		this.mGpsAlt = 0; 
 	}
@@ -29,7 +29,7 @@ public class LogEntry {
 	{
 		this.mLat = 0;
 		this.mLon = 0;
-		this.mAlt = -1;
+		this.mAlt = 0;
 		this.mSpeed = 0;
 		this.mGpsAlt = 0;		
 	}
