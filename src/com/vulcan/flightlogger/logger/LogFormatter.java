@@ -81,6 +81,7 @@ public class LogFormatter {
 			builder.append("<ele>").append(ELEVATION_FORMAT.format(entry.mGpsAlt)).append("</ele>");
 			builder.append("<speed>").append(entry.mSpeed).append("</speed>");
 			builder.append("<time>").append(timestamp).append("</time>");
+			builder.append("<extension><agl>").append(ELEVATION_FORMAT.format(entry.mAlt)).append("</agl></extension>");
 			builder.append("</trkpt>").append("\n");
 			return builder.toString();
 	}

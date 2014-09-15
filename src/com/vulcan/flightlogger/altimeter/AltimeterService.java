@@ -154,7 +154,6 @@ public class AltimeterService extends Service implements
 	
 	private boolean validateDataPayload(byte[] data) {
 		// verify that the carriage return is the terminating character
-		int ll = data.length;
 		boolean isValid = ((int) data[data.length - 1] == 13)
 				&& (data.length == 10);
 		if (isValid) {
@@ -169,11 +168,12 @@ public class AltimeterService extends Service implements
 			// See valueIsOutOfRange()
 
 			mCurrentAltitudeInMeters = meters;
-}
+		}
 		else {
 			// note: the serial adapter buffers 256 bytes.  
 			// if it gets backed up you end up here (with a 258 byte buffer typically)
-			// TESTING Log.e("Altimeter Service", "invalid data: len " + data.length + ", value = " + (data.length > 0 ? data[0] : "--"));
+			Log.e("Altimeter Service", "invalid data: len " + data.length + ", value = " + (data.length > 0 ? new String(data) : "--"));
+			mCurrentAltitudeInMeters = -1;
 		}
 
 		return isValid;
