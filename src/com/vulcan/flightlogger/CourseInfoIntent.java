@@ -18,6 +18,9 @@ public class CourseInfoIntent implements Parcelable {
 
 	private static final String LOGGER_TAG = "CourseInfoIntent";
 
+	public CourseInfoIntent() {
+	}
+
 	public CourseInfoIntent(String gpxName, String routeName, String transectName, String transectDetails, int action) {
 
 		mGpxName = gpxName;
@@ -104,6 +107,10 @@ public class CourseInfoIntent implements Parcelable {
 		// GREEN
 		// something's in there, possibly all
 		return hasFile() && hasRoute() && hasTransect() && hasTransectDetails();
+	}
+
+	public boolean isFullyDefaulted() {
+		return !hasFile() && !hasRoute() && !hasTransect() && !hasTransectDetails();
 	}
 
 	public String getShortFilename() {

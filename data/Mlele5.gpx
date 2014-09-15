@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx version="1.1" creator="GPS Utility 5.20 - http://www.gpsu.co.uk"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/CreationTimeExtensions/v1 http://www.garmin.com/xmlschemas/CreationTimeExtensionsv1.xsd"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1"
+  xmlns:gpxtrx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
+  xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:ctx="http://www.garmin.com/xmlschemas/CreationTimeExtension/v1">
+
+<wpt lat="-6.6855862" lon="31.5837303"><name>L2-S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.6198011" lon="31.6277778"><name>L2-N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.7305070" lon="31.6080760"><name>L4-S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.6200642" lon="31.6820171"><name>L4-N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.8997598" lon="31.5491249"><name>L6-S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.6203214" lon="31.7362576"><name>L6-N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.9332420" lon="31.5811421"><name>L8S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.6374336" lon="31.7792193"><name>L8N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.9710895" lon="31.6102374"><name>L10S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.6722000" lon="31.8103724"><name>L10N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.9969643" lon="31.6473602"><name>L12S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.7035039" lon="31.8438452"><name>L12N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-7.0356622" lon="31.6758932"><name>L14S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.7519784" lon="31.8658349"><name>L14N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-7.0283320" lon="31.7352698"><name>L16S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.8488347" lon="31.8554552"><name>L16N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-7.0314237" lon="31.7876606"><name>L18S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.9046021" lon="31.8725698"><name>L18N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-7.0728687" lon="31.8143642"><name>L20S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-6.9729398" lon="31.8812736"><name>L20N</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-7.0615923" lon="31.8763773"><name>L22S</name><sym>City (Medium)</sym></wpt>
+<wpt lat="-7.0132314" lon="31.9087530"><name>L22N</name><sym>City (Medium)</sym></wpt>
+
+<rte><name>Mele-5km</name>
+<rtept lat="-6.6855862" lon="31.5837303"><name>L2-S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.6198011" lon="31.6277778"><name>L2-N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.6200642" lon="31.6820171"><name>L4-N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.7305070" lon="31.6080760"><name>L4-S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.8997598" lon="31.5491249"><name>L6-S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.6203214" lon="31.7362576"><name>L6-N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.6374336" lon="31.7792193"><name>L8N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.9332420" lon="31.5811421"><name>L8S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.9710895" lon="31.6102374"><name>L10S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.6722000" lon="31.8103724"><name>L10N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.7035039" lon="31.8438452"><name>L12N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.9969643" lon="31.6473602"><name>L12S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-7.0356622" lon="31.6758932"><name>L14S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.7519784" lon="31.8658349"><name>L14N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.8488347" lon="31.8554552"><name>L16N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-7.0283320" lon="31.7352698"><name>L16S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-7.0314237" lon="31.7876606"><name>L18S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.9046021" lon="31.8725698"><name>L18N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-6.9729398" lon="31.8812736"><name>L20N</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-7.0728687" lon="31.8143642"><name>L20S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-7.0615923" lon="31.8763773"><name>L22S</name><sym>City (Medium)</sym></rtept>
+<rtept lat="-7.0132314" lon="31.9087530"><name>L22N</name><sym>City (Medium)</sym></rtept>
+</rte>
+
+</gpx>

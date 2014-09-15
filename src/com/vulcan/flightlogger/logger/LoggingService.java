@@ -140,7 +140,10 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 		String transectName = (transect == null) ? "no-transect-specified" : transect.calcBaseFilename();
 		mLogTransectData = true;
 		mCurrTransectName = transectName;
+		// DONT_USE_TRANSECT_LOG_BEFORE_ITS_CREATED
+		// if this thread gets delayed and writeLogEntries comes in with data... we crash
 		mCurrStats = new TransectStats(mCurrTransectName, transect);
+		Log.d(TAG, "startTransectLog!!!");
 	}
 	
 	public void stopLogging()
@@ -290,13 +293,19 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 			}
 		}.start();
 	}
-	
+
 	private void writeLogEntries(LogEntry entry, String timestamp) {
 		String flightlogEntry = mLogFormatter.writeGPXFlightlogRecord(timestamp, entry);
 		writeLogEntry(this.mGlobalFlightLog, flightlogEntry);
 		if (isLogging() == true)
 		{
-			mCurrStats.addTransectStat(entry);
+			// DONT_USE_TRANSECT_LOG_BEFORE_ITS_CREATED (fixes crash bug)
+			if (mCurrStats == null) {
+				Log.d(TAG, "mCurrStats null - not averaging this entry");
+			} else {
+				mCurrStats.addTransectStat(entry);
+			}
+			
 			String transectEntry = mLogFormatter.writeGenericCSVRecord(
 					timestamp,
 					mCurrTransectName,
