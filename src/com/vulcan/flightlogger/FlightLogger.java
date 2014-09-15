@@ -687,20 +687,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		return summary;
 	}
 
-	private void setOrClearPrefsString(SharedPreferences.Editor editor, String key, String value) {
-		if ((value != null) && !value.isEmpty())
-			editor.putString(key, value);
-		else
-			editor.remove(key);
-	}
-
-	private void setOrClearPrefsPositiveInt(SharedPreferences.Editor editor, String key, int value) {
-		if (value >= 0)
-			editor.putInt(key, value);
-		else
-			editor.remove(key);
-	}
-
 	protected TransectSummary setFlightData(CourseInfoIntent data) {
 		TransectSummary summary = null;
 		mFlightData = data;
