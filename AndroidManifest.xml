@@ -56,17 +56,6 @@
             android:label="@string/action_load_gpx" >
         </activity>
         <activity
-            android:name="com.vulcan.flightlogger.altimeter.LaserAltimeterActivity"
-            android:label="@string/action_altimeter" >
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
-        </activity>
-        <activity
             android:name="com.vulcan.flightlogger.altimeter.SerialConsole"
             android:label="@string/action_show_serial_console" >
         </activity>
