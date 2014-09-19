@@ -24,15 +24,16 @@ import android.util.Log;
 
 public class NavigationService extends Service implements LocationListener {
 	
-	// need to get a better number in here to save battery life, once testing
-	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
-	
 	// determines whether to generate test data or live GPS fixes
 	private boolean mUseMockData = false;
 	
+	// the minimum meter change before reporting an update, assuming the
+	// MIN_TIME_BETWEEN_UPDATES threshold has been crossed
+	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
+	
 	// need to revisit this guy, to see if we need more accuracy. Currently we
 	// sample at 3 seconds
-	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 1;
+	private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 2;
 	
 	// how many track mock samples to create from a transect path
 	private final int NUM_MOCK_TRACKS = 1000;

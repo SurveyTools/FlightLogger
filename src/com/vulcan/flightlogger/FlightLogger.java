@@ -1253,6 +1253,8 @@ public class FlightLogger extends USBAwareActivity
 
 	public void onAltitudeUpdate(float rawAltitudeInMeters) {
 		// rough validation
+		// TESTING 
+		Log.d("doTimerCallback", "meters" + rawAltitudeInMeters);
 		final long timestamp = curDataTimestamp();
 		final boolean outOfRange = AltimeterService.valueIsOutOfRange(rawAltitudeInMeters);
 		final boolean showOutOfRange = outOfRange && (mLastGoodAltitudeTimestamp != 0)  && ((timestamp - mLastGoodAltitudeTimestamp) > SHOW_OUT_OF_RANGE_AFTER_MILLIS);

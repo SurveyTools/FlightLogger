@@ -1,5 +1,6 @@
 package com.vulcan.flightlogger.altimeter;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -21,6 +22,13 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
 
 public class AltimeterService extends Service implements
 		AdapterConnectionListener, USB2SerialAdapter.DataListener {
+	
+	public enum DriverType {
+		AGLASER, LIGHTWARE 
+	}
+	
+	public static final int FTDI_PRODUCT_ID = 24577;
+	
 	// used for mock data, assume a range of 300 ft +/- 20
 	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.FEET_PER_METER;
 	public final float MOCK_DELTA_ALT = 2/GPSUtils.FEET_PER_METER;
@@ -35,6 +43,8 @@ public class AltimeterService extends Service implements
 	private boolean mIsConnected = false;
 	// TODO sample altitude
 	private int[] mAltSample;
+	// encapsulates driver setting deltas
+	private AltimeterValidator mDataValidator;
 
 	private final String LOGGER_TAG = AltimeterService.class.getSimpleName();
 
@@ -127,7 +137,7 @@ public class AltimeterService extends Service implements
 
 	public void initSerialCommunication() {
 		SlickUSB2Serial.initialize(this);
-		SlickUSB2Serial.connectProlific(AltimeterService.this);
+		SlickUSB2Serial.autoConnect(AltimeterService.this);
 	}
 
 	@Override
@@ -154,26 +164,13 @@ public class AltimeterService extends Service implements
 	
 	private boolean validateDataPayload(byte[] data) {
 		// verify that the carriage return is the terminating character
-		boolean isValid = ((int) data[data.length - 1] == 13)
-				&& (data.length == 10);
-		if (isValid) {
-			byte[] stripMeters = Arrays.copyOfRange(data, 0, data.length - 2);
-			float meters = Float.parseFloat(new String(stripMeters));
-			
-			// ALTIMETER_PASSES_99999_FOR_OUT_OF_RANGE_DATA
-			// We used to capture this condition and not save
-			// (or notify) the bad data.  We needed to show
-			// that data was still coming in however, so we've
-			// moved the validation checks to the recipients.
-			// See valueIsOutOfRange()
-
-			mCurrentAltitudeInMeters = meters;
-		}
-		else {
-			// note: the serial adapter buffers 256 bytes.  
-			// if it gets backed up you end up here (with a 258 byte buffer typically)
-			Log.e("Altimeter Service", "invalid data: len " + data.length + ", value = " + (data.length > 0 ? new String(data) : "--"));
-			mCurrentAltitudeInMeters = -1;
+		boolean isValid = false;
+		
+		float meters = mDataValidator.parseDataPayload(data);
+		
+		if(meters > 0)
+		{
+			isValid = true;
 		}
 
 		return isValid;
@@ -181,13 +178,32 @@ public class AltimeterService extends Service implements
 
 	@Override
 	public void onAdapterConnected(USB2SerialAdapter adapter) {
+		BaudRate adapterRate;
+		if (adapter.getProductId() == FTDI_PRODUCT_ID)
+		{
+			Log.d(LOGGER_TAG, "Connecting with " + adapter.toString());
+			mDataValidator = new LightwareDataValidator();
+			adapterRate = BaudRate.BAUD_460800;
+		} else //assume its a prolific driver
+		{
+			mDataValidator = new AglaserDataValidator();
+			adapterRate = BaudRate.BAUD_9600;
+		}
 		adapter.setDataListener(this);
 		mIsConnected = true;
 		mSelectedAdapter = adapter;
-		mSelectedAdapter.setCommSettings(BaudRate.BAUD_9600,
+		mSelectedAdapter.setCommSettings(adapterRate,
 				DataBits.DATA_8_BIT, ParityOption.PARITY_NONE,
 				StopBits.STOP_1_BIT);
-
+		// after we've gotten the baud rate set, if its 
+		// the lightware laser, slow the output down to 2Hz,
+		// as the buffer the library allocates for the FTDI chip is 4K(?)
+		if (adapter.getProductId() == FTDI_PRODUCT_ID)
+		{
+			Charset ascii = Charset.forName("US-ASCII");
+			byte[] slowDownCmd = "#S2".getBytes(ascii);
+			adapter.sendData(slowDownCmd);
+		}
 	}
 
 	@Override

@@ -19,6 +19,7 @@ public class AppSettings {
 	public float mPrefAltitudeTargetFeet; // e.g. 300, shown in mPrefAltitudeDisplayUnits, stored in PREF_ALT_NAV_STORAGE_UNITS (FEET)
 	public float mPrefAltitudeRadiusFeet; // e.g. +/- 100', shown in mPrefAltitudeDisplayUnits, stored in PREF_ALT_NAV_STORAGE_UNITS (FEET)
 	public float mPrefNavigationRadiusFeet; // e.g. +/- 200', shown in mPrefAltitudeDisplayUnits, stored in PREF_ALT_NAV_STORAGE_UNITS (FEET)
+	public int mPrefUpdateFrequency;
 	public boolean mUseCustomParsingMethod;
 	public TransectParsingMethod mPrefTransectParsingMethod; // e.g. TransectParsingMethod.USE_DEFAULT
 	public DistanceUnit mPrefDistanceDisplayUnits;
@@ -49,6 +50,7 @@ public class AppSettings {
 	public static final String PREF_DISPLAY_UNITS_SPEED_KEY = "PREF_DISPLAY_UNITS_SPEED_KEY";
 	public static final String PREF_DISPLAY_UNITS_ALTITUDE_KEY = "PREF_DISPLAY_UNITS_ALTITUDE_KEY";
 	public static final String PREF_ALT_NAV_UNITS_STORAGE_KEY = "PREF_ALT_NAV_UNITS_STORAGE_KEY";
+	public static final String PREF_LOGGING_FREQ_KEY = "PREF_LOGGING_FREQ_KEY";
 
 	public AppSettings(ContextWrapper contextWrapper) {
 		mContextWrapper = contextWrapper;
