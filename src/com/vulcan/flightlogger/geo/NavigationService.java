@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
+import com.vulcan.flightlogger.CourseInfoIntent;
 
 import android.app.Service;
 import android.content.Context;
@@ -49,6 +50,7 @@ public class NavigationService extends Service implements LocationListener {
 	public boolean doNavigation = false;
 	
 	public Transect mCurrTransect;
+	public CourseInfoIntent mCurrTransectDetails;
 	private Location mCurrLoc; // last location received
 	
 	private final IBinder mBinder = new LocalBinder();
@@ -76,6 +78,7 @@ public class NavigationService extends Service implements LocationListener {
 			if(useMockData)
 			{
 				mCurrTransect = buildMockTransect();
+				mCurrTransectDetails = null;
 				initMockGps();
 			}
 			else
@@ -131,14 +134,16 @@ public class NavigationService extends Service implements LocationListener {
     
     // TODO - Get a 'demo' state in place, and depending on that state, 
     // either init 'real' GPS or mock GPS
-	public void startNavigation(Transect transect) {
+	public void startNavigation(Transect transect, CourseInfoIntent transectDetails) {
 		mCurrTransect = transect;
+		mCurrTransectDetails = transectDetails;
 		doNavigation = true;
 		initGps(MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES);
 	}
 	
 	public void stopNavigation() {
 		mCurrTransect = null;
+		mCurrTransectDetails = null;
 	}                  
 	
 	public boolean isNavigating() {
@@ -185,6 +190,7 @@ public class NavigationService extends Service implements LocationListener {
 		doNavigation = true;
 		
 		mCurrTransect = buildMockTransect();
+		mCurrTransectDetails = null;
 		final double startPointLat = mCurrTransect.mStartWaypt.getLatitude();
 		final double startPointLon = mCurrTransect.mStartWaypt.getLongitude();
 		final double latDelta = (mCurrTransect.mEndWaypt.getLatitude() - mCurrTransect.mStartWaypt.getLatitude()) / NUM_MOCK_TRACKS;

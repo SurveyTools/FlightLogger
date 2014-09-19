@@ -118,6 +118,13 @@ public class Transect implements Parcelable{
 		return false;
 	}
 
+	public boolean matchesByDetailsName(String targetName) {
+		String detailsName = getDetailsName();
+		if ((detailsName != null) && (targetName != null))
+			return detailsName.matches(targetName);
+		return false;
+	}
+
 	// "T03_S ~ T03_N"
 	static public String calcDetailsName(String waypointName1, String waypointName2) {
 		String detailsName = null;

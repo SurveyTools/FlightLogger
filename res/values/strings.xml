@@ -56,6 +56,10 @@
 	<string name="nav_about_version_base">Version</string>
 	<string name="nav_about_version_missing">**missing**</string>
 		
+	<string name="nav_confirm_back_message">Are you sure you want to exit?</string>
+	<string name="nav_confirm_yes">YES</string>
+	<string name="nav_confirm_no">NO</string>
+		
 	<string name="chooser_label_transect_graph">Transects</string>
     
     <string name="nt_label_title">Stopping Transect...</string>

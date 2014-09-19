@@ -404,6 +404,30 @@ public class GPSUtils {
 	}
 
 	// APP_SETTINGS_WIP - hash table
+	public static String getKeyForTransectParsingMethod(TransectParsingMethod tpm) throws NotFoundException {
+
+		switch(tpm) {
+		case ADJACENT_PAIRS:
+			return "tpm_adjacent_pairs";
+	
+		case ANGLES_OVER_10_NO_DUPS:
+			return"tpm_angles_10";
+	
+		case USE_DEFAULT:
+		case ANGLES_OVER_15_NO_DUPS:
+			return "tpm_angles_15";
+	
+		case ANGLES_OVER_20_NO_DUPS:
+			return "tpm_angles_20";
+	
+		case ANGLES_OVER_30_NO_DUPS:
+			return "tpm_angles_30";
+	}
+
+		throw new NotFoundException("transect parsing method not found");
+	}
+
+	// APP_SETTINGS_WIP - hash table
 	public static TransectParsingMethod getTransectParsingMethodForKey(String tpmKey) throws NotFoundException {
 
 		if (tpmKey != null) {
