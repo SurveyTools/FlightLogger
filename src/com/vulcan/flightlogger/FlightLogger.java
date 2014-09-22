@@ -1043,10 +1043,10 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		// START/STOP button only reflects the logging state
 		
 		// STARTUP_SEQUENCE_EVENTS
-		if (mLogger == null)
-			Log.d(LOG_CLASSNAME, "updateFooterUI:  LOGGER NULL");
-		else
-			Log.d(LOG_CLASSNAME, "updateFooterUI:  logger valid, " + (mLogger.isLogging() ? "logging" : "<<NOT LOGGING>>"));
+//		if (mLogger == null)
+//			Log.d(LOG_CLASSNAME, "updateFooterUI:  LOGGER NULL");
+//		else
+//			Log.d(LOG_CLASSNAME, "updateFooterUI:  logger valid, " + (mLogger.isLogging() ? "logging" : "<<NOT LOGGING>>"));
 
 
 		if (isLogging()) {
@@ -1268,8 +1268,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 
 	public void onAltitudeUpdate(float rawAltitudeInMeters) {
 		// rough validation
-		// TESTING 
-		Log.d("doTimerCallback", "meters" + rawAltitudeInMeters);
+		// TESTING Log.d("doTimerCallback", "meters" + rawAltitudeInMeters);
 		final long timestamp = curDataTimestamp();
 		final boolean outOfRange = AltimeterService.valueIsOutOfRange(rawAltitudeInMeters);
 		final boolean showOutOfRange = outOfRange && (mLastGoodAltitudeTimestamp != 0) && ((timestamp - mLastGoodAltitudeTimestamp) > SHOW_OUT_OF_RANGE_AFTER_MILLIS);

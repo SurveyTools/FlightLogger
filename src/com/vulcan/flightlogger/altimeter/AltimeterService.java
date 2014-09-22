@@ -28,6 +28,7 @@ public class AltimeterService extends Service implements
 	}
 	
 	public static final int FTDI_PRODUCT_ID = 24577;
+	public static final int PROLIFIC_PRODUCT_ID = 8200;
 	
 	// used for mock data, assume a range of 300 ft +/- 20
 	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.FEET_PER_METER;
@@ -168,11 +169,12 @@ public class AltimeterService extends Service implements
 		
 		float meters = mDataValidator.parseDataPayload(data);
 		
-		if(meters > 0)
+		if(meters > -1)
 		{
 			isValid = true;
 		}
-
+		 this.mCurrentAltitudeInMeters = meters;
+		 
 		return isValid;
 	}
 
