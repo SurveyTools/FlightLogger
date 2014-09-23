@@ -2,7 +2,6 @@ package com.vulcan.flightlogger.altimeter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import com.vulcan.flightlogger.geo.GPSUtils;
@@ -10,6 +9,7 @@ import com.vulcan.flightlogger.geo.GPSUtils;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import slickdevlabs.apps.usb2seriallib.AdapterConnectionListener;
@@ -27,6 +27,7 @@ public class AltimeterService extends Service implements
 		AGLASER, LIGHTWARE 
 	}
 	
+	private static final int ALT_RESPONSE_TIMEOUT_MILLIS = 2500;
 	public static final int FTDI_PRODUCT_ID = 24577;
 	public static final int PROLIFIC_PRODUCT_ID = 8200;
 	
@@ -42,6 +43,10 @@ public class AltimeterService extends Service implements
 	private float mCurrentAltitudeInMeters;
 	private boolean mGenMockData = false;
 	private boolean mIsConnected = false;
+	private boolean mHasUpdatedAltData = false;
+	private Handler mAltResponseHandler;
+	
+
 	// TODO sample altitude
 	private int[] mAltSample;
 	// encapsulates driver setting deltas
@@ -124,6 +129,27 @@ public class AltimeterService extends Service implements
 	// called once at instantiation
 	public void onCreate() {
 		super.onCreate();
+		mAltResponseHandler = new Handler();
+		Runnable runnable = new Runnable() {
+			   @Override
+			   public void run() {
+			      checkAltimeterConnectionHealth();
+			      mAltResponseHandler.postDelayed(this, ALT_RESPONSE_TIMEOUT_MILLIS);
+			   }
+			};
+		new Thread(runnable).start();
+	}
+	
+	private void checkAltimeterConnectionHealth() {
+		if(mIsConnected)
+		{
+			if(mHasUpdatedAltData == false)
+			{
+				Log.d("checkAltimeterConnectionHealth", "Reinitializing logger");
+				initSerialCommunication();
+			}
+		}
+		
 	}
 
 	// TODO Since we have generics support, we should refactor all the 
@@ -144,6 +170,7 @@ public class AltimeterService extends Service implements
 	@Override
 	public void onDataReceived(int arg0, byte[] data) {
 		if (validateDataPayload(data)) {
+			mHasUpdatedAltData = true;
 			sendAltitudeUpdate();
 		}
 	}
@@ -172,8 +199,11 @@ public class AltimeterService extends Service implements
 		if(meters > -1)
 		{
 			isValid = true;
-		}
-		 this.mCurrentAltitudeInMeters = meters;
+			mHasUpdatedAltData = true;
+		} 
+		else mHasUpdatedAltData = false; 
+		
+		this.mCurrentAltitudeInMeters = meters;
 		 
 		return isValid;
 	}
@@ -203,10 +233,16 @@ public class AltimeterService extends Service implements
 		if (adapter.getProductId() == FTDI_PRODUCT_ID)
 		{
 			Charset ascii = Charset.forName("US-ASCII");
+			// in theory, this make it 2Hz, timing wise seems to be erratic
 			byte[] slowDownCmd = "#S2".getBytes(ascii);
 			adapter.sendData(slowDownCmd);
 		}
+		
+		// since we've reconnected, no data yet.
+		mHasUpdatedAltData = false;
 	}
+	
+	
 
 	@Override
 	public void onAdapterConnectionError(int arg0, String errMsg) {
