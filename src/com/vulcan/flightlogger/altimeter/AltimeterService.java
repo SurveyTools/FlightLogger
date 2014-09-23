@@ -27,7 +27,8 @@ public class AltimeterService extends Service implements
 		AGLASER, LIGHTWARE 
 	}
 	
-	private static final int ALT_RESPONSE_TIMEOUT_MILLIS = 2500;
+	private static final String LIGHTWARE_UPDATE_FREQ_CMD = "#S6"; // 6 hertz
+	private static final int ALT_RESPONSE_TIMEOUT_MILLIS = 3000;
 	public static final int FTDI_PRODUCT_ID = 24577;
 	public static final int PROLIFIC_PRODUCT_ID = 8200;
 	
@@ -234,7 +235,7 @@ public class AltimeterService extends Service implements
 		{
 			Charset ascii = Charset.forName("US-ASCII");
 			// in theory, this make it 2Hz, timing wise seems to be erratic
-			byte[] slowDownCmd = "#S2".getBytes(ascii);
+			byte[] slowDownCmd = LIGHTWARE_UPDATE_FREQ_CMD.getBytes(ascii);
 			adapter.sendData(slowDownCmd);
 		}
 		
