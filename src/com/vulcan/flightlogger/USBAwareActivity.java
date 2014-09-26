@@ -19,23 +19,27 @@ public class USBAwareActivity extends Activity {
 	protected final String LOGGER_TAG = this.getClass().getSimpleName();
 	protected boolean mHasInitialized = false;
 
-	// listens for attachment events
-	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-
-		public void onReceive(Context context, Intent intent) {
-			String action = intent.getAction();
-			if (USB_DEVICE_ATTACHED.equals(action)) {
-				synchronized (this) {
-					UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-					if (device != null) {
-						initUsbDevice(device);
-					} else {
-						Log.d(LOGGER_TAG, "permission denied for device " + device);
-					}
-				}
-			}
-		}
-	};
+//	// listens for attachment events
+//	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+//
+//		public void onReceive(Context context, Intent intent) {
+//			if (intent != null)
+//			{
+//				String action = intent.getAction();
+//				Log.d(LOGGER_TAG, "USBAwareActivity recieved " + action);
+//				if (USB_DEVICE_ATTACHED.equals(action)) {
+//					synchronized (this) {
+//						UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+//						if (device != null) {
+//							initUsbDevice(device);
+//						} else {
+//							Log.d(LOGGER_TAG, "permission denied for device " + device);
+//						}
+//					}
+//				}
+//			}
+//		}
+//	};
 
 	protected void updateBatteryStatus(Intent batteryStatus) {
 		// semi pure virtual
@@ -54,8 +58,8 @@ public class USBAwareActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		IntentFilter filter = new IntentFilter(USB_DEVICE_ATTACHED);
-		registerReceiver(mUsbReceiver, filter);
+//		IntentFilter filter = new IntentFilter(USB_DEVICE_ATTACHED);
+//		registerReceiver(mUsbReceiver, filter);
 
 		IntentFilter batteryfilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		registerReceiver(mBatteryStatusReceiver, batteryfilter);
@@ -88,12 +92,13 @@ public class USBAwareActivity extends Activity {
 	// overide in subclasses
 	protected void initUsbDriver()
     {
+		
     }
 	
 	@Override
     protected void onDestroy()
     {
-        unregisterReceiver(mUsbReceiver);
+      //  unregisterReceiver(mUsbReceiver);
         unregisterReceiver(mBatteryStatusReceiver);
         super.onDestroy();
     }

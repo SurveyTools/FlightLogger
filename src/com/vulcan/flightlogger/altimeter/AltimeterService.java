@@ -27,8 +27,9 @@ public class AltimeterService extends Service implements
 		AGLASER, LIGHTWARE 
 	}
 	
-	private static final String LIGHTWARE_UPDATE_FREQ_CMD = "#S6"; // 6 hertz
-	private static final int ALT_RESPONSE_TIMEOUT_MILLIS = 3000;
+	private static final String LIGHTWARE_UPDATE_FREQ_CMD = "#S6"; // 4 hertz
+	private static final long ALT_RESPONSE_TIMEOUT_MILLIS = 5 * 1000;
+	private static final long NANOS_PER_MILLI = 1000000l;
 	public static final int FTDI_PRODUCT_ID = 24577;
 	public static final int PROLIFIC_PRODUCT_ID = 8200;
 	
@@ -44,7 +45,8 @@ public class AltimeterService extends Service implements
 	private float mCurrentAltitudeInMeters;
 	private boolean mGenMockData = false;
 	private boolean mIsConnected = false;
-	private boolean mHasUpdatedAltData = false;
+	private long mLastAltUpdateNanos = 0l;
+	
 	private Handler mAltResponseHandler;
 	
 
@@ -142,11 +144,14 @@ public class AltimeterService extends Service implements
 	}
 	
 	private void checkAltimeterConnectionHealth() {
-		if(mIsConnected)
+		if(mIsConnected && mLastAltUpdateNanos > 0)
 		{
-			if(mHasUpdatedAltData == false)
+			long currTime = System.nanoTime();
+			long lastUpdateNanos = currTime - mLastAltUpdateNanos;
+			if(lastUpdateNanos > ALT_RESPONSE_TIMEOUT_MILLIS * NANOS_PER_MILLI)
 			{
-				Log.d("checkAltimeterConnectionHealth", "Reinitializing logger");
+				Log.d("checkAltimeterConnectionHealth", "currTime: " + currTime + " lastUpdate: " + mLastAltUpdateNanos);
+				Log.d("checkAltimeterConnectionHealth", "No data recieved recently, reinitializing serial driver");
 				initSerialCommunication();
 			}
 		}
@@ -166,12 +171,16 @@ public class AltimeterService extends Service implements
 	public void initSerialCommunication() {
 		SlickUSB2Serial.initialize(this);
 		SlickUSB2Serial.autoConnect(AltimeterService.this);
+		
+		// we start the clock when we initialize...
+		mLastAltUpdateNanos = System.nanoTime();	
 	}
 
 	@Override
 	public void onDataReceived(int arg0, byte[] data) {
 		if (validateDataPayload(data)) {
-			mHasUpdatedAltData = true;
+			mLastAltUpdateNanos = System.nanoTime();
+			Log.d("onDataRecieved", "Last update: " + mCurrentAltitudeInMeters);
 			sendAltitudeUpdate();
 		}
 	}
@@ -197,14 +206,13 @@ public class AltimeterService extends Service implements
 		
 		float meters = mDataValidator.parseDataPayload(data);
 		
-		if(meters > -1)
+		if(meters > -2) 
 		{
 			isValid = true;
-			mHasUpdatedAltData = true;
+			mLastAltUpdateNanos = System.nanoTime();
 		} 
-		else mHasUpdatedAltData = false; 
 		
-		this.mCurrentAltitudeInMeters = meters;
+		mCurrentAltitudeInMeters = meters;
 		 
 		return isValid;
 	}
@@ -214,11 +222,12 @@ public class AltimeterService extends Service implements
 		BaudRate adapterRate;
 		if (adapter.getProductId() == FTDI_PRODUCT_ID)
 		{
-			Log.d(LOGGER_TAG, "Connecting with " + adapter.toString());
+			Log.d(LOGGER_TAG, "Connecting Lightware laser with adapter " + adapter.toString());
 			mDataValidator = new LightwareDataValidator();
 			adapterRate = BaudRate.BAUD_460800;
 		} else //assume its a prolific driver
 		{
+			Log.d(LOGGER_TAG, "Connecting AgLaser with adapter " + adapter.toString());
 			mDataValidator = new AglaserDataValidator();
 			adapterRate = BaudRate.BAUD_9600;
 		}
@@ -234,13 +243,10 @@ public class AltimeterService extends Service implements
 		if (adapter.getProductId() == FTDI_PRODUCT_ID)
 		{
 			Charset ascii = Charset.forName("US-ASCII");
-			// in theory, this make it 2Hz, timing wise seems to be erratic
+			// timing Hz seems to be erratic
 			byte[] slowDownCmd = LIGHTWARE_UPDATE_FREQ_CMD.getBytes(ascii);
 			adapter.sendData(slowDownCmd);
 		}
-		
-		// since we've reconnected, no data yet.
-		mHasUpdatedAltData = false;
 	}
 	
 	
@@ -248,6 +254,7 @@ public class AltimeterService extends Service implements
 	@Override
 	public void onAdapterConnectionError(int arg0, String errMsg) {
 		mIsConnected = false;
+		Log.d("AltimeterService", "Error connecting: " + errMsg);
 		for (AltitudeUpdateListener listener : mListeners) {
 			listener.onAltitudeError(errMsg);
 		}

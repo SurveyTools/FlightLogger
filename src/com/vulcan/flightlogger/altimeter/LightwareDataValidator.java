@@ -20,7 +20,7 @@ public class LightwareDataValidator implements AltimeterValidator {
 		// beginning of the buffer. Later, we should probably extract a range of values, 
 		// and average them.
 		
-		if (data.length > 70)
+		if (data.length > 100)
 		{
 			byte[] sampleData = Arrays.copyOfRange(data, 0, 100);
 			// find the values between the patterns. The value may have up to 2 spaces (0x20) padding
@@ -36,15 +36,21 @@ public class LightwareDataValidator implements AltimeterValidator {
 						byte[] sample = Arrays.copyOfRange(sampleSlice, 0, matchEnd);
 						Log.d(this.getClass().getName(), "Meters: " + new String(sample));
 						meters = Float.parseFloat(new String(sample));
+						if (meters < 0)
+							meters = AltimeterService.ALTIMETER_OUT_OF_RANGE_THRESHOLD;
 					}	
 				} 
+				// TODO - throw an IllegalValidationError, instead of an int
 				catch (IllegalArgumentException iae)
 				{
 					Log.d("LightwareDataValidator.parseDataPayload", "start: " + start);
+					return -1;
 				}
 			}
 		}
-		else Log.d(this.getClass().getName(), "No data");
+		else {
+			meters = AltimeterService.ALTIMETER_OUT_OF_RANGE_THRESHOLD;
+		}
 		return meters;
 	}
 
