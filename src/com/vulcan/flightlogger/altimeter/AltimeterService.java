@@ -2,6 +2,7 @@ package com.vulcan.flightlogger.altimeter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import com.vulcan.flightlogger.geo.GPSUtils;
@@ -27,17 +28,19 @@ public class AltimeterService extends Service implements
 		AGLASER, LIGHTWARE 
 	}
 	
-	private static final String LIGHTWARE_UPDATE_FREQ_CMD = "#S6"; // 4 hertz
+	private static final String LIGHTWARE_UPDATE_FREQ_CMD = "#S4"; // 4 hertz
 	private static final long ALT_RESPONSE_TIMEOUT_MILLIS = 5 * 1000;
 	private static final long NANOS_PER_MILLI = 1000000l;
 	public static final int FTDI_PRODUCT_ID = 24577;
 	public static final int PROLIFIC_PRODUCT_ID = 8200;
+	public static final int DATA_SAMPLE_SIZE = 50;
 	
 	// used for mock data, assume a range of 300 ft +/- 20
 	public final float MOCK_MAX_TOTAL_DELTA = 40/GPSUtils.FEET_PER_METER;
 	public final float MOCK_DELTA_ALT = 2/GPSUtils.FEET_PER_METER;
 	public final float MOCK_TARGET_ALT = 300/GPSUtils.FEET_PER_METER;
 	public static final float ALTIMETER_OUT_OF_RANGE_THRESHOLD = 99999f; // AgLaser uses 99999.99.  SEE ALTIMETER_PASSES_99999_FOR_OUT_OF_RANGE_DATA
+	public static final float LASER_OUT_OF_RANGE = 99999.99f; // Make sure lightware and aglaser validators report the same error value
 
 	// how many samples for an alt avg.
 	public static final String USE_MOCK_DATA = "useMockData";
@@ -90,7 +93,7 @@ public class AltimeterService extends Service implements
 				mAltSample = new int[ALT_SAMPLE_COUNT];
 			}
 		}
-		Log.d(LOGGER_TAG, "starting altimeter service");
+		//TESTING Log.d(LOGGER_TAG, ">> starting altimeter service");
 		return START_STICKY;
 	}
 
@@ -136,22 +139,22 @@ public class AltimeterService extends Service implements
 		Runnable runnable = new Runnable() {
 			   @Override
 			   public void run() {
-			      checkAltimeterConnectionHealth();
 			      mAltResponseHandler.postDelayed(this, ALT_RESPONSE_TIMEOUT_MILLIS);
+			      checkAltimeterConnectionHealth();
 			   }
 			};
 		new Thread(runnable).start();
 	}
 	
 	private void checkAltimeterConnectionHealth() {
-		if(mIsConnected && mLastAltUpdateNanos > 0)
+		if(mLastAltUpdateNanos > 0)
 		{
 			long currTime = System.nanoTime();
 			long lastUpdateNanos = currTime - mLastAltUpdateNanos;
+			//TESTING Log.d("checkAltimeterConnectionHealth", ">> currTime: " + currTime + " lastUpdateNanos: " + lastUpdateNanos);
 			if(lastUpdateNanos > ALT_RESPONSE_TIMEOUT_MILLIS * NANOS_PER_MILLI)
 			{
-				Log.d("checkAltimeterConnectionHealth", "currTime: " + currTime + " lastUpdate: " + mLastAltUpdateNanos);
-				Log.d("checkAltimeterConnectionHealth", "No data recieved recently, reinitializing serial driver");
+				Log.d("checkAltimeterConnectionHealth", ">> No data recieved recently, reinitializing serial driver");				
 				initSerialCommunication();
 			}
 		}
@@ -169,18 +172,24 @@ public class AltimeterService extends Service implements
 	}
 
 	public void initSerialCommunication() {
+		//TESTING Log.d("initSerialCommunications", ">> Initializing serial driver");
+		
 		SlickUSB2Serial.initialize(this);
+	
 		SlickUSB2Serial.autoConnect(AltimeterService.this);
 		
-		// we start the clock when we initialize...
+		// we start the watchdog clock when we initialize...
 		mLastAltUpdateNanos = System.nanoTime();	
 	}
 
 	@Override
 	public void onDataReceived(int arg0, byte[] data) {
-		if (validateDataPayload(data)) {
+		int end = data.length > DATA_SAMPLE_SIZE ? DATA_SAMPLE_SIZE : data.length;
+		byte[] sampleData = Arrays.copyOfRange(data, 0, end);
+		
+		if (validateDataPayload(sampleData)) {
 			mLastAltUpdateNanos = System.nanoTime();
-			Log.d("onDataRecieved", "Last update: " + mCurrentAltitudeInMeters);
+			//TESTING Log.d("onDataRecieved", ">> Last update: " + mCurrentAltitudeInMeters);
 			sendAltitudeUpdate();
 		}
 	}
@@ -222,12 +231,12 @@ public class AltimeterService extends Service implements
 		BaudRate adapterRate;
 		if (adapter.getProductId() == FTDI_PRODUCT_ID)
 		{
-			Log.d(LOGGER_TAG, "Connecting Lightware laser with adapter " + adapter.toString());
+			//TESTING Log.d(LOGGER_TAG, ">> Connecting Lightware laser with adapter " + adapter.toString());
 			mDataValidator = new LightwareDataValidator();
 			adapterRate = BaudRate.BAUD_460800;
 		} else //assume its a prolific driver
 		{
-			Log.d(LOGGER_TAG, "Connecting AgLaser with adapter " + adapter.toString());
+			//TESTING Log.d(LOGGER_TAG, ">> Connecting AgLaser with adapter " + adapter.toString());
 			mDataValidator = new AglaserDataValidator();
 			adapterRate = BaudRate.BAUD_9600;
 		}
@@ -237,16 +246,7 @@ public class AltimeterService extends Service implements
 		mSelectedAdapter.setCommSettings(adapterRate,
 				DataBits.DATA_8_BIT, ParityOption.PARITY_NONE,
 				StopBits.STOP_1_BIT);
-		// after we've gotten the baud rate set, if its 
-		// the lightware laser, slow the output down to 2Hz,
-		// as the buffer the library allocates for the FTDI chip is 4K(?)
-		if (adapter.getProductId() == FTDI_PRODUCT_ID)
-		{
-			Charset ascii = Charset.forName("US-ASCII");
-			// timing Hz seems to be erratic
-			byte[] slowDownCmd = LIGHTWARE_UPDATE_FREQ_CMD.getBytes(ascii);
-			adapter.sendData(slowDownCmd);
-		}
+
 	}
 	
 	
@@ -254,10 +254,12 @@ public class AltimeterService extends Service implements
 	@Override
 	public void onAdapterConnectionError(int arg0, String errMsg) {
 		mIsConnected = false;
-		Log.d("AltimeterService", "Error connecting: " + errMsg);
+		//TESTING Log.d("AltimeterService", ">> Error connecting: " + errMsg);
 		for (AltitudeUpdateListener listener : mListeners) {
 			listener.onAltitudeError(errMsg);
 		}
+		
+		SlickUSB2Serial.cleanup(this);
 
 	}
 
