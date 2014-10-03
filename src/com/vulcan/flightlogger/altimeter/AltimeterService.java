@@ -176,7 +176,8 @@ public class AltimeterService extends Service implements
 		
 		SlickUSB2Serial.initialize(this);
 	
-		SlickUSB2Serial.autoConnect(AltimeterService.this);
+		SlickUSB2Serial.connectProlific(AltimeterService.this);
+		// SlickUSB2Serial.autoConnect(AltimeterService.this);
 		
 		// we start the watchdog clock when we initialize...
 		mLastAltUpdateNanos = System.nanoTime();	
