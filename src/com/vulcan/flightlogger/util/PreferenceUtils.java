@@ -1,6 +1,8 @@
 package com.vulcan.flightlogger.util;
 
 import com.vulcan.flightlogger.R;
+import com.vulcan.flightlogger.altimeter.AltimeterUtils;
+import com.vulcan.flightlogger.altimeter.AltimeterService.RangefinderDriverType;
 import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.GPSUtils.*;
 
@@ -64,6 +66,17 @@ public class PreferenceUtils {
 		} catch(Exception e) {
 			// failed
 			Log.e(TAG, "error parsing distance unit pref for \"" + key + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		return value;
+	}
+	
+	public static RangefinderDriverType getSharedPrefRangefinderType(SharedPreferences sharedPref, String key, RangefinderDriverType driverType) {
+		RangefinderDriverType value = driverType;
+		try {
+			value = AltimeterUtils.getRangefinderDriverForKey(sharedPref.getString(key, ""));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error parsing rangefinder driver type for \"" + key + "\" (" + e.getLocalizedMessage() + ")");
 		}
 		return value;
 	}

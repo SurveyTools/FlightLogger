@@ -4,6 +4,14 @@
     <!--  note: use PreferenceCategory (with android:title) if you want headers -->
 
 		<!--  PREF_UNITS -->
+		    
+	<com.vulcan.flightlogger.util.ListPreferenceShowSummary
+        android:key="PREF_RANGEFINDER_TYPE_KEY"
+        android:title="@string/pref_rangefinder_title"
+        android:dialogTitle="@string/pref_rangefinder_title"
+        android:entries="@array/pref_rangefinder_names"
+        android:entryValues="@array/pref_rangefinder_values"
+        android:defaultValue="@string/pref_rangefinder_default_value" />
  
     	<com.vulcan.flightlogger.util.EditDistancePreferenceShowSummary
         android:key="PREF_ALTITUDE_TARGET_KEY"

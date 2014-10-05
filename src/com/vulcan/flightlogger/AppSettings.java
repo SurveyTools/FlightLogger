@@ -1,5 +1,6 @@
 package com.vulcan.flightlogger;
 
+import com.vulcan.flightlogger.altimeter.AltimeterService.RangefinderDriverType;
 import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.GPSUtils.*;
 import com.vulcan.flightlogger.util.PreferenceUtils;
@@ -25,6 +26,7 @@ public class AppSettings {
 	public DistanceUnit mPrefDistanceDisplayUnits;
 	public VelocityUnit mPrefSpeedDisplayUnits;
 	public DistanceUnit mPrefAltitudeDisplayUnits; // display
+	public RangefinderDriverType mRangefinderType; // laser type
 
 	public boolean mDataAveragingEnabled;
 	public DataAveragingMethod mDataAveragingMethod;
@@ -49,6 +51,7 @@ public class AppSettings {
 	public static final String PREF_DISPLAY_UNITS_DISTANCE_KEY = "PREF_DISPLAY_UNITS_DISTANCE_KEY";
 	public static final String PREF_DISPLAY_UNITS_SPEED_KEY = "PREF_DISPLAY_UNITS_SPEED_KEY";
 	public static final String PREF_DISPLAY_UNITS_ALTITUDE_KEY = "PREF_DISPLAY_UNITS_ALTITUDE_KEY";
+	public static final String PREF_RANGEFINDER_TYPE_KEY = "PREF_RANGEFINDER_TYPE_KEY";
 	public static final String PREF_ALT_NAV_UNITS_STORAGE_KEY = "PREF_ALT_NAV_UNITS_STORAGE_KEY";
 	public static final String PREF_LOGGING_FREQ_KEY = "PREF_LOGGING_FREQ_KEY";
 
@@ -73,6 +76,7 @@ public class AppSettings {
 			mDataAveragingEnabled = srcData.mDataAveragingEnabled;
 			mDataAveragingMethod = srcData.mDataAveragingMethod;
 			mDataAveragingWindow = srcData.mDataAveragingWindow;
+			mRangefinderType = srcData.mRangefinderType;
 
 			mContextWrapper = srcData.mContextWrapper;
 		} else {
@@ -93,6 +97,7 @@ public class AppSettings {
 		Log.d(LOGGER_TAG, "mDataAveragingEnabled: " + mDataAveragingEnabled);
 		Log.d(LOGGER_TAG, "mDataAveragingMethod: " + mDataAveragingMethod);
 		Log.d(LOGGER_TAG, "mDataAveragingWindow: " + mDataAveragingWindow);
+		Log.d(LOGGER_TAG, "mRangefinderType: " + mRangefinderType);
 	}
 
 	public void refresh(Context context) {
@@ -111,12 +116,16 @@ public class AppSettings {
 		mPrefDistanceDisplayUnits = PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_DISTANCE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_distance_units_default_value));
 		mPrefSpeedDisplayUnits = PreferenceUtils.getSharedPrefVelocityUnits(sharedPref, PREF_DISPLAY_UNITS_SPEED_KEY, ResourceUtils.getResourceVelocityUnits(context, R.string.pref_speed_units_default_value));
 		mPrefAltitudeDisplayUnits = PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_ALTITUDE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_altitude_units_default_value));
+		mPrefAltitudeDisplayUnits = PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_ALTITUDE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_altitude_units_default_value));
 
 		mDataAveragingEnabled = sharedPref.getBoolean(PREF_DATA_AVERAGING_ENABLED_KEY, ResourceUtils.getResourceBooleanFromString(context, R.string.pref_use_custom_transect_parsing_method_default_value));
 		mDataAveragingMethod = PreferenceUtils.getSharedPrefDataAveragingMethod(sharedPref, PREF_DATA_AVERAGING_METHOD_KEY, ResourceUtils.getResourceDataAveragingMethod(context, R.string.pref_data_averaging_method_default_value));
 		mDataAveragingWindow = PreferenceUtils.getSharedPrefDataAveragingWindow(sharedPref, PREF_DATA_AVERAGING_WINDOW_KEY, ResourceUtils.getResourceDataAveragingWindow(context, R.string.pref_data_averaging_window_default_value));
+		
+		mRangefinderType = PreferenceUtils.getSharedPrefRangefinderType(sharedPref, PREF_RANGEFINDER_TYPE_KEY, ResourceUtils.getResourceRangefinderDriverType(context, R.string.pref_rangefinder_default_value));
 
-		// TESTING debugDump();
+		// TESTING 
+		debugDump();
 	}
 
 	public void reset() {
@@ -136,6 +145,8 @@ public class AppSettings {
 
 		mDataAveragingMethod = ResourceUtils.getResourceDataAveragingMethod(mContextWrapper, R.string.pref_data_averaging_method_default_value);
 		mDataAveragingWindow = ResourceUtils.getResourceDataAveragingWindow(mContextWrapper, R.string.pref_data_averaging_window_default_value);
+		
+		mRangefinderType = ResourceUtils.getResourceRangefinderDriverType(mContextWrapper, R.string.pref_rangefinder_default_value);
 	}
 	
 	public static TransectParsingMethod getPrefTransectParsingMethod(Context context) {
@@ -157,6 +168,11 @@ public class AppSettings {
 	public static DistanceUnit getPrefAltitudeDisplayUnit(Context context) {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return PreferenceUtils.getSharedPrefDistanceUnits(sharedPref, PREF_DISPLAY_UNITS_ALTITUDE_KEY, ResourceUtils.getResourceDistanceUnits(context, R.string.pref_altitude_units_default_value));
+	}
+	
+	public static RangefinderDriverType getPrefRangefinderDriverType(Context context) {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return PreferenceUtils.getSharedPrefRangefinderType(sharedPref, PREF_RANGEFINDER_TYPE_KEY, ResourceUtils.getResourceRangefinderDriverType(context, R.string.pref_rangefinder_default_value));
 	}
 	
 	public static boolean getPrefDataAveragingEnabled(Context context) {

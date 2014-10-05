@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.vulcan.flightlogger.AppSettings;
 import com.vulcan.flightlogger.geo.GPSUtils;
+import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
+import com.vulcan.flightlogger.util.PreferenceUtils;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -24,11 +28,10 @@ import slickdevlabs.apps.usb2seriallib.SlickUSB2Serial.StopBits;
 public class AltimeterService extends Service implements
 		AdapterConnectionListener, USB2SerialAdapter.DataListener {
 	
-	public enum DriverType {
+	public enum RangefinderDriverType {
 		AGLASER, LIGHTWARE 
 	}
 	
-	private static final String LIGHTWARE_UPDATE_FREQ_CMD = "#S4"; // 4 hertz
 	private static final long ALT_RESPONSE_TIMEOUT_MILLIS = 5 * 1000;
 	private static final long NANOS_PER_MILLI = 1000000l;
 	public static final int FTDI_PRODUCT_ID = 24577;
@@ -135,6 +138,7 @@ public class AltimeterService extends Service implements
 	// called once at instantiation
 	public void onCreate() {
 		super.onCreate();
+
 		mAltResponseHandler = new Handler();
 		Runnable runnable = new Runnable() {
 			   @Override
@@ -175,9 +179,20 @@ public class AltimeterService extends Service implements
 		//TESTING Log.d("initSerialCommunications", ">> Initializing serial driver");
 		
 		SlickUSB2Serial.initialize(this);
-	
-		SlickUSB2Serial.connectProlific(AltimeterService.this);
-		// SlickUSB2Serial.autoConnect(AltimeterService.this);
+		
+		RangefinderDriverType driverType = AppSettings.getPrefRangefinderDriverType(this);
+		if (driverType == RangefinderDriverType.LIGHTWARE)
+		{
+			//TESTING 
+			Log.d("initSerialCommunication", ">> Connecting to Lightware device");
+			SlickUSB2Serial.connectFTDI(AltimeterService.this);
+		}
+		else
+		{
+			//TESTING 
+			Log.d("initSerialCommunication", ">> Connecting to AgLaser device");
+			SlickUSB2Serial.connectProlific(AltimeterService.this);
+		}
 		
 		// we start the watchdog clock when we initialize...
 		mLastAltUpdateNanos = System.nanoTime();	

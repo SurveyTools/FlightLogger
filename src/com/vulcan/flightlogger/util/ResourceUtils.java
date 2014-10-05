@@ -1,5 +1,7 @@
 package com.vulcan.flightlogger.util;
 
+import com.vulcan.flightlogger.altimeter.AltimeterService;
+import com.vulcan.flightlogger.altimeter.AltimeterUtils;
 import com.vulcan.flightlogger.geo.GPSUtils;
 
 import android.content.Context;
@@ -120,6 +122,19 @@ public class ResourceUtils {
 		} catch(Exception e) {
 			// failed
 			Log.e(TAG, "error loading daw  rsrc \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
+		}
+		
+		return value;
+	}
+	
+	public static AltimeterService.RangefinderDriverType getResourceRangefinderDriverType(Context context, int rsrcID) {
+		AltimeterService.RangefinderDriverType value = AltimeterService.RangefinderDriverType.AGLASER;
+
+		try {
+			value = AltimeterUtils.getRangefinderDriverForKey(context.getResources().getString(rsrcID));
+		} catch(Exception e) {
+			// failed
+			Log.e(TAG, "error loading tpm rsrc \"" + rsrcID + "\" (" + e.getLocalizedMessage() + ")");
 		}
 		
 		return value;

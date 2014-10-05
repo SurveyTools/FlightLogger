@@ -51,6 +51,16 @@
 	    <item>distance_nautical_miles</item>
 	</string-array>
 	
+	<string-array name="pref_rangefinder_names">
+	    <item>Mindrum AgLaser</item>
+	    <item>Lightware SF03/XLR</item>
+	</string-array>
+
+	<string-array name="pref_rangefinder_values">
+	    <item>rangefinder_aglaser</item>
+	    <item>rangefinder_sf03xlr</item>
+	</string-array>
+	
    	<string-array name="pref_data_averaging_method_names">
 	    <item>Median</item>
 		<item>Average (Arithmetic Mean)</item>
