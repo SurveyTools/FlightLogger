@@ -231,13 +231,12 @@ public class AltimeterService extends Service implements
 		
 		float meters = mDataValidator.parseDataPayload(data);
 		
-		if(meters > -2) 
+		if(meters > 0) 
 		{
 			isValid = true;
 			mLastAltUpdateNanos = System.nanoTime();
+			mCurrentAltitudeInMeters = meters;
 		} 
-		
-		mCurrentAltitudeInMeters = meters;
 		 
 		return isValid;
 	}
