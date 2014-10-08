@@ -66,7 +66,6 @@ public class AppSettings {
 		if (srcData != null) {
 			mPrefShowDebug = srcData.mPrefShowDebug;
 			mPrefAltitudeTargetFeet = srcData.mPrefAltitudeTargetFeet;
-			mPrefAltitudeTargetFeet = srcData.mPrefAltitudeTargetFeet;
 			mPrefNavigationRadiusFeet = srcData.mPrefNavigationRadiusFeet;
 			mUseCustomParsingMethod = srcData.mUseCustomParsingMethod;
 			mPrefTransectParsingMethod = srcData.mPrefTransectParsingMethod;
