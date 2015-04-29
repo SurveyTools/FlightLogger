@@ -1,0 +1,26 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "22.0.0"
+
+    defaultConfig {
+        applicationId "com.vulcan.flightlogger"
+        minSdkVersion 19
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.0'
+    compile files('libs/SlickUSB2SerialLib.jar')
+    compile files('libs/commons-io-2.4.jar')
+    compile files('libs/pl2303driver.jar')
+}
