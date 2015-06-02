@@ -63,6 +63,9 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	
 	private final ArrayList<LoggingStatusListener> mListeners = new ArrayList<LoggingStatusListener>();
 
+	public static final SimpleDateFormat ISO_8601_DATE_TIME_FORMAT = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+
 	// references to the services consumed
 	private ServiceConnection mNavigationConnection = new ServiceConnection() {
 
@@ -282,9 +285,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	// TODO - If needed, consider write into a buffer, and flush it every 20 entries or so.
 	private void logFlightData(long logFrequencySecs) {
 		final long logFrequencyMillis = logFrequencySecs * 1000;
-		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-				Locale.US);
-		
+
 		mLogFlightData = true;			
 		mCurrLogEntry = new LogEntry();
 		
@@ -298,7 +299,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 							entry = new LogEntry(mCurrLogEntry);
 							mCurrLogEntry.clearEntry();
 						}
-						String entryTime = df.format(new Date());
+						String entryTime = ISO_8601_DATE_TIME_FORMAT.format(new Date());
 						writeLogEntries(entry, entryTime);
 						Thread.sleep(logFrequencyMillis);
 					} catch (InterruptedException e) {

@@ -19,7 +19,8 @@ public class GPXLogConverter {
 	.append("creator=\"Vulcan FlightLogger\" ")
 	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ")
 	.append("xmlns=\"http://www.topografix.com/GPX/1/0\" ")
-	.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\">")
+	.append("xmlns:topografix=\"http://www.topografix.com/GPX/Private/TopoGrafix/0/1\"")
+	.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.topografix.com/GPX/Private/TopoGrafix/0/1 http://www.topografix.com/GPX/Private/TopoGrafix/0/1/topografix.xsd\">")
 	.append("<trk><name>flightlog</name><trkseg>")
 	.toString();
 
@@ -63,7 +64,7 @@ public class GPXLogConverter {
 	public String writeGPSTrackRecord(String[] csvVal)
 	{
 		StringBuilder builder = new StringBuilder();
-		builder.append("<trkpt lat=").append(csvVal[1]).append(" lon=").append(csvVal[2]).append(">");
+		builder.append("<trkpt lat=\"").append(csvVal[1]).append("\" lon=\"").append(csvVal[2]).append("\">");
 		builder.append("<ele>").append(csvVal[3]).append("</ele>");
 		builder.append("<speed>").append(csvVal[4]).append("</speed>");
 		builder.append("<time>").append(csvVal[0]).append("</time>");
