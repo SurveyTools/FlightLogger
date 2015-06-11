@@ -77,7 +77,7 @@ public class LogFormatter {
 	public String writeGPXFlightlogRecord(String timestamp, LogEntry entry)
 	{
 		StringBuilder builder = new StringBuilder();
-			builder.append("<trkpt lat=").append(entry.mLat).append(" lon=").append(entry.mLon).append(">");
+			builder.append("<trkpt lat=\"").append(entry.mLat).append("\" lon=\"").append(entry.mLon).append("\">");
 			builder.append("<ele>").append(ELEVATION_FORMAT.format(entry.mGpsAlt)).append("</ele>");
 			builder.append("<speed>").append(entry.mSpeed).append("</speed>");
 			builder.append("<time>").append(timestamp).append("</time>");
