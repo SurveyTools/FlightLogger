@@ -19,7 +19,7 @@ public class GPXLogConverter {
 	.append("creator=\"Vulcan FlightLogger\" ")
 	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ")
 	.append("xmlns=\"http://www.topografix.com/GPX/1/0\" ")
-	.append("xmlns:topografix=\"http://www.topografix.com/GPX/Private/TopoGrafix/0/1\"")
+	.append("xmlns:topografix=\"http://www.topografix.com/GPX/Private/TopoGrafix/0/1\" ")
 	.append("xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.topografix.com/GPX/Private/TopoGrafix/0/1 http://www.topografix.com/GPX/Private/TopoGrafix/0/1/topografix.xsd\">")
 	.append("<trk><name>flightlog</name><trkseg>")
 	.toString();
