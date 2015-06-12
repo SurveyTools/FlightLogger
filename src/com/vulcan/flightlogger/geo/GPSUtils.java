@@ -41,7 +41,7 @@ public class GPSUtils {
 
 	public enum TransectParsingMethod {
 		// note: immutable since these are stored as prefs
-		USE_DEFAULT, ADJACENT_PAIRS, ANGLES_OVER_10_NO_DUPS, ANGLES_OVER_15_NO_DUPS, ANGLES_OVER_20_NO_DUPS, ANGLES_OVER_30_NO_DUPS,
+		USE_DEFAULT, ADJACENT_PAIRS, ANGLES_OVER_5_NO_DUPS, ANGLES_OVER_10_NO_DUPS, ANGLES_OVER_15_NO_DUPS, ANGLES_OVER_20_NO_DUPS, ANGLES_OVER_30_NO_DUPS,
 	}
 
 	// PREF_UNITS
@@ -269,6 +269,9 @@ public class GPSUtils {
 
 		case ADJACENT_PAIRS:
 			return parseTransectsUsingPairs(route);
+			
+        case ANGLES_OVER_5_NO_DUPS:
+            return parseTransectsUsingAngles(route, 5, false);
 
 		case ANGLES_OVER_10_NO_DUPS:
 			return parseTransectsUsingAngles(route, 10, false);
@@ -409,6 +412,9 @@ public class GPSUtils {
 		switch(tpm) {
 		case ADJACENT_PAIRS:
 			return "tpm_adjacent_pairs";
+			
+        case ANGLES_OVER_5_NO_DUPS:
+            return"tpm_angles_5";
 	
 		case ANGLES_OVER_10_NO_DUPS:
 			return"tpm_angles_10";
@@ -433,6 +439,8 @@ public class GPSUtils {
 		if (tpmKey != null) {
 			if (tpmKey.equalsIgnoreCase("tpm_adjacent_pairs"))
 				return TransectParsingMethod.ADJACENT_PAIRS;
+            else if (tpmKey.equalsIgnoreCase("tpm_angles_5"))
+                return TransectParsingMethod.ANGLES_OVER_5_NO_DUPS;
 			else if (tpmKey.equalsIgnoreCase("tpm_angles_10"))
 				return TransectParsingMethod.ANGLES_OVER_10_NO_DUPS;
 			else if (tpmKey.equalsIgnoreCase("tpm_angles_15"))

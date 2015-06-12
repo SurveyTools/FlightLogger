@@ -2,6 +2,7 @@
 <resources>
    	<string-array name="pref_transect_parsing_method_default_names">
 	    <item>Adjacent Pairs</item>
+        <item>Angles over 5º</item>
 	    <item>Angles over 10º</item>
 	    <item>Angles over 15º</item>
 	    <item>Angles over 20º</item>
@@ -10,6 +11,7 @@
 
 	<string-array name="pref_transect_parsing_method_default_values">
 	    <item>tpm_adjacent_pairs</item>
+        <item>tpm_angles_5</item>
 	    <item>tpm_angles_10</item>
 	    <item>tpm_angles_15</item>
 	    <item>tpm_angles_20</item>
