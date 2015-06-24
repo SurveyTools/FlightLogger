@@ -1,18 +1,14 @@
 package com.vulcan.flightlogger.altimeter;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 import com.vulcan.flightlogger.AppSettings;
 import com.vulcan.flightlogger.geo.GPSUtils;
-import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
-import com.vulcan.flightlogger.util.PreferenceUtils;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.Resources.NotFoundException;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -29,12 +25,13 @@ public class AltimeterService extends Service implements
 		AdapterConnectionListener, USB2SerialAdapter.DataListener {
 	
 	public enum RangefinderDriverType {
-		AGLASER, LIGHTWARE 
+		AGLASER, LIGHTWARE, LIGHTWARE_SF30 
 	}
 	
 	private static final long ALT_RESPONSE_TIMEOUT_MILLIS = 5 * 1000;
 	private static final long NANOS_PER_MILLI = 1000000l;
-	public static final int FTDI_PRODUCT_ID = 24577;
+	public static final int LIGHTWARE_SF03_REV2_PRODUCT_ID = 24577; // x6001 - pre 6/2015 model
+	public static final int LIGHTWARE_SF03_PRODUCT_ID = 24597; // x6015 - newer model based on SF30 electronics
 	public static final int PROLIFIC_PRODUCT_ID = 8200;
 	public static final int DATA_SAMPLE_SIZE = 50;
 	
@@ -53,8 +50,7 @@ public class AltimeterService extends Service implements
 	private boolean mIsConnected = false;
 	private long mLastAltUpdateNanos = 0l;
 	
-	private Handler mAltResponseHandler;
-	
+	private Handler mAltResponseHandler;	
 
 	// TODO sample altitude
 	private int[] mAltSample;
@@ -181,16 +177,14 @@ public class AltimeterService extends Service implements
 		SlickUSB2Serial.initialize(this);
 		
 		RangefinderDriverType driverType = AppSettings.getPrefRangefinderDriverType(this);
-		if (driverType == RangefinderDriverType.LIGHTWARE)
+		if (driverType == RangefinderDriverType.LIGHTWARE || driverType == RangefinderDriverType.LIGHTWARE_SF30)
 		{
-			//TESTING 
-			Log.d("initSerialCommunication", ">> Connecting to Lightware device");
+			//TESTING Log.d("initSerialCommunication", ">> Initializing with Lightware device driver");
 			SlickUSB2Serial.connectFTDI(AltimeterService.this);
 		}
 		else
 		{
-			//TESTING 
-			Log.d("initSerialCommunication", ">> Connecting to AgLaser device");
+			//TESTING Log.d("initSerialCommunication", ">> Initializing with AgLaser device driver");
 			SlickUSB2Serial.connectProlific(AltimeterService.this);
 		}
 		
@@ -243,13 +237,24 @@ public class AltimeterService extends Service implements
 
 	@Override
 	public void onAdapterConnected(USB2SerialAdapter adapter) {
+
 		BaudRate adapterRate;
-		if (adapter.getProductId() == FTDI_PRODUCT_ID)
+		RangefinderDriverType driverType = AppSettings.getPrefRangefinderDriverType(this);
+		if (driverType == RangefinderDriverType.LIGHTWARE)
 		{
-			//TESTING Log.d(LOGGER_TAG, ">> Connecting Lightware laser with adapter " + adapter.toString());
-			mDataValidator = new LightwareDataValidator();
+			//TESTING 
+			Log.d(LOGGER_TAG, ">> Connecting to Lightware SF03/XLR");
+			mDataValidator = new LightwareSF03DataValidator();
 			adapterRate = BaudRate.BAUD_460800;
-		} else //assume its a prolific driver
+		}
+		else if (driverType == RangefinderDriverType.LIGHTWARE_SF30)
+		{
+			//TESTING 
+			Log.d(LOGGER_TAG, ">> Connecting to Lightware SF30/XLR");
+			mDataValidator = new LightwareSF30DataValidator();
+			adapterRate = BaudRate.BAUD_115200; 
+		}
+		else //assume its a prolific driver
 		{
 			//TESTING Log.d(LOGGER_TAG, ">> Connecting AgLaser with adapter " + adapter.toString());
 			mDataValidator = new AglaserDataValidator();

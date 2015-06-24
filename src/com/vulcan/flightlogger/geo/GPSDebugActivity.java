@@ -136,8 +136,6 @@ public class GPSDebugActivity extends Activity implements TransectUpdateListener
 	}
 	
 	public void loadGPX(View view) {
-	    // Do something in response to button click
-		Log.d("Foo", "Foo");
 		// load gpx
 		Intent intent = new Intent(this, FileBrowser.class);
 		this.startActivityForResult(intent, LOAD_GPX_FILE);

@@ -73,9 +73,9 @@ public class USBAwareActivity extends Activity {
 	 * @param device
 	 */
 	protected void initUsbDevice(UsbDevice device) {
-		Log.d(LOGGER_TAG, "init USB device: " + device);
+		// Log.d(LOGGER_TAG, "init USB device: " + device);
 		String deviceInfo = String.format(Locale.US, "Connecting device: %s vendor id: %d prod id: %d", device.getDeviceName(), device.getVendorId(), device.getProductId());
-		Log.d("USBAwareActivity", deviceInfo);
+		// Log.d("USBAwareActivity", deviceInfo);
 		showToast("Connecting usb device");
 		initUsbDriver();
 	}

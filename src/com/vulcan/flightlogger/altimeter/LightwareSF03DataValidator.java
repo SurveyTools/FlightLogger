@@ -1,10 +1,15 @@
 package com.vulcan.flightlogger.altimeter;
 
 import java.util.Arrays;
-import android.util.Log;
+// import android.util.Log;
 import com.vulcan.flightlogger.util.KMPMatch;
 
-public class LightwareDataValidator implements AltimeterValidator {
+/*
+ * This validator is used for Revision 2 SF03 devices, which are the 'old' generation devices
+ * built before 6/2015.
+ */
+
+public class LightwareSF03DataValidator implements AltimeterValidator {
 	
 	final static int dataSampleBufferSize = 100;
 	final static int dataSampleSize = 10;

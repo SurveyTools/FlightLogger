@@ -14,6 +14,8 @@ public class AltimeterUtils {
 				return RangefinderDriverType.AGLASER;
 			else if (key.equalsIgnoreCase("rangefinder_sf03xlr"))
 				return RangefinderDriverType.LIGHTWARE;
+			else if (key.equalsIgnoreCase("rangefinder_sf30xlr"))
+				return RangefinderDriverType.LIGHTWARE_SF30;
 		}
 		
 		throw new NotFoundException("driver key not found");
