@@ -42,5 +42,11 @@ public class LogEntry {
 		this.mSpeed = cloned.mSpeed;
 		this.mGpsAlt = cloned.mGpsAlt;
 	  }
+	
+	
+	public boolean isValidEntry()
+	{
+		return (this.mLat != 0) && (this.mLon != 0) && (this.mAlt != 0);
+	}
 
 }

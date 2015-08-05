@@ -313,26 +313,29 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 	}
 
 	private void writeLogEntries(LogEntry entry, String timestamp) {
-		String flightlogEntry = mLogFormatter.writeGPXFlightlogRecord(timestamp, entry);
-		writeLogEntry(this.mGlobalFlightLog, flightlogEntry);
-		if (isLogging() == true)
+		if (entry.isValidEntry())
 		{
-			// DONT_USE_TRANSECT_LOG_BEFORE_ITS_CREATED (fixes crash bug)
-			if (mCurrStats == null) {
-				Log.d(TAG, "mCurrStats null - not averaging this entry");
-			} else {
-				mCurrStats.addTransectStat(entry);
+			String flightlogEntry = mLogFormatter.writeGPXFlightlogRecord(timestamp, entry);
+			writeLogEntry(this.mGlobalFlightLog, flightlogEntry);
+			if (isLogging() == true)
+			{
+				// DONT_USE_TRANSECT_LOG_BEFORE_ITS_CREATED (fixes crash bug)
+				if (mCurrStats == null) {
+					Log.d(TAG, "mCurrStats null - not averaging this entry");
+				} else {
+					mCurrStats.addTransectStat(entry);
+				}
+				
+				String transectEntry = mLogFormatter.writeGenericCSVRecord(
+						timestamp,
+						mCurrTransectName,
+						Double.toString(entry.mLat),
+						Double.toString(entry.mLon), 
+						Float.toString(entry.mAlt),					
+						Double.toString(entry.mGpsAlt),
+						Float.toString(entry.mSpeed));
+				writeLogEntry(this.mTransectLogfile, transectEntry);
 			}
-			
-			String transectEntry = mLogFormatter.writeGenericCSVRecord(
-					timestamp,
-					mCurrTransectName,
-					Double.toString(entry.mLat),
-					Double.toString(entry.mLon), 
-					Float.toString(entry.mAlt),					
-					Double.toString(entry.mGpsAlt),
-					Float.toString(entry.mSpeed));
-			writeLogEntry(this.mTransectLogfile, transectEntry);
 		}
 	}
 	
