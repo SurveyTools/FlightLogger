@@ -46,7 +46,8 @@ public class LogEntry {
 	
 	public boolean isValidEntry()
 	{
-		return (this.mLat != 0.0) && (this.mLon != 0.0);
+		// add 0.0 incase a future versions returns -0.0
+		return (this.mLat + 0.0 > 0.0) && (this.mLon + 0.0 > 0.0);
 	}
 
 }
