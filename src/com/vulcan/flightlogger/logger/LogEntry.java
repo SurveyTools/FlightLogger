@@ -35,19 +35,21 @@ public class LogEntry {
 	}
 	
 	// copy constructor to keep sampled data atomic
-	public LogEntry(LogEntry cloned) {
+	public LogEntry(LogEntry cloned) 
+	{
 		this.mLat = cloned.mLat;
 		this.mLon = cloned.mLon;
 		this.mAlt = cloned.mAlt;
 		this.mSpeed = cloned.mSpeed;
 		this.mGpsAlt = cloned.mGpsAlt;
-	  }
-	
+	}
 	
 	public boolean isValidEntry()
 	{
-		// add 0.0 incase a future versions returns -0.0
-		return (this.mLat + 0.0 > 0.0) && (this.mLon + 0.0 > 0.0);
+		// don't want to log anything where the lat and lon are 0. 
+		// this may be a problem if you are really 300 miles offshore in
+		// the Gulf of Guinea in the Atlantic Ocean, where lat/lon is 0
+		return !((this.mLat == 0.0f) && (this.mLon == 0.0f));
 	}
 
 }
