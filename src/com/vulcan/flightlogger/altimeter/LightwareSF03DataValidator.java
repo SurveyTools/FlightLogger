@@ -1,5 +1,8 @@
 package com.vulcan.flightlogger.altimeter;
 
+import java.lang.Float;
+import java.lang.NumberFormatException;
+import java.lang.String;
 import java.util.Arrays;
 // import android.util.Log;
 import com.vulcan.flightlogger.util.KMPMatch;
@@ -13,7 +16,8 @@ public class LightwareSF03DataValidator implements AltimeterValidator {
 	
 	final static int dataSampleBufferSize = 100;
 	final static int dataSampleSize = 10;
-	final byte[] terminatingPattern = { (byte)0x20, (byte)0x6d, (byte)0x0d, (byte)0x0a }; 
+	final byte[] terminatingPattern = { (byte)0x20, (byte)0x6d, (byte)0x0d, (byte)0x0a };
+    //final byte[] terminatingPattern = { (byte)0x20, (byte)0x6d, (byte)0x0d };
 
 	@Override
 	public float parseDataPayload(byte[] data) {
@@ -26,8 +30,13 @@ public class LightwareSF03DataValidator implements AltimeterValidator {
 		
 		// find the values between the patterns. The value may have up to 2 spaces (0x20) padding
 		int start = KMPMatch.indexOf(data, terminatingPattern);
+		// first, see if we have exactly one frame of data
+        if (start > 0 && data.length <= dataSampleSize)
+        {
+            meters = parseAltimeterSample(data, start);
+        }
 		// if we have a match, extract a sample from the next value in the sequence
-		if (start > 0 && (start + dataSampleSize + terminatingPattern.length) < data.length )
+		else if (start > 0 && (start + dataSampleSize + terminatingPattern.length) < data.length )
 		{
 			int fromIndex = start + terminatingPattern.length;
 			int toIndex = fromIndex + dataSampleSize + terminatingPattern.length;
@@ -36,17 +45,8 @@ public class LightwareSF03DataValidator implements AltimeterValidator {
 				int matchEnd = KMPMatch.indexOf(sampleSlice, terminatingPattern);
 				if (matchEnd > 0)
 				{
-					byte[] sample = Arrays.copyOfRange(sampleSlice, 0, matchEnd);
-					//TESTING Log.d(this.getClass().getName(), "Meters as unparsed string: " + new String(sample));
-					try {
-						meters = Float.parseFloat(new String(sample));
-					} catch (NumberFormatException nfe) { // for lightware lasers that report ---.--
-						meters = AltimeterService.LASER_OUT_OF_RANGE;
-					}
-					//TESTING Log.d(this.getClass().getName(), "Meters as float: " + meters);
-					if (meters < 0) // for lightware lasers that report -1.00 m
-						meters = AltimeterService.LASER_OUT_OF_RANGE; 
-				}	
+                    meters = parseAltimeterSample(sampleSlice, matchEnd);
+				}
 			} 
 			catch (ArrayIndexOutOfBoundsException aioobe)
 			{
@@ -63,5 +63,20 @@ public class LightwareSF03DataValidator implements AltimeterValidator {
 		}
 		return meters;
 	}
+
+    private float parseAltimeterSample(byte[] sampleSlice, int matchEnd) {
+        float meters;
+        byte[] sample = Arrays.copyOfRange(sampleSlice, 0, matchEnd);
+        //TESTING Log.d(this.getClass().getName(), "Meters as unparsed string: " + new String(sample));
+        try {
+            meters = Float.parseFloat(new String(sample));
+        } catch (NumberFormatException nfe) { // for lightware lasers that report ---.--
+            meters = AltimeterService.LASER_OUT_OF_RANGE;
+        }
+        //TESTING Log.d(this.getClass().getName(), "Meters as float: " + meters);
+        if (meters < 0) // for lightware lasers that report -1.00 m
+            meters = AltimeterService.LASER_OUT_OF_RANGE;
+        return meters;
+    }
 
 }
