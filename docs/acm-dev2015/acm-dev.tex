@@ -18,6 +18,7 @@ DOI: http://dx.doi.org/10.1145/2830629.2835221}
 % --- Image support for png ---
 \usepackage{graphicx}
 \graphicspath{ {images/} }
+ \usepackage{url}
 
 \begin{document}
 \title{Improving Flight Accuracy for Aerial Wildlife Surveys in Sub-Saharan Africa}
@@ -44,13 +45,13 @@ Aerial surveys are vital to assessing animal populations as part of an effort to
 \section{Introduction}
 Healthy ecosystems, including thriving wildlife populations, are a major component of social and economic development across many regions in rural Africa. The monitoring of wildlife populations, including the use of aerial surveys, is essential to healthy ecosystems as it informs wildlife management planning, identifies poaching hotspots, and tracks ecological trends.
 
-A common method of aerial survey called a systematic reconnaissance flight, or transect sample count, is conducted by flying carefully defined lines in a given region, counting the animals observed within the strips visible from each side of the aircraft and then extrapolating to estimate the total population.  The lines, called transects, must be flown within a precise altitude, speed and course to minimize the extrapolation errors and to enable comparison with previous results where possible.  
+A common method of aerial survey called a systematic reconnaissance flight, or transect sample count, is conducted by flying carefully defined lines in a given region, counting the animals observed within the strips visible from each side of the aircraft and then extrapolating to estimate the total population \cite{mike}.  The lines, called transects, must be flown within a precise altitude, speed and course to minimize the extrapolation errors and to enable comparison with previous results where possible.  
 
 Maintaining altitude and course is difficult since multiple instruments typically need to be referenced simultaneously by the pilot (e.g. altimeter, GPS and airspeed).  Consistency in flying performance is important not only for general safety but also for providing a consistent platform for observation, and minimizing biases. The software and hardware package described in this paper was designed to reduce the burden on the pilot by integrating altimeter, speed and GPS into a single console with a graphical indicator and altitude deviation.  
 
 The software further simplifies the management of flying individual transects by allowing a flight plan of transects to be pre-loaded, as well as logging flight data automatically instead of by the manual recording on paper by a Front Seat Observer (FSO) or surveyor.  
 
-This paper describes the design and usage of an Android-based survey assistance device we call the Flightlogger, developed as part of the Great Elephant Census project (GEC), which makes improvements in these areas:
+This paper describes the design and usage of an Android-based survey assistance device we call the Flightlogger, developed as part of the Great Elephant Census project \cite{gec} (GEC), which makes improvements in these areas:
 
 (i) \textit{Flight accuracy}. Provide an in-flight management system that helps the pilot navigate to and maintain course on individual transects through a real-time integrated display of altitude, speed and location.
 
@@ -109,13 +110,8 @@ We are indebted to Falk Grossman and Dr. Mike Chase
 for their support and feedback. We are grateful to the Paul G. Allen Family Foundation for the funding
 of the Great Elephant Census. Our thanks go to the GEC PI team at Vulcan, especially Dr. Kathleen Gobush, Lauren Kickham and Joel Masselink.
 
-\section{References}
-\begin{enumerate}
-  \item Craig, G.C. (2012) Aerial Survey Standards for the MIKE Programme. Version 2.0.  CITES MIKE Programme.
-  \item The Great Elephant Census:  Project Description. (2014)  Available at http://www.greatelephantcensus.com/the-census/
-\end{enumerate}
-
-
+\bibliographystyle{plain}
+\bibliography{flightlogger}
 
 
 \end{document}
