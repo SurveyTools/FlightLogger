@@ -1,6 +1,6 @@
 #!/bin/sh
-rm *.aux *.blg *.bbl acm-dev.pdf *.log
-pdflatex acm-dev 
-bibtex acm-dev 
-pdflatex acm-dev
-pdflatex acm-dev
+rm *.aux *.blg *.bbl flightlogger.pdf *.log
+pdflatex flightlogger 
+bibtex flightlogger 
+pdflatex flightlogger
+pdflatex flightlogger
