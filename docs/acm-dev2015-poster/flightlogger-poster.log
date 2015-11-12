@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  11 NOV 2015 14:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  11 NOV 2015 17:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -268,7 +268,7 @@ Package: amssymb 2013/01/14 v3.01 AMS font symbols
 \WF@everypar=\toks27
 Package: wrapfig 2003/01/31  v 3.6
 )
-No file flightlogger-poster.aux.
+(./flightlogger-poster.aux)
 \openout1 = `flightlogger-poster.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
@@ -284,6 +284,7 @@ LaTeX Font Info:    ... okay on input line 39.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
 LaTeX Font Info:    ... okay on input line 39.
 LaTeX Font Info:    Try loading font information for OT1+ptm on input line 39.
+
 (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -351,70 +352,62 @@ e
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <74.3> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 52.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <51.6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 54.
-
-Underfull \hbox (badness 10000) in paragraph at lines 52--56
-
- []
-
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <35.83> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 59.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 64.
-(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-Underfull \hbox (badness 10000) in paragraph at lines 59--65
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--65
-
- []
 
 <figures/logo.png, id=1, 1401.235pt x 521.95pt>
 File: figures/logo.png Graphic file (type png)
  <use figures/logo.png>
+Package pdftex.def Info: figures/logo.png used on input line 56.
+(pdftex.def)             Requested size: 569.05511pt x 211.96999pt.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <74.3> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 62.
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--63
+
+ []
+
+File: figures/logo.png Graphic file (type png)
+<use figures/logo.png>
 Package pdftex.def Info: figures/logo.png used on input line 68.
 (pdftex.def)             Requested size: 569.05511pt x 211.96999pt.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20.74> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 83.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <29.86> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 125.
-LaTeX Font Info:    Try loading font information for U+msa on input line 129.
 
+Overfull \hbox (24.45447pt too wide) in paragraph at lines 55--70
+[][] [] [] 
+ []
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <35.83> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 87.
+LaTeX Font Info:    Try loading font information for U+msa on input line 142.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 129.
+LaTeX Font Info:    Try loading font information for U+msb on input line 142.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24.88> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 164.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 144.
 
-Overfull \hbox (51.61647pt too wide) in paragraph at lines 162--171
+Overfull \hbox (51.61647pt too wide) in paragraph at lines 142--151
 [][] 
  []
 
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20.74> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 151.
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--172
+Underfull \hbox (badness 10000) in paragraph at lines 139--152
 \OT1/ptm/m/n/24.88 Donec fau-cibus pu-rus at tor-tor eges-tas eu fer-men-tum do
 -lor fa-cil-i-sis. Mae-ce-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--172
+Underfull \hbox (badness 10000) in paragraph at lines 139--152
 \OT1/ptm/m/n/24.88 nean vi-tae risus ante. Pel-len-tesque condi-men-tum dui. Et
 iam sagit-tis pu-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--172
+Underfull \hbox (badness 10000) in paragraph at lines 139--152
 \OT1/ptm/m/n/24.88 rus non tel-lus tem-por vo-lut-pat. Donec et dui non massa t
 ris-tique adip-isc-ing.
  []
@@ -423,57 +416,45 @@ ris-tique adip-isc-ing.
 File: figures/placeholder.jpg Graphic file (type jpg)
 
 <use figures/placeholder.jpg>
-Package pdftex.def Info: figures/placeholder.jpg used on input line 179.
+Package pdftex.def Info: figures/placeholder.jpg used on input line 159.
 (pdftex.def)             Requested size: 772.3307pt x 425.95706pt.
 File: figures/placeholder.jpg Graphic file (type jpg)
  <use figures/placeholder.jpg>
-Package pdftex.def Info: figures/placeholder.jpg used on input line 203.
+Package pdftex.def Info: figures/placeholder.jpg used on input line 183.
 (pdftex.def)             Requested size: 772.3307pt x 425.95706pt.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 216.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 196.
 
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <24.88> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 216.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 196.
 
 No file flightlogger-poster.bbl.
-
-Overfull \vbox (19.25743pt too high) has occurred while \output is active []
-
-
 [1
 
 
 Non-PDF special ignored!{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/upd
-map/pdftex.map} <./figures/logo.png> <./figures/placeholder.jpg>] [2]
-(./flightlogger-poster.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+map/pdftex.map} <./figures/logo.png> <./figures/placeholder.jpg>]
+(./flightlogger-poster.aux) ) 
 Here is how much of TeX's memory you used:
- 4534 strings out of 493089
- 67955 string characters out of 6134842
- 178063 words of memory out of 5000000
- 7935 multiletter control sequences out of 15000+600000
- 30698 words of font info for 64 fonts, out of 8000000 for 9000
+ 4481 strings out of 493089
+ 67237 string characters out of 6134842
+ 165063 words of memory out of 5000000
+ 7891 multiletter control sequences out of 15000+600000
+ 20649 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,8n,38p,1008b,383s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
-exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/te
-xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/tex
-live/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texli
-ve/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texliv
-e/2015/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2015/t
-exmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015/texmf-dist/
-fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type
-1/urw/times/utmri8a.pfb>
-Output written on flightlogger-poster.pdf (2 pages, 128643 bytes).
+ 38i,8n,38p,1008b,385s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2015/texmf-dist/fonts/enc/dvip
+s/base/8r.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmb8a.p
+fb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/l
+ocal/texlive/2015/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on flightlogger-poster.pdf (1 page, 83209 bytes).
 PDF statistics:
- 48 PDF objects out of 1000 (max. 8388607)
- 32 compressed objects within 1 object stream
+ 29 PDF objects out of 1000 (max. 8388607)
+ 18 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
