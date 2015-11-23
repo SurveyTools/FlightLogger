@@ -14,7 +14,7 @@ public class AltitudeDatum extends FlightDatum {
 	static final String INVALID_ALTITUDE_STRING = "--";
 	static final String IGNORE_ALTITUDE_STRING = "";
 	static final String OUT_OF_RANGE_ALTITUDE_STRING = "RNG"; // OUT_OF_RANGE_METRICS
-	static final String DEMO_ALTITUDE_STRING = "312"; // DEMO_MODE
+	static final String DEMO_ALTITUDE_STRING = "299"; // DEMO_MODE
 
 	static final long SHOW_OUT_OF_RANGE_AFTER_MILLIS = DATA_IS_OLD_THRESHOLD_MILLIS;
 
@@ -73,7 +73,7 @@ public class AltitudeDatum extends FlightDatum {
 	@Override
 	public short getStatusColor() {
 		if (mDemoMode)
-			return FLIGHT_STATUS_GREEN; // DEMO_MODE
+			return FLIGHT_STATUS_RED; // DEMO_MODE
 		else if (mIgnore)
 			return FLIGHT_STATUS_IGNORE;
 		else if (!mDataIsValid)

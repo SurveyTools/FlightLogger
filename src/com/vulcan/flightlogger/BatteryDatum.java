@@ -54,6 +54,8 @@ public class BatteryDatum extends FlightDatum {
 		// note: DEMO_MODE ignored
 		if (mIgnore)
 			color = FLIGHT_STATUS_IGNORE;
+		else if (mDemoMode)
+			color = FLIGHT_STATUS_YELLOW;
 		else if (!mDataIsValid)
 			color = FLIGHT_STATUS_RED;
 		else {

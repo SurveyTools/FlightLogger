@@ -12,10 +12,6 @@ import com.vulcan.flightlogger.geo.GPSUtils;
 import com.vulcan.flightlogger.geo.NavigationService;
 import com.vulcan.flightlogger.geo.TransectUpdateListener;
 import com.vulcan.flightlogger.geo.GPSUtils.DistanceUnit;
-//superdevo import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingMethod;
-//superdevo import com.vulcan.flightlogger.geo.GPSUtils.DataAveragingWindow;
-//superdevo import com.vulcan.flightlogger.geo.GPSUtils.TransectParsingMethod;
-//superdevo import com.vulcan.flightlogger.geo.data.FlightStatus;
 import com.vulcan.flightlogger.geo.data.Transect;
 import com.vulcan.flightlogger.geo.data.TransectStatus;
 import com.vulcan.flightlogger.logger.LoggingService;
@@ -38,9 +34,6 @@ import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-//superdevo import android.preference.PreferenceManager;
-//superdevo import android.content.res.ColorStateList;
-//superdevo import android.content.res.Resources.NotFoundException;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -65,7 +58,7 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 	static final int CHANGE_APP_SETTINGS = 10013;
 	static final int UI_UPDATE_TIMER_MILLIS = 500;
 	static final int SHOW_OUT_OF_RANGE_AFTER_MILLIS = 12000;
-	static final boolean DEMO_MODE = false;
+	static final boolean DEMO_MODE = false; // DEMO_MODE
 	public static final int UPDATE_IMAGE = 666;
 	public static final String LOG_CLASSNAME = "FlightLogger";
 	private static final String SAVED_FLIGHT_DATA_KEY = "FlightData";
@@ -276,7 +269,6 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 		ViewGroup layout = (ViewGroup) findViewById(R.id.navscreenLeft);
 		TransectILSView tv = new TransectILSView(this);
 		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
 		boolean demoMode = false; // DEMO_MODE
 		mAltitudeData = new AltitudeDatum(false, demoMode);
 		mGPSData = new GPSDatum(false, demoMode);
@@ -1026,6 +1018,8 @@ public class FlightLogger extends USBAwareActivity implements AltitudeUpdateList
 				// right status
 				if (mGPSData.mIgnore)
 					mStatusDisplayRight.setText("(Ignore GPS)");
+				else if (mGPSData.mDemoMode)
+					mStatusDisplayRight.setText("8:16 Remaining"); // we don't actuall show this anymore but it works in all demo modes
 				else
 					mStatusDisplayRight.setText("GPS N/A");
 			}

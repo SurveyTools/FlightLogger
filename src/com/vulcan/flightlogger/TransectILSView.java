@@ -28,7 +28,8 @@ public class TransectILSView extends View {
 	}
 
 	private boolean mShowDebugInfo;
-	
+	private boolean mDemoMode = false; // TODO integrate with DEMO_MODE in FlightLogger
+
 	// altitude
 	private AltitudeDatum mCurAltitude;
 	private float mAltitudeTargetFeet; // e.g. 300 feet
@@ -173,12 +174,16 @@ public class TransectILSView extends View {
 		float errorPixelRadius = contentPixelRadius - markerStrokeWidth; // 15 is perfect, 18 gives you a little gap which is good
 		float warningPixelRadius = errorPixelRadius * .85f; // 15 is perfect, 18 gives you a little gap which is good
 
-		// TESTING
-		// ILS_BAR_DEBUGGING
+		//
+		// ILS_BAR_DEBUGGINGTESTING
 		boolean debugAlwaysShowBars = false;
 		boolean debugOverrideValues = false;;
 		float debugRange = 300;
 		float debugNormalizedValue = -.25f;// -.2f;//0.6f;
+
+		// DEMO_MODE
+		if (mDemoMode)
+			debugAlwaysShowBars = true;
 		
 		// TESTING Log.i("navView", "draw w = " + w + ", getWidth = " + ww +
 		// ", mw = " + width + ", pl = " + pl);
@@ -503,9 +508,9 @@ public class TransectILSView extends View {
 				// normalized delta
 				mAltitudeDeltaNormalized = mAltitudeDeltaInFeet / mAltitudeDialRadiusFeet;
 
+			} else if (altitudeData.mDemoMode) {
 				// DEMO_MODE
-				if (altitudeData.mDemoMode)
-					mAltitudeDeltaNormalized = -0.3f;
+				mAltitudeDeltaNormalized = -0.4f;
 			}
 		} else {
 			mCurAltitude = null;
@@ -544,11 +549,12 @@ public class TransectILSView extends View {
 
 				// normalized delta
 				mTransectDeltaNormalized = pathDeviationInFeet / mTransectDialRadiusFeet;
-
-				// DEMO_MODE
-				if (gpsData.mDemoMode)
-					mTransectDeltaNormalized = -0.4f;
 			}
+			else if (gpsData.mDemoMode) {
+				// DEMO_MODE
+				mTransectDeltaNormalized = -0.29f;
+			}
+
 		}
 
 		return mTransectDeltaNormalized != oldTransectDeltaNormalized;

@@ -23,7 +23,7 @@
     <string name="action_altimeter">Laser Altimeter</string>
     <string name="action_show_gps_debug">GPS Debug</string>
     <string name="action_convert_cvs_logfile">Convert Logfile to GPX</string>
-    <string name="altitude_placeholder">312</string>
+    <string name="altitude_placeholder">299</string>
     <string name="nav_status_gps_text">GPS</string>
     <string name="nav_status_alt_text">ALT</string>
     <string name="nav_status_bat_text">BAT</string>

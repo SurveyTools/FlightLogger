@@ -38,7 +38,7 @@
 	<string-array name="pref_speed_unit_values">
 	    <item>velocity_nautical_miles_per_hour</item>
 	    <item>velocity_kilmeters_per_hour</item>
-	    <item>velocity__miles_per_hour</item>
+	    <item>velocity_miles_per_hour</item>
 	</string-array>
 	
 	<string-array name="pref_distance_unit_names">
