@@ -417,7 +417,7 @@ public class LoggingService extends Service implements AltitudeUpdateListener,
 
 	@Override
 	public void onRouteUpdate(TransectStatus status) {
-		if (status != null && mLogTransectData)
+		if (status != null && mLogFlightData)
 		{
 			this.mCurrLogEntry.mLat =  status.mCurrGpsLat;
 			this.mCurrLogEntry.mLon = status.mCurrGpsLon;
