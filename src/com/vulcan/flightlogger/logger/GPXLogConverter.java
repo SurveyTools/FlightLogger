@@ -18,7 +18,7 @@ public class GPXLogConverter {
 	final static public String GPX_HEADER = new StringBuilder()
 	.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?> ")
 	.append("<gpx version=\"1.0\" ")
-	.append("creator=\"Vulcan FlightLogger v.").append(BuildConfig.VERSION_NAME).append("\" ")
+	.append("creator=\"Vulcan FlightLogger v.0.7.5\" ")
 	.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ")
 	.append("xmlns=\"http://www.topografix.com/GPX/1/0\" ")
 	.append("xmlns:topografix=\"http://www.topografix.com/GPX/Private/TopoGrafix/0/1\" ")
